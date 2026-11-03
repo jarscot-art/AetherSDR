@@ -385,6 +385,18 @@ constexpr std::array kSpecs = {
                 "polled so front-panel XFC updates both repeater-control surfaces. "
                 "Excluded from scrub because asserting it changes the receive "
                 "frequency during the check.", IcomFeature::TxFrequencyCheck},
+    ControlSpec{"split.status", 0x0F, 0, false, "SPLIT readback",
+                Plane::Radio, Encoding::OnOff, Wiring::DecodeOnly,
+                0, 1, "on/off", 0, 1, "", "", true,
+                "IC-7300MK2 native readback only: bare 0F queries, 00/01 replies. "
+                "Never a SPLIT write or FM DUP command. Excluded from scrub.",
+                IcomFeature::SplitTxReadback},
+    ControlSpec{"tx.frequency", 0x1C, 0x03, true, "Native TX frequency readback",
+                Plane::Transmit, Encoding::BcdFreq, Wiring::DecodeOnly,
+                0, 0, "Hz", 0, 0, "", "", true,
+                "IC-7300MK2 radio-reported TX, polled and freshness-qualified. "
+                "No RX/XIT arithmetic, setting write or keying. Excluded from scrub.",
+                IcomFeature::SplitTxReadback},
     ControlSpec{"repeater.tx.frequency", 0x1C, 0x03, true,
                 "Transmit frequency readback",
                 Plane::Slice, Encoding::BcdFreq, Wiring::DecodeOnly,
@@ -565,6 +577,10 @@ std::span<const ControlSpec> controlSpecs() { return kSpecs; }
 bool controlSupported(const IcomModel& model, const IcomModelProfile& profile,
                       const ControlSpec& spec) noexcept
 {
+    if (spec.id == "repeater.shift" || spec.id == "repeater.offset") {
+        return profile.supports(spec.requiredFeature) && profile.fmRepeater
+            && profile.fmRepeater->hasDuplex;
+    }
     if (spec.requiredFeature == IcomFeature::Scope) {
         // Scope startup and status handling have always followed identity
         // geometry. Keep the registry aligned with that real wire behavior;

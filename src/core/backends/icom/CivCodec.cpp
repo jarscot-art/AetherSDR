@@ -107,6 +107,7 @@ std::optional<CivFrame> parseFrame(std::span<const std::uint8_t> frame)
         return std::nullopt;
 
     CivFrame f;
+    f.hasNormalTerminator = terminator == kCivEom;
     f.to   = frame[2];
     f.from = frame[3];
     f.cmd  = frame[4];
@@ -1038,6 +1039,19 @@ std::optional<RepeaterToneRegister> decodeRepeaterToneRegister(
         (payload[0] & 0x10) != 0,
         (payload[0] & 0x01) != 0,
     };
+}
+
+std::vector<std::uint8_t> cmdReadSplit(std::uint8_t to)
+{
+    return buildFrame(to, cmd::kDuplex);
+}
+
+std::optional<bool> decodeSplit(std::span<const std::uint8_t> payload)
+{
+    if (payload.size() != 1 || payload[0] > 1) {
+        return std::nullopt;
+    }
+    return payload[0] == 1;
 }
 
 std::vector<std::uint8_t> cmdReadTransmitFrequency(std::uint8_t to)

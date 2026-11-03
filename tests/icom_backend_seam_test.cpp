@@ -7,6 +7,7 @@
 #include "TxTestAuthority.h"
 #include "TestSettingsProfile.h"
 #include "core/AppSettings.h"
+#include "models/TransmitModel.h"
 
 #include <QCoreApplication>
 #include <QLoggingCategory>
@@ -23,6 +24,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <utility>
 
 using namespace AetherSDR;
 using namespace AetherSDR::icom;
@@ -78,6 +80,55 @@ struct IcomCivBackendTestAccess {
             }
         }
         return out;
+    }
+    static QVariantMap readbackState(const IcomCivBackend& b, bool values = true)
+    {
+        return b.splitTxReadbackDiagnostics(b.nowMs(), values);
+    }
+    static void deliverRaw(IcomCivBackend& b, const CivFrame& frame, std::uint64_t generation = 1)
+    {
+        b.onCivFrame(frame, generation);
+    }
+    static void pollReadbacks(IcomCivBackend& b)
+    {
+        b.queueSplitTxReadback(IcomCivScheduler::Priority::Control);
+    }
+    static void pollTx(IcomCivBackend& b)
+    {
+        b.queueRead(cmdReadTransmitFrequency(b.m_session->civAddress()), "tx.frequency",
+                    IcomCivScheduler::Priority::Control);
+    }
+    static void expireRead(IcomCivBackend& b)
+    {
+        b.pumpCiv(std::max<qint64>(b.nowMs(), b.m_civScheduler.stats().lastDispatchMs)
+                  + IcomCivScheduler::kReadTimeoutMs + 1);
+    }
+    static void expireFreshness(IcomCivBackend& b)
+    {
+        b.m_splitReadback.atMs -= 5001;
+        b.m_txReadback.atMs -= 5001;
+        b.serviceSplitTxReadback(b.nowMs());
+    }
+    static void periodicReadbacks(IcomCivBackend& b)
+    {
+        b.m_splitTxPollAtMs = b.nowMs() - 2001;
+        b.onLinkTick();
+    }
+    static void endSession(IcomCivBackend& b)
+    {
+        b.onSessionDisconnected(QString());
+    }
+    static void userFrequencyCommand(IcomCivBackend& b)
+    {
+        // Exercise invalidation before an existing operator command. The
+        // transport is unstarted; no command can leave this test fixture.
+        b.sendUserCommand(cmdSetFrequency(b.m_session->civAddress(), 14'025'000));
+    }
+    static void queueFrequencyBeforeExpiry(IcomCivBackend& b)
+    {
+        b.queueWrite(cmdSetFrequency(b.m_session->civAddress(), 14'025'000), "frequency",
+                     IcomCivScheduler::Priority::Operator);
+        b.m_txReadback.atMs = b.nowMs() - 5001;
     }
     static void forget(IcomCivBackend& b)
     {
@@ -1902,6 +1953,305 @@ void testScrubReasserts()
           "and emits no keying, tuner or power-off frame");
 }
 
+CivFrame mk2Readback(std::uint8_t command, std::vector<std::uint8_t> data,
+                     std::optional<std::uint8_t> sub = std::nullopt)
+{
+    CivFrame f;
+    f.to = kControllerAddress; f.from = 0xB6; f.cmd = command;
+    f.hasSub = sub.has_value(); f.sub = sub.value_or(0); f.data = std::move(data);
+    return f;
+}
+
+void testNativeSplitTxReadback()
+{
+    using Access = IcomCivBackendTestAccess;
+    IcomCivBackend backend;
+    Access::prepare(backend, "IC-7300MK2");
+    TransmitModel tx;
+    QObject::connect(&backend, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+    int receiverPublications = 0;
+    QObject::connect(&backend, &IRadioBackend::sliceChanged,
+                     [&](int, const SliceDelta&) { ++receiverPublications; });
+    // Test isolated unsolicited publications here. Scheduler causality is
+    // exercised separately below, without depending on elapsed wall time.
+    const auto deliver = [&](const CivFrame& frame) {
+        Access::forget(backend);
+        Access::deliverRaw(backend, frame);
+    };
+    const auto splitOff = mk2Readback(cmd::kDuplex, {0});
+    const auto splitOn = mk2Readback(cmd::kDuplex, {1});
+    const auto frequency = mk2Readback(cmd::kControl, {0x00, 0x65, 0x02, 0x14, 0}, 0x03);
+    const auto field = [&](const char* key) {
+        return Access::readbackState(backend).value(QLatin1String(key)).toMap();
+    };
+    check(!field("split").value("valid").toBool()
+              && !field("txFrequencyHz").contains("value"), "new MK2 session has no inferred state");
+    deliver(splitOff);
+    check(field("split").value("valid").toBool() && field("split").value("value").toULongLong() == 0,
+          "SPLIT OFF is a confirmed state rather than unknown");
+    deliver(frequency);
+    check(tx.confirmedTransmitFreq() == 14.0265 && Access::frequency(backend) == 14'100'000
+              && receiverPublications == 0, "TX readback changes no RX frequency or slice");
+    deliver(splitOn);
+    check(!tx.confirmedTransmitFreq() && tx.transmitFreq() == 0.0,
+          "SPLIT change invalidates previous TX but preserves ATU frequency memory");
+    deliver(frequency);
+    const auto rx = mk2Readback(cmd::kReadFreq, {0, 0x50, 0x02, 0x14, 0});
+    deliver(rx);
+    check(tx.transmitFreq() == 14.025 && !tx.confirmedTransmitFreq(),
+          "03 updates only the compatibility reference, not confirmed TX");
+    deliver(frequency);
+    const auto tuner = mk2Readback(cmd::kControl, {1}, control::kTuner);
+    deliver(tuner);
+    check(tx.confirmedTransmitFreq() == 14.0265 && tx.transmitFreq() == 14.025
+              && tx.atuStatus() == ATUStatus::Successful,
+          "ATU status preserves the dial reference and the independent native TX observation");
+    const int rxBeforeOffset = receiverPublications;
+    deliver(mk2Readback(cmd::kTuneOffset, {0x60, 0x11, 0}, tuneOffset::kFrequency));
+    check(!tx.confirmedTransmitFreq() && receiverPublications == rxBeforeOffset + 1,
+          "existing shared RIT/XIT publication stays intact and invalidates TX evidence");
+    deliver(frequency);
+    check(tx.confirmedTransmitFreq() == 14.0265,
+          "radio TX is not increased again by the 1160 Hz offset");
+    const auto redacted = Access::readbackState(backend, false).value("txFrequencyHz").toMap();
+    check(!redacted.contains("value") && !redacted.contains("lastConfirmedValue"),
+          "default diagnostics redact both live and historical frequency values");
+    Access::expireFreshness(backend);
+    check(!tx.confirmedTransmitFreq() && tx.transmitFreq() == 14.025
+              && !field("txFrequencyHz").contains("value")
+              && field("txFrequencyHz").contains("lastConfirmedValue"),
+          "expiry preserves only explicitly historical frequency data");
+    deliver(frequency);
+    Access::forget(backend);
+    Access::pollReadbacks(backend);
+    Access::pollReadbacks(backend);
+    auto queued = Access::issued(backend);
+    check(std::count_if(queued.begin(), queued.end(), [](const CivFrame& f) {
+        return f.cmd == cmd::kDuplex && !f.hasSub && f.data.empty();
+    }) == 1, "repeated SPLIT polling coalesces");
+    check(std::count_if(queued.begin(), queued.end(), [](const CivFrame& f) {
+        return f.cmd == cmd::kControl && f.hasSub && f.sub == control::kReadTxFreq && f.data.empty();
+    }) == 1, "repeated TX polling coalesces");
+    check(std::all_of(queued.begin(), queued.end(), [](const CivFrame& f) {
+        return f.data.empty() && (f.cmd == cmd::kDuplex
+            || (f.cmd == cmd::kControl && f.hasSub && f.sub == control::kReadTxFreq));
+    }), "new readback path queues only the two read-only commands");
+    Access::forget(backend);
+    Access::periodicReadbacks(backend);
+    queued = Access::issued(backend);
+    check(std::any_of(queued.begin(), queued.end(), [](const CivFrame& f) { return f.cmd == cmd::kDuplex; })
+              && std::any_of(queued.begin(), queued.end(), [](const CivFrame& f) {
+                  return f.cmd == cmd::kControl && f.sub == control::kReadTxFreq;
+              }), "periodic reconciliation includes SPLIT and TX");
+    Access::endSession(backend);
+    check(!tx.confirmedTransmitFreq(), "disconnect invalidates live TX evidence");
+    deliver(frequency);
+    check(!tx.confirmedTransmitFreq(), "a disconnected session cannot publish late TX");
+    Access::prepare(backend, "IC-7300MK2", 3);
+    Access::deliverRaw(backend, frequency, 1);
+    check(!tx.confirmedTransmitFreq(), "reconnect rejects the previous session's TX delivery");
+    Access::deliverRaw(backend, frequency, 3);
+    check(tx.confirmedTransmitFreq() == 14.0265 && tx.transmitFreq() == 14.025,
+          "new-session TX restores proof without replacing the retained ATU reference");
+}
+
+void testNativeReadbackFailures()
+{
+    using Access = IcomCivBackendTestAccess;
+    const auto frequency = mk2Readback(cmd::kControl, {0, 0x65, 0x02, 0x14, 0}, 0x03);
+    for (const std::uint8_t ack : {std::uint8_t{0xFA}, std::uint8_t{0xFB}}) {
+        IcomCivBackend b;
+        Access::prepare(b, "IC-7300MK2");
+        TransmitModel tx;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+        Access::deliverRaw(b, frequency);
+        Access::pollTx(b);
+        Access::pumpNextSlot(b);
+        Access::deliverRaw(b, mk2Readback(ack, {}));
+        check(!tx.confirmedTransmitFreq() && tx.transmitFreq() == 0.0,
+              "FA or bare FB carries no frequency and invalidates the current attempt");
+    }
+    {
+        IcomCivBackend b;
+        Access::prepare(b, "IC-7300MK2");
+        TransmitModel tx;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+        Access::deliverRaw(b, frequency);
+        Access::pollTx(b);
+        Access::pumpNextSlot(b);
+        for (const auto& payload : std::vector<std::vector<std::uint8_t>>{
+                 {}, {0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0xFA, 0, 0x14, 0},
+                 {0, 0, 0, 0, 0}, {0, 0, 0, 0, 1}}) {
+            Access::deliverRaw(b, mk2Readback(cmd::kControl, payload, 0x03));
+            check(Access::inFlightKey(b) == "tx.frequency" && tx.confirmedTransmitFreq() == 14.0265,
+                  "malformed/zero/out-of-range TX does not satisfy a pending read");
+        }
+        for (const auto& payload : std::vector<std::vector<std::uint8_t>>{{}, {0, 1}, {0x10}, {0x02}}) {
+            Access::deliverRaw(b, mk2Readback(cmd::kDuplex, payload));
+        }
+        auto wrong = frequency; wrong.hasSub = false;
+        Access::deliverRaw(b, wrong);
+        wrong = frequency; wrong.hasNormalTerminator = false;
+        Access::deliverRaw(b, wrong);
+        auto malformedSplit = mk2Readback(cmd::kDuplex, {0});
+        malformedSplit.hasNormalTerminator = false;
+        Access::deliverRaw(b, malformedSplit);
+        auto malformedAck = mk2Readback(kCivNg, {});
+        malformedAck.hasNormalTerminator = false;
+        Access::deliverRaw(b, malformedAck);
+        wrong = frequency; wrong.from = kControllerAddress;
+        Access::deliverRaw(b, wrong);
+        wrong = frequency; wrong.from = 0xA4;
+        Access::deliverRaw(b, wrong);
+        wrong = frequency; wrong.to = 0xE1;
+        Access::deliverRaw(b, wrong);
+        Access::deliverRaw(b, frequency, 0);
+        check(Access::inFlightKey(b) == "tx.frequency"
+                  && !Access::readbackState(b).value("split").toMap().value("valid").toBool(),
+              "foreign address, old session and FC-terminated frames cannot confirm readbacks");
+        Access::expireRead(b);
+        check(!tx.confirmedTransmitFreq()
+                  && Access::readbackState(b).value("txFrequencyHz").toMap().value("status").toString() == QLatin1String("timeout"),
+              "missing valid response times out and invalidates the previous sample");
+        Access::deliverRaw(b, frequency);
+        check(tx.confirmedTransmitFreq() == 14.0265,
+              "a later nonsuperseded radio report restores readback");
+    }
+    {
+        IcomCivBackend b;
+        Access::prepare(b, "IC-7300MK2");
+        TransmitModel tx;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+        Access::deliverRaw(b, frequency);
+        Access::pollTx(b);
+        Access::pumpNextSlot(b);
+        Access::deliverRaw(b, mk2Readback(cmd::kDuplex, {1}));
+        Access::deliverRaw(b, frequency);
+        check(!tx.confirmedTransmitFreq(),
+              "an in-flight answer from before a SPLIT change cannot confirm the new context");
+        Access::pumpNextSlot(b);
+        Access::deliverRaw(b, frequency);
+        check(tx.confirmedTransmitFreq() == 14.0265,
+              "the new-context read can confirm TX");
+    }
+    {
+        IcomCivBackend b;
+        Access::prepare(b, "IC-7300MK2");
+        Access::pollReadbacks(b);
+        Access::pumpNextSlot(b);
+        check(Access::inFlightKey(b) == "split", "snapshot requests SPLIT without a setting byte");
+        Access::expireRead(b);
+        check(!Access::readbackState(b).value("split").toMap().value("valid").toBool()
+                  && Access::readbackState(b).value("split").toMap().value("status").toString()
+                         == QLatin1String("timeout"),
+              "missing SPLIT reply is unknown/timeout rather than OFF");
+    }
+    {
+        IcomCivBackend b;
+        Access::prepare(b, "IC-7300MK2");
+        TransmitModel tx;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+        Access::deliverRaw(b, frequency);
+        Access::pollTx(b);
+        Access::pumpNextSlot(b);
+        bool retired = false;
+        QObject::connect(&tx, &TransmitModel::stateChanged, [&] {
+            if (!retired && !tx.confirmedTransmitFreq()) {
+                retired = true;
+                Access::endSession(b);
+            }
+        });
+        Access::expireRead(b);
+        check(retired && !tx.confirmedTransmitFreq(),
+              "a synchronous disconnect during timeout publication fences the old pump");
+        Access::deliverRaw(b, frequency);
+        check(!tx.confirmedTransmitFreq(), "retired-session TX cannot revive evidence");
+    }
+    for (const char* model : {"IC-705", "IC-9700"}) {
+        IcomCivBackend b;
+        Access::prepare(b, model);
+        TransmitModel tx;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+        Access::deliver(b, mk2Readback(cmd::kReadFreq, {0, 0x50, 0x02, 0x14, 0}));
+        check(tx.transmitFreq() == 14.025 && !tx.transmitFreqValidity().has_value(),
+              "legacy Icom profiles keep their dial-based TX publication and provenance");
+        Access::deliver(b, mk2Readback(cmd::kDuplex, {0x12}));
+        check(!Access::readbackState(b).value("supported").toBool(),
+              "native SPLIT diagnostics stay inactive on DUP profiles");
+        Access::forget(b);
+        Access::pollReadbacks(b);
+        check(Access::issued(b).empty(), "new readback polling is gated off for other Icom models");
+    }
+    for (const int path : {0, 1, 2}) {
+        IcomCivBackend b;
+        Access::prepare(b, "IC-7300MK2");
+        TransmitModel tx;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+        Access::deliverRaw(b, frequency);
+        bool retired = false;
+        QObject::connect(&tx, &TransmitModel::stateChanged, [&] {
+            if (!retired && !tx.confirmedTransmitFreq()) {
+                retired = true;
+                Access::endSession(b);
+            }
+        });
+        if (path == 0) {
+            Access::sendConnectReadBurst(b);
+        } else if (path == 1) {
+            auto identity = mk2Readback(cmd::kReadId, {0xB6}, 0x00);
+            identity.from = 0xB7;
+            Access::deliverRaw(b, identity);
+        } else {
+            Access::userFrequencyCommand(b);
+        }
+        check(retired && !b.isConnected() && Access::issued(b).empty(),
+              "disconnect during TX invalidation cancels the old snapshot, identity or operator path");
+    }
+    {
+        IcomCivBackend b;
+        Access::prepare(b, "IC-7300MK2");
+        TransmitModel tx;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+        Access::deliverRaw(b, frequency);
+        bool withdrawn = false;
+        QObject::connect(&tx, &TransmitModel::stateChanged, [&] {
+            if (!withdrawn && !tx.confirmedTransmitFreq()) {
+                withdrawn = true;
+                auto identity = mk2Readback(cmd::kReadId, {0xB6}, 0x00);
+                identity.from = 0xB7;
+                Access::deliverRaw(b, identity);
+            }
+        });
+        Access::queueFrequencyBeforeExpiry(b);
+        Access::pumpNextSlot(b);
+        const auto issued = Access::issued(b);
+        check(withdrawn && !Access::readbackState(b).value("supported").toBool()
+                  && !tx.confirmedTransmitFreq()
+                  && std::none_of(issued.begin(), issued.end(), [](const CivFrame& f) {
+                      return f.cmd == cmd::kSetFreq;
+                  }), "identity withdrawal during expiry fences a previously selected operator dispatch");
+    }
+    {
+        IcomCivBackend b;
+        Access::prepare(b, "IC-7300MK2");
+        TransmitModel tx;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &tx, &TransmitModel::applyChanges);
+        double capturedAtuFrequency = 0;
+        int atuEdges = 0;
+        QObject::connect(&tx, &TransmitModel::atuStateChanged, [&] {
+            capturedAtuFrequency = tx.transmitFreq(); ++atuEdges;
+        });
+        Access::deliverRaw(b, mk2Readback(cmd::kControl, {1}, control::kTuner));
+        check(tx.atuStatus() == ATUStatus::Successful && !tx.confirmedTransmitFreq()
+                  && capturedAtuFrequency == 14.1 && atuEdges == 1,
+              "ATU completion is immediate and keeps its established dial reference");
+        Access::deliverRaw(b, frequency);
+        check(tx.confirmedTransmitFreq() == 14.0265 && tx.transmitFreq() == 14.1
+                  && capturedAtuFrequency == 14.1 && atuEdges == 1,
+              "native TX readback cannot retag the GUI's ATU match or change KAT500's reference");
+    }
+}
+
 }  // namespace
 
 int main(int argc, char** argv)
@@ -1915,6 +2265,8 @@ int main(int argc, char** argv)
     qRegisterMetaType<SliceDelta>("SliceDelta");
     qRegisterMetaType<MeterDef>("MeterDef");
 
+    testNativeSplitTxReadback();
+    testNativeReadbackFailures();
     testStaleGenerationDropped();
     testSwrMinimumHold();
     testIc705PreampFrequencyRanges();

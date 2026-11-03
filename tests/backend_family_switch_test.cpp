@@ -218,6 +218,23 @@ int main(int argc, char** argv)
             switchTo(model, family, rebuilt);
         }
 
+        TransmitDelta nativeTx;
+        nativeTx.transmitFreq = 14.0265;
+        nativeTx.transmitFreqValid = true;
+        nativeTx.legacyTransmitFreq = 14.025;
+        model.transmitModel().applyChanges(nativeTx);
+        check(model.transmitModel().confirmedTransmitFreq() == 14.0265,
+              QStringLiteral("native TX observation is seeded before family replacement"));
+        switchTo(model, QStringLiteral("icom"), rebuilt);
+        check(!model.transmitModel().confirmedTransmitFreq()
+                  && !model.transmitModel().transmitFreqValidity().has_value(),
+              QStringLiteral("production family replacement clears TX proof"));
+        TransmitDelta legacyTx;
+        legacyTx.transmitFreq = 7.1;
+        model.transmitModel().applyChanges(legacyTx);
+        check(model.transmitModel().transmitFreq() == 7.1,
+              QStringLiteral("replacement backend is not masked by the old ATU reference"));
+
         // 3. #4599's defect class: per-backend wiring must not accumulate across
         //    those twelve switches. A connection installed in setupBackend()
         //    whose sender and receiver are both `this` survives

@@ -93,3 +93,62 @@ separate automation work so this foundation does not cross the radio seam.
    testing.
 7. Prove radio state, application state, and restart convergence. Never enable
    CI-V Transceive or CI-V Output (for ANT) silently.
+
+## IC-7300MK2 SPLIT and native TX readback
+
+`SplitTxReadbackProfile` activates read-only `0F` and `1C 03` for the MK2.
+Its authority is the [IC-7300MK2 CI-V Reference Guide](https://icomuk.co.uk/files/icom/PDF/productAdditionalFile/IC-7300MK2_ENG_CI-V_0.pdf),
+PDF pages 4, 14 and 16. A bare `0F` queries SPLIT; its single reply data byte
+is `00` (off) or `01` (on). It remains a non-subcommand frame in the codec.
+FM DUP `10`/`11`/`12` is a separate model dialect and is never used on the MK2.
+`1C 03` is read-only and returns five little-endian BCD frequency bytes.
+No SPLIT write, VFO operation, XFC write, PTT, CW or tuning operation is added.
+Neither CI-V Transceive nor CI-V Output (for ANT) is enabled by these reads.
+
+The backend queues both reads at startup and nominally every 2000 ms through
+the existing scheduler, with its existing pacing, coalescing and priorities.
+Only identified-radio replies (controller or broadcast destination), with a normal
+`FD` terminator, exact shape, BCD and model-frequency bounds, establish evidence.
+The codec retains the distinction from `FC` without changing legacy decoders.
+Valid broadcast reports are consumed when already enabled by the operator. A generic `FB` is
+not a value; `FA`, a timed-out current attempt, or age beyond 5000 ms invalidates
+the corresponding evidence. A newer report protects against an older attempt's
+timeout. Expiry notifications are serviced by the existing command-plane pump,
+not a new timer. An absolute monotonic `transmitFreqDeadline` travels with native
+TX deltas; both model getters of validity check it directly. A delayed queued
+publication cannot restart the freshness budget or survive a delayed pump.
+
+SPLIT, dial/mode, RIT/XIT and observed PTT/XFC changes invalidate the previous
+TX context and queue a new TX read; the existing RIT/XIT register handling is
+unchanged. Context-refresh reads supersede older scheduled reads. Session and
+identity changes clear observations. CI-V has no transaction IDs: a delayed
+reply indistinguishable from a current reply cannot be proved to belong to an
+older physical operation. The result is a bounded-age radio report, not an
+atomic snapshot or permission to transmit. The GUI and its calculated XIT
+marker are unchanged by this backend-only feature.
+
+### Compatibility with ATU frequency consumers
+
+`TransmitDelta::transmitFreq` carries the actual MK2 `1C 03` value in MHz,
+with `transmitFreqValid=true` in the same delta. No RX or tuner decoder writes
+that native TX value. `TransmitModel::confirmedTransmitFreq()` returns an
+optional qualified value and becomes empty on invalidation. An unrelated
+partial delta preserves the observation; a frequency-only legacy delta clears
+its explicit provenance. Other backends keep their current publications.
+
+`TransmitModel::transmitFreq()` is deliberately retained as a compatibility
+reference, not promoted to a freshness-qualified API. Existing `TxApplet`,
+`AtuPreTuneDialog` and `Kat500TxController` use it for ATU matching and carrier
+context. For MK2, `TransmitDelta::legacyTransmitFreq` preserves their established
+selected-dial reference while actual TX is tracked independently. Even a native
+TX reply arriving before the first RX reply cannot initialize or overwrite the
+legacy reference. Invalidating TX does not set this reference to zero, and TX polling cannot oscillate it
+between the RX and TX VFOs. ATU status and its reference still arrive together,
+without waiting for TX readback: the status also completes a local ATU intent.
+These legacy consumers do not acquire SPLIT-aware matching in this change.
+Backend replacement clears explicit provenance and the separate native
+observation, preserving the legacy reference's existing numeric contract.
+
+Unit coverage uses injected receive frames and scheduler time, without radio
+sockets. Compilation, executable tests and physical MK2 convergence must be
+verified separately; protocol documentation alone is not hardware proof.
