@@ -1,0 +1,5 @@
+"source","destination","sha256"
+"D:\a\AetherSDR\AetherSDR\source\third_party\fftw3\bin\libfftw3-3.dll","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3-3.dll","001A835D2F25AC0661580D67DB5622157C28481C06A7F3EF45AD939839BF54A1"
+"D:\a\AetherSDR\AetherSDR\source\third_party\fftw3\bin\libfftw3f-3.dll","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3f-3.dll","42CA18FFF35DD12890E04478BC990005B3969CB744F6843976BD436CCD7F0A4C"
+"D:\a\AetherSDR\AetherSDR\source\third_party\deepfilter\lib\windows-x86_64\deepfilter.dll","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","723F9293F95CBDDA31E27C447EC4FF2CE2B1EDDD14F19818DB24EDB370CC7D0C"
+"D:\a\AetherSDR\AetherSDR\source\third_party\hidapi\bin\hidapi.dll","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll","4F13B3061EF384D2A79829A71EB287E0910560B2FA396044772656F58674B8B3"

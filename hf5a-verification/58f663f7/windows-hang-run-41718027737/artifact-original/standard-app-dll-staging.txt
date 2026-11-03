@@ -1,0 +1,42 @@
+501:         set(FFTW3_DLL "${FFTW3_ROOT}/bin/libfftw3-3.dll")
+801:             set(DFNR_LIB "${DFNR_LIB_DIR}/libdeepfilter.dll.a")
+802:             set(DFNR_DLL "${DFNR_LIB_DIR}/deepfilter.dll")
+804:             # MSVC: prefer .dll.lib import library, fall back to .lib
+805:             if(EXISTS "${DFNR_LIB_DIR}/deepfilter.dll.lib")
+806:                 set(DFNR_LIB "${DFNR_LIB_DIR}/deepfilter.dll.lib")
+810:             set(DFNR_DLL "${DFNR_LIB_DIR}/deepfilter.dll")
+2569:     add_custom_command(TARGET aether-dv-waveform POST_BUILD
+2585:         add_custom_command(TARGET aether-dv-waveform POST_BUILD
+2597: # from there: no Qt, and the static MSVC runtime (vcruntime140.dll lives in
+2777:     # step — windeployqt, which stages qt6keychain.dll for the installer, isn't
+2779:     # start with "qt6keychain.dll was not found".
+2780:     if(WIN32 AND EXISTS "${CMAKE_SOURCE_DIR}/third_party/qtkeychain/bin/qt6keychain.dll")
+2781:         add_custom_command(TARGET AetherSDR POST_BUILD
+2783:                 "${CMAKE_SOURCE_DIR}/third_party/qtkeychain/bin/qt6keychain.dll"
+2797:         add_custom_command(TARGET AetherSDR POST_BUILD
+2993:         set(HIDAPI_DLL "${HIDAPI_ROOT}/bin/hidapi.dll")
+3078:             "${CMAKE_SOURCE_DIR}/third_party/rtl-deps/bin/rtlsdr.dll"
+3079:             "${CMAKE_SOURCE_DIR}/third_party/rtl-deps/bin/libusb-1.0.dll"
+3080:             "${CMAKE_SOURCE_DIR}/third_party/fftw3/bin/libfftw3f-3.dll")
+3083:                 add_custom_command(TARGET ${_rtl_app} POST_BUILD
+3179:         add_custom_command(TARGET AetherSDR POST_BUILD
+3182:             COMMENT "Copying hidapi.dll to build directory"
+3202:         file(GLOB ORT_DLLS "${ORT_ROOT}/bin/*.dll" "${ORT_ROOT}/lib/*.dll")
+3256:         # sherpa's Windows bundle carries onnxruntime.lib + onnxruntime.dll; link
+3257:         # its import lib and drop our ORT DLL copy (sherpa's onnxruntime.dll ships
+3258:         # via SHERPA_DLLS) so only one onnxruntime.dll lands next to the exe.
+3307:     if(WIN32 AND FFTW3_DLL)
+3308:         add_custom_command(TARGET AetherSDR POST_BUILD
+3310:                 "${FFTW3_DLL}" "$<TARGET_FILE_DIR:AetherSDR>"
+3311:             COMMENT "Copying libfftw3-3.dll to build directory"
+3355:             add_custom_command(TARGET AetherSDR POST_BUILD
+3379:         file(GLOB SHERPA_DLLS "${SHERPA_ROOT}/bin/*.dll" "${SHERPA_ROOT}/lib/*.dll")
+3395:             add_custom_command(TARGET AetherSDR POST_BUILD
+3450:             set(FFTW3F_DLL "${CMAKE_SOURCE_DIR}/third_party/fftw3/bin/libfftw3f-3.dll")
+3451:             add_custom_command(TARGET AetherSDR POST_BUILD
+3454:                 COMMENT "Copying libfftw3f-3.dll to build directory")
+3510:         add_custom_command(TARGET AetherSDR POST_BUILD
+3513:             COMMENT "Copying deepfilter.dll to build directory")
+3519:             add_custom_command(TARGET AetherSDR POST_BUILD
+3526:             add_custom_command(TARGET AetherSDR POST_BUILD
+3749:         # the POST_BUILD note above.

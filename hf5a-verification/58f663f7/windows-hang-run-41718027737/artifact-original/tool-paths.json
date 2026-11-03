@@ -1,0 +1,50 @@
+[
+  {
+    "Name": "cl.exe",
+    "Source": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe",
+    "Version": {
+      "Major": 14,
+      "Minor": 51,
+      "Build": 36260,
+      "Revision": 0,
+      "MajorRevision": 0,
+      "MinorRevision": 0
+    }
+  },
+  {
+    "Name": "cmake.exe",
+    "Source": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+    "Version": {
+      "Major": 4,
+      "Minor": 4,
+      "Build": 5,
+      "Revision": 0,
+      "MajorRevision": 0,
+      "MinorRevision": 0
+    }
+  },
+  {
+    "Name": "ctest.exe",
+    "Source": "C:\\Program Files\\CMake\\bin\\ctest.exe",
+    "Version": {
+      "Major": 4,
+      "Minor": 4,
+      "Build": 5,
+      "Revision": 0,
+      "MajorRevision": 0,
+      "MinorRevision": 0
+    }
+  },
+  {
+    "Name": "dumpbin.exe",
+    "Source": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\dumpbin.exe",
+    "Version": {
+      "Major": 14,
+      "Minor": 51,
+      "Build": 36260,
+      "Revision": 0,
+      "MajorRevision": 0,
+      "MinorRevision": 0
+    }
+  }
+]

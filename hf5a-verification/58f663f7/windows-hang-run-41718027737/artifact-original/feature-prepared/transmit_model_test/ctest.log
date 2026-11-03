@@ -1,0 +1,147 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/source/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/source/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 814
+    Start 814: transmit_model_test
+
+814: Test command: D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe
+814: Working Directory: D:/a/AetherSDR/AetherSDR/source/build
+814: Environment variables: 
+814:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+814:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/source/build/test-fftw-wisdom
+814: Test timeout computed to be: 300
+814: [ OK ] legacy frequency publications preserve their numeric contract
+814: [ OK ] an explicit TX report preserves the existing ATU reference
+814: [ OK ] unrelated partial deltas do not erase provenance
+814: [ OK ] timeout invalidates live TX without zeroing ATU's historical frequency
+814: [ OK ] a validity flag alone cannot revive an old frequency
+814: [ OK ] invalid zero readback does not corrupt the last valid number
+814: [ OK ] nonfinite readback cannot become valid
+814: [ OK ] ATU reference and actual TX can differ without weakening proof
+814: [ OK ] a timeout leaves the established ATU reference untouched
+814: [ OK ] backend replacement clears proof but preserves the legacy getter
+814: [ OK ] the next legacy backend adopts frequency normally
+814: [ OK ] frequency observation and expiry issue no control intent
+814: [ OK ] TX arriving before RX cannot initialize the ATU dial reference
+814: [ OK ] TX arriving first after reconnect cannot overwrite the retained ATU reference
+814: [ OK ] an already expired queued report cannot renew freshness without the backend pump
+814: [ OK ] backend expiry still notifies observers after getter-level expiry
+814: [ OK ] a fresh report of the same frequency announces restoration of validity
+814: [ OK ] session reset clears proof while retaining the legacy reference
+814: [ OK ] radio-reported MOX is retained without claiming local TX intent
+814: [ OK ] radio-reported MOX emits no local transmit-ownership edges
+814: [ OK ] radio-reported MOX raises stateChanged() so isMox() consumers repaint
+814: [ OK ] an unchanged MOX value raises no redundant stateChanged()
+814: [ OK ] the un-key edge repaints too, so the label cannot latch on stale current
+814: [ OK ] and none of that reopened the local moxChanged path
+814: [ OK ] the model starts on MIC, as a Flex would report
+814: [ OK ] adopting a forced selection reports that it changed something
+814: [ OK ] and the model now agrees with the screen
+814: [ OK ] WITHOUT emitting a command — a forced value is not operator intent
+814: [ OK ] re-adopting the same value is a no-op
+814: [ OK ] and an empty selection is refused rather than stored
+814: [ OK ] so the last good value survives
+814: [ OK ] none of which touched the wire
+814: [ OK ] the OPERATOR choosing a source still emits a command
+814: [ OK ] CW paddle swap is adopted locally and still commands Flex
+814: [ OK ] CWL selection is adopted locally and still commands Flex
+814: [ OK ] two-tone tune sets mode and tags the tune source before starting
+814: [ OK ] two-tone tune toggle stops and restores single-tone mode
+814: [ OK ] two-tone tune toggle starts two-tone when not tuning
+814: [ OK ] single-tone tune tags the tune source before starting
+814: [ OK ] tune refuses CW key-down and CWX text, admits key-up
+814: [ OK ] stopping tune re-admits CW keying and CWX text
+814: [ OK ] tune reported by the radio alone refuses key-down and CWX, admits key-up
+814: [ OK ] radio tune=0 re-admits CW keying and CWX text
+814: [ OK ] TUNE start is refused while CW is keyed
+814: [ OK ] TUNE starts again once CW is released
+814: [ OK ] single-tone tune mode command is accepted
+814: [ OK ] invalid tune mode is ignored
+814: [ OK ] DEXP toggle sends compander command and updates local state
+814: [ OK ] DEXP level sends compander_level command and updates local state
+814: [ OK ] compander status updates DEXP state
+814: [ OK ] canonical compander status wins over legacy DEXP aliases
+814: [ OK ] legacy DEXP aliases update state when canonical compander status is absent
+814: [ OK ] tune preflight blocks tune command
+814: [ OK ] two-tone preflight blocks setup and tune commands
+814: [ OK ] TX profile load uses profile tx load
+814: [ OK ] Mic profile load uses profile mic load
+814: [ OK ] radio-reported rf_power emits rfPowerChanged
+814: [ OK ] radio-reported tune_power emits tunePowerChanged
+814: [ OK ] unchanged rf_power does not re-emit
+814: [ OK ] setRfPower emits rfPowerChanged
+814: [ OK ] setTunePower emits tunePowerChanged
+814: [ OK ] setRfPower to the same value does not re-emit
+814: [ OK ] paired TX filter update is sent atomically
+814: [ OK ] setTxFilter adopts the passband without waiting for a status echo
+814: [ OK ] setTxFilter announces operator intent for the seam
+814: [ OK ] setTxFilterLow preserves the high cut
+814: [ OK ] setTxFilterHigh preserves the low cut
+814: [ OK ] an eSSB passband is not clamped away
+814: [ OK ] radio status still updates the passband
+814: [ OK ] applying radio status does not emit operator intent
+814: [ OK ] setMicLevel adopts the level
+814: [ OK ] setMicLevel announces operator intent for the seam
+814: [ OK ] re-setting an unchanged mic level still re-asserts to the seam
+814: [ OK ] an over-range mic level is clamped before it reaches the seam
+814: [ OK ] radio status still updates the mic level
+814: [ OK ] applying radio status does not emit mic operator intent
+814: [ OK ] hold off: a speed-coupled delay drop is adopted, no command emitted
+814: [ OK ] a combined speed+delay status delta is adopted wholesale
+814: [ OK ] hold off: setCwSpeed emits only the wpm command
+814: [ OK ] hold on: the committed delay is re-asserted after the wpm command
+814: [ OK ] hold on: the re-assert still goes out after the radio walked the delay
+814: [ OK ] hold on: the re-assert does NOT overwrite radio truth locally
+814: [ OK ] hold on: applyChanges still only adopts, never re-commands
+814: [ OK ] hold on: each operator speed change re-asserts the committed delay
+814: [ OK ] hold on: an unchanged speed re-sends wpm but never the delay
+814: [ OK ] a committed delay of 0 (QSK) is never re-asserted
+814: [ OK ] holdBreakInDelayChanged fires once on enable
+814: [ OK ] hold on but no operator-set delay: nothing is re-asserted (not the radio's 40)
+814: [ OK ] once the operator sets a delay, hold re-asserts it
+814: [ OK ] the committed delay tracks the operator's latest setCwDelay
+814: [ OK ] holdBreakInDelayChanged fires only on a real transition
+814: [ OK ] hold off again: no re-assert
+814: [ OK ] a fresh model is not armed
+814: [ OK ] enabling hold turns it on but does not arm it
+814: [ OK ] enabling hold emits no arming edge
+814: [ OK ] a radio-reported delay does not arm the hold
+814: [ OK ] the operator setting a delay arms the hold, once
+814: [ OK ] a further delay change does not re-emit the arming edge
+814: [ OK ] a committed delay of 0 (QSK) disarms the hold
+814: [ OK ] after a disconnect the hold is still ON but no longer armed
+814: [ OK ] resetState emits the disarming edge so the UI can show it
+814: [ OK ] holdBreakInDelayArmed() already agrees with every edge as it is emitted
+814: [ OK ] resetState clears the previous session's DAX flag
+814: [ OK ] resetState announces the DAX change through micStateChanged
+814: [ OK ] resetState keeps the hold preference
+814: [ OK ] resetState clears the committed delay — radio A's value is not re-asserted at radio B
+814: [ OK ] after reset the committed delay rebuilds from the new session
+814: [ OK ] WSPR PTT bypasses Quindar signaling
+814: [ OK ] InProgress -> FailBypass emits atuTuneFailed
+814: [ OK ] InProgress -> Fail emits atuTuneFailed
+814: [ OK ] InProgress -> Successful does not emit atuTuneFailed
+814: [ OK ] InProgress -> OK does not emit atuTuneFailed
+814: [ OK ] User-aborted tune does not emit atuTuneFailed on FailBypass
+814: [ OK ] Initial status FailBypass without InProgress does not emit atuTuneFailed
+814: [ OK ] PTT mic override is unreported before any transmit status
+814: [ OK ] pre-4.3 transmit status without the key leaves it unreported
+814: [ OK ] a reported 0 default latches the key and announces it
+814: [ OK ] the radio's echo is adopted
+814: [ OK ] a session reset forgets the radio's PTT mic override
+814: [ OK ] an applied CW pitch announces the report before the change
+814: [ OK ] a repeated CW pitch is announced as a report without a change
+814: [ OK ] a local CW pitch change is not announced as a report
+1/1 Test #814: transmit_model_test ..............   Passed    0.04 sec
+
+The following tests passed:
+	transmit_model_test
+
+100% tests passed out of 1
+
+Total Test time (real) =   0.08 sec

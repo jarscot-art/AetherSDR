@@ -1,0 +1,56 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe
+
+File Type: EXECUTABLE IMAGE
+
+  Image has the following dependencies:
+
+    Qt6Core.dll
+    Qt6Test.dll
+    AVRT.dll
+    ADVAPI32.dll
+    Qt6Multimedia.dll
+    Qt6Gui.dll
+    Qt6SerialPort.dll
+    Qt6WebSockets.dll
+    Qt6Network.dll
+    ole32.dll
+    IPHLPAPI.DLL
+    VERSION.dll
+    WINMM.dll
+    hidapi.dll
+    SETUPAPI.dll
+    libfftw3-3.dll
+    libfftw3f-3.dll
+    deepfilter.dll
+    WS2_32.dll
+    libssl-3-x64.dll
+    libcrypto-3-x64.dll
+    KERNEL32.dll
+    USER32.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-locale-l1-1-0.dll
+
+  Summary
+
+      130000 .data
+       60000 .pdata
+     24B9000 .rdata
+        D000 .reloc
+        1000 .rsrc
+      895000 .text
+        1000 _RDATA

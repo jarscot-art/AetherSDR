@@ -1,0 +1,55 @@
+suspend tid=1848 previous=0
+suspend tid=8676 previous=0
+suspend tid=5112 previous=0
+suspend tid=6380 previous=0
+MiniDumpWriteDump=1 error=0
+SymInitialize=1
+module 0x7ff6eb190000 size=1753088 symbols=140698482966528 D:\a\AetherSDR\AetherSDR\diagnostic-bin\capture-process.exe
+module 0x7ff941020000 size=2506752 symbols=140708514234368 C:\Windows\SYSTEM32\ntdll.dll
+module 0x7ff93fcd0000 size=823296 symbols=140708493983744 C:\Windows\System32\KERNEL32.DLL
+module 0x7ff93e1e0000 size=4116480 symbols=140708465737728 C:\Windows\System32\KERNELBASE.dll
+module 0x7ff93b060000 size=647168 symbols=140708413833216 C:\Windows\SYSTEM32\apphelp.dll
+module 0x7ff940e10000 size=1855488 symbols=140708512071680 C:\Windows\System32\USER32.dll
+module 0x7ff93e120000 size=159744 symbols=140708464951296 C:\Windows\System32\win32u.dll
+module 0x7ff91f190000 size=2408448 symbols=140707945316352 C:\Windows\SYSTEM32\dbghelp.dll
+module 0x7ff93fbb0000 size=176128 symbols=140708492804096 C:\Windows\System32\GDI32.dll
+module 0x7ff93ec50000 size=1355776 symbols=140708476682240 C:\Windows\System32\ucrtbase.dll
+module 0x7ff93ea50000 size=1232896 symbols=140708474585088 C:\Windows\System32\gdi32full.dll
+module 0x7ff9404a0000 size=3698688 symbols=140708502175744 C:\Windows\System32\combase.dll
+module 0x7ff93e5e0000 size=667648 symbols=140708469932032 C:\Windows\System32\msvcp_win.dll
+module 0x7ff93eeb0000 size=1146880 symbols=140708479172608 C:\Windows\System32\RPCRT4.dll
+module 0x7ff93f010000 size=880640 symbols=140708480614400 C:\Windows\System32\OLEAUT32.dll
+module 0x7ff931cb0000 size=245760 symbols=140708258971648 C:\Windows\SYSTEM32\dbgcore.DLL
+module 0x7ff93efd0000 size=200704 symbols=140708480352256 C:\Windows\System32\IMM32.DLL
+
+THREAD 1848
+0 0x7ff941182944 ntdll!ZwDelayExecution+0x14
+1 0x7ff941182944 ntdll!ZwDelayExecution+0x14
+2 0x7ff9410f0fb4 ntdll!RtlDelayExecution+0x34
+3 0x7ff93e218d61 KERNELBASE!SleepEx+0x91
+4 0x7ff6eb1a12e8 capture-process!wmain+0xd8 D:\a\AetherSDR\AetherSDR\harness\hf5a-diagnostics\capture-process.cpp:50
+5 0x7ff6eb242fff capture-process!__scrt_common_main_seh+0x10f D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288
+6 0x7ff93fcfdd37 KERNEL32!BaseThreadInitThunk+0x17
+7 0x7ff94105f2bc ntdll!RtlUserThreadStart+0x2c
+
+THREAD 8676
+0 0x7ff941185f74 ntdll!NtWaitForWorkViaWorkerFactory+0x14
+1 0x7ff941185f74 ntdll!NtWaitForWorkViaWorkerFactory+0x14
+2 0x7ff9410a4945 ntdll!RtlSetThreadSubProcessTag+0x1815
+3 0x7ff93fcfdd37 KERNEL32!BaseThreadInitThunk+0x17
+4 0x7ff94105f2bc ntdll!RtlUserThreadStart+0x2c
+
+THREAD 5112
+0 0x7ff941185f74 ntdll!NtWaitForWorkViaWorkerFactory+0x14
+1 0x7ff941185f74 ntdll!NtWaitForWorkViaWorkerFactory+0x14
+2 0x7ff9410a4945 ntdll!RtlSetThreadSubProcessTag+0x1815
+3 0x7ff93fcfdd37 KERNEL32!BaseThreadInitThunk+0x17
+4 0x7ff94105f2bc ntdll!RtlUserThreadStart+0x2c
+
+THREAD 6380
+0 0x7ff941185f74 ntdll!NtWaitForWorkViaWorkerFactory+0x14
+1 0x7ff941185f74 ntdll!NtWaitForWorkViaWorkerFactory+0x14
+2 0x7ff9410a4945 ntdll!RtlSetThreadSubProcessTag+0x1815
+3 0x7ff93fcfdd37 KERNEL32!BaseThreadInitThunk+0x17
+4 0x7ff94105f2bc ntdll!RtlUserThreadStart+0x2c
+Capture completed; target threads remain suspended until caller terminates this PID.

@@ -1,0 +1,329 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 126203074853,
+      "run_id": 41718027737,
+      "workflow_name": "HF5A isolated Windows hang diagnostics",
+      "head_branch": "hf5a/stage1-windows-hang-diagnostics",
+      "run_url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/runs/41718027737",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVhfZUs8AAAAdYkoZJQ",
+      "head_sha": "a0be0bc3ded557eda3dad79e5bdb006c93acbce4",
+      "url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/jobs/126203074853",
+      "html_url": "https://github.com/jarscot-art/AetherSDR/actions/runs/41718027737/job/126203074853",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-03T21:02:01Z",
+      "started_at": "2026-11-03T21:02:03Z",
+      "completed_at": "2026-11-03T21:31:53Z",
+      "name": "diagnose-windows",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-03T21:02:04Z",
+          "completed_at": "2026-11-03T21:02:05Z"
+        },
+        {
+          "name": "Checkout diagnostic harness only",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-03T21:02:05Z",
+          "completed_at": "2026-11-03T21:02:58Z"
+        },
+        {
+          "name": "Checkout exact application and test sources",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-03T21:02:58Z",
+          "completed_at": "2026-11-03T21:04:45Z"
+        },
+        {
+          "name": "Verify source and prepare evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-03T21:04:45Z",
+          "completed_at": "2026-11-03T21:04:46Z"
+        },
+        {
+          "name": "Restore Qt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-03T21:04:46Z",
+          "completed_at": "2026-11-03T21:04:47Z"
+        },
+        {
+          "name": "Verify the restored Qt tree",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-03T21:04:47Z",
+          "completed_at": "2026-11-03T21:04:47Z"
+        },
+        {
+          "name": "Install Qt LTS via aqtinstall",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-03T21:04:47Z",
+          "completed_at": "2026-11-03T21:05:54Z"
+        },
+        {
+          "name": "Export Qt environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-03T21:05:54Z",
+          "completed_at": "2026-11-03T21:05:55Z"
+        },
+        {
+          "name": "Restore FFTW3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-03T21:05:55Z",
+          "completed_at": "2026-11-03T21:05:55Z"
+        },
+        {
+          "name": "Install FFTW3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-03T21:05:55Z",
+          "completed_at": "2026-11-03T21:06:03Z"
+        },
+        {
+          "name": "Restore DeepFilterNet3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-03T21:06:03Z",
+          "completed_at": "2026-11-03T21:06:03Z"
+        },
+        {
+          "name": "Setup DeepFilterNet3 (DFNR)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-03T21:06:03Z",
+          "completed_at": "2026-11-03T21:06:05Z"
+        },
+        {
+          "name": "Restore sccache objects",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-03T21:06:05Z",
+          "completed_at": "2026-11-03T21:06:05Z"
+        },
+        {
+          "name": "Setup sccache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-03T21:06:05Z",
+          "completed_at": "2026-11-03T21:06:06Z"
+        },
+        {
+          "name": "Setup MSVC environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-03T21:06:06Z",
+          "completed_at": "2026-11-03T21:06:08Z"
+        },
+        {
+          "name": "Setup hidapi (HID encoder support)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-03T21:06:08Z",
+          "completed_at": "2026-11-03T21:06:20Z"
+        },
+        {
+          "name": "Setup PortAudio (CW sidetone callback sink)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-03T21:06:20Z",
+          "completed_at": "2026-11-03T21:06:29Z"
+        },
+        {
+          "name": "Test sccache health",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-03T21:06:29Z",
+          "completed_at": "2026-11-03T21:06:32Z"
+        },
+        {
+          "name": "Configure",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-03T21:06:32Z",
+          "completed_at": "2026-11-03T21:06:53Z"
+        },
+        {
+          "name": "Assert GPU spectrum rendering actually enabled",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-03T21:06:53Z",
+          "completed_at": "2026-11-03T21:06:54Z"
+        },
+        {
+          "name": "Assert PortAudio sidetone sink actually enabled",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-03T21:06:54Z",
+          "completed_at": "2026-11-03T21:06:54Z"
+        },
+        {
+          "name": "Build Opus dependency",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-03T21:06:54Z",
+          "completed_at": "2026-11-03T21:07:18Z"
+        },
+        {
+          "name": "Build five test executables and dependencies only",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-03T21:07:18Z",
+          "completed_at": "2026-11-03T21:25:54Z"
+        },
+        {
+          "name": "Build Windows SDK dump and thread-stack collector",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-03T21:25:54Z",
+          "completed_at": "2026-11-03T21:25:59Z"
+        },
+        {
+          "name": "Diagnose feature-original: four tests separately, 60 seconds each",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-03T21:25:59Z",
+          "completed_at": "2026-11-03T21:30:04Z"
+        },
+        {
+          "name": "Diagnose feature-prepared: four tests separately, 60 seconds each",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-03T21:30:04Z",
+          "completed_at": "2026-11-03T21:30:11Z"
+        },
+        {
+          "name": "Preserve feature executables and PDBs before any baseline checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-03T21:30:11Z",
+          "completed_at": "2026-11-03T21:30:12Z"
+        },
+        {
+          "name": "Conditional unchanged baseline: same SDK, dependencies, flags and runtime",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 28,
+          "started_at": "2026-11-03T21:30:12Z",
+          "completed_at": "2026-11-03T21:30:12Z"
+        },
+        {
+          "name": "Diagnose baseline-prepared: four tests separately, 60 seconds each",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 29,
+          "started_at": "2026-11-03T21:30:12Z",
+          "completed_at": "2026-11-03T21:30:12Z"
+        },
+        {
+          "name": "Summarize every actual case and runtime environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-11-03T21:30:12Z",
+          "completed_at": "2026-11-03T21:30:15Z"
+        },
+        {
+          "name": "Upload diagnostic logs, all individual results, dumps and stacks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-11-03T21:30:15Z",
+          "completed_at": "2026-11-03T21:30:17Z"
+        },
+        {
+          "name": "Upload exact feature executable and PDB evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32,
+          "started_at": "2026-11-03T21:30:17Z",
+          "completed_at": "2026-11-03T21:31:00Z"
+        },
+        {
+          "name": "Upload collector and optional baseline executable evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33,
+          "started_at": "2026-11-03T21:31:00Z",
+          "completed_at": "2026-11-03T21:31:46Z"
+        },
+        {
+          "name": "Post Setup sccache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 64,
+          "started_at": "2026-11-03T21:31:46Z",
+          "completed_at": "2026-11-03T21:31:46Z"
+        },
+        {
+          "name": "Post Checkout exact application and test sources",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 65,
+          "started_at": "2026-11-03T21:31:46Z",
+          "completed_at": "2026-11-03T21:31:49Z"
+        },
+        {
+          "name": "Post Checkout diagnostic harness only",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 66,
+          "started_at": "2026-11-03T21:31:49Z",
+          "completed_at": "2026-11-03T21:31:51Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 67,
+          "started_at": "2026-11-03T21:31:51Z",
+          "completed_at": "2026-11-03T21:31:51Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/jarscot-art/AetherSDR/check-runs/126203074853",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000000008,
+      "runner_name": "GitHub Actions 1000000008",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll
+
+PE signature found
+
+File Type: DLL
+
+FILE HEADER VALUES
+            8664 machine (x64)
+               6 number of sections
+        6AB74F29 time date stamp Sat Sep 26 04:50:49 2026
+               0 file pointer to symbol table
+               0 number of symbols
+              F0 size of optional header
+            2022 characteristics
+                   Executable
+                   Application can handle large (>2GB) addresses
+                   DLL
+
+OPTIONAL HEADER VALUES
+             20B magic # (PE32+)
+           14.44 linker version
+          10DA00 size of code
+           A4C00 size of initialized data
+               0 size of uninitialized data
+          10D3E0 entry point (000000018010D3E0)
+            1000 base of code
+       180000000 image base (0000000180000000 to 00000001801B5FFF)
+            1000 section alignment
+             200 file alignment
+            6.00 operating system version
+            6.12 image version
+            6.00 subsystem version
+               0 Win32 version
+          1B6000 size of image
+             400 size of headers
+          1C14A2 checksum
+               2 subsystem (Windows GUI)
+            4160 DLL characteristics
+                   High Entropy Virtual Addresses
+                   Dynamic base
+                   NX compatible
+                   Control Flow Guard
+          100000 size of stack reserve
+            1000 size of stack commit
+          100000 size of heap reserve
+            1000 size of heap commit
+               0 loader flags
+              10 number of directories
+          1621A0 [   25A70] RVA [size] of Export Directory
+          187C10 [     168] RVA [size] of Import Directory
+          1B2000 [     590] RVA [size] of Resource Directory
+          19F000 [   129B4] RVA [size] of Exception Directory
+          1AFC00 [    2F38] RVA [size] of Certificates Directory
+          1B3000 [    2154] RVA [size] of Base Relocation Directory
+          145860 [      70] RVA [size] of Debug Directory
+               0 [       0] RVA [size] of Architecture Directory
+               0 [       0] RVA [size] of Global Pointer Directory
+          145900 [      28] RVA [size] of Thread Storage Directory
+          145720 [     140] RVA [size] of Load Configuration Directory
+               0 [       0] RVA [size] of Bound Import Directory
+          10F000 [    2040] RVA [size] of Import Address Table Directory
+               0 [       0] RVA [size] of Delay Import Directory
+               0 [       0] RVA [size] of COM Descriptor Directory
+               0 [       0] RVA [size] of Reserved Directory
+
+
+SECTION HEADER #1
+   .text name
+  10D8C6 virtual size
+    1000 virtual address (0000000180001000 to 000000018010E8C5)
+  10DA00 size of raw data
+     400 file pointer to raw data (00000400 to 0010DDFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+60000020 flags
+         Code
+         Execute Read
+
+SECTION HEADER #2
+  .rdata name
+   85B26 virtual size
+  10F000 virtual address (000000018010F000 to 0000000180194B25)
+   85C00 size of raw data
+  10DE00 file pointer to raw data (0010DE00 to 001939FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+  Debug Directories
+
+        Time Type        Size      RVA  Pointer
+    -------- ------- -------- -------- --------
+    6AB74F29 cv            4C 0014DDF8   14CBF8    Format: RSDS, {CDD72CAD-1B5C-4B29-A382-13F0573AE95E}, 1, C:\Users\qt\work\qt\qtbase_build\bin\Qt6Network.pdb
+    6AB74F29 feat          14 0014DE44   14CC44    Counts: Pre-VC++ 11.00=0, C/C++=129, /GS=129, /sdl=0, guardN=129
+    6AB74F29 coffgrp      370 0014DE58   14CC58
+    6AB74F29 dllchar        4 0014E1C8   14CFC8
+
+        00000001 extended DLL characteristics
+                   CET compatible
+
+SECTION HEADER #3
+   .data name
+    9CC0 virtual size
+  195000 virtual address (0000000180195000 to 000000018019ECBF)
+    7000 size of raw data
+  193A00 file pointer to raw data (00193A00 to 0019A9FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+C0000040 flags
+         Initialized Data
+         Read Write
+
+SECTION HEADER #4
+  .pdata name
+   129B4 virtual size
+  19F000 virtual address (000000018019F000 to 00000001801B19B3)
+   12A00 size of raw data
+  19AA00 file pointer to raw data (0019AA00 to 001AD3FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #5
+   .rsrc name
+     590 virtual size
+  1B2000 virtual address (00000001801B2000 to 00000001801B258F)
+     600 size of raw data
+  1AD400 file pointer to raw data (001AD400 to 001AD9FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #6
+  .reloc name
+    2154 virtual size
+  1B3000 virtual address (00000001801B3000 to 00000001801B5153)
+    2200 size of raw data
+  1ADA00 file pointer to raw data (001ADA00 to 001AFBFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+42000040 flags
+         Initialized Data
+         Discardable
+         Read Only
+
+  Summary
+
+        A000 .data
+       13000 .pdata
+       86000 .rdata
+        3000 .reloc
+        1000 .rsrc
+      10E000 .text

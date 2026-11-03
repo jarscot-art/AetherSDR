@@ -1,0 +1,13 @@
+{
+  "phase": "feature-original",
+  "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "test": "icom_backend_seam_test",
+  "status": "TIMEOUT",
+  "ctestExitCode": 8,
+  "secondsIncludingCapture": 60.3182837,
+  "testLimitSeconds": 60,
+  "captureLimitSeconds": 90,
+  "testPid": 4248,
+  "startedUtc": "2026-11-03T21:27:03.7029633Z",
+  "diagnosticError": null
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "phase": "feature-prepared",
+    "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+    "test": "icom_control_profile_test",
+    "status": "PASS",
+    "ctestExitCode": 0,
+    "secondsIncludingCapture": 0.2861971,
+    "testLimitSeconds": 60,
+    "captureLimitSeconds": 90,
+    "testPid": 0,
+    "startedUtc": "2026-11-03T21:30:07.0921076Z",
+    "diagnosticError": null
+  },
+  {
+    "phase": "feature-prepared",
+    "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+    "test": "icom_backend_seam_test",
+    "status": "PASS",
+    "ctestExitCode": 0,
+    "secondsIncludingCapture": 0.1866938,
+    "testLimitSeconds": 60,
+    "captureLimitSeconds": 90,
+    "testPid": 0,
+    "startedUtc": "2026-11-03T21:30:07.4043618Z",
+    "diagnosticError": null
+  },
+  {
+    "phase": "feature-prepared",
+    "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+    "test": "transmit_model_test",
+    "status": "PASS",
+    "ctestExitCode": 0,
+    "secondsIncludingCapture": 0.1075609,
+    "testLimitSeconds": 60,
+    "captureLimitSeconds": 90,
+    "testPid": 0,
+    "startedUtc": "2026-11-03T21:30:07.6045821Z",
+    "diagnosticError": null
+  },
+  {
+    "phase": "feature-prepared",
+    "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+    "test": "backend_family_switch_test",
+    "status": "PASS",
+    "ctestExitCode": 0,
+    "secondsIncludingCapture": 3.5473933,
+    "testLimitSeconds": 60,
+    "captureLimitSeconds": 90,
+    "testPid": 2992,
+    "startedUtc": "2026-11-03T21:30:07.7219611Z",
+    "diagnosticError": null
+  }
+]

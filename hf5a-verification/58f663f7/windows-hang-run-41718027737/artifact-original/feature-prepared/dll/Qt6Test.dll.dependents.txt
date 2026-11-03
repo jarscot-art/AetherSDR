@@ -1,0 +1,31 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Core.dll
+    KERNEL32.dll
+    MSVCP140.dll
+    MSVCP140_1.dll
+    VCRUNTIME140_1.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+
+  Summary
+
+        2000 .data
+        3000 .pdata
+       1A000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       3E000 .text

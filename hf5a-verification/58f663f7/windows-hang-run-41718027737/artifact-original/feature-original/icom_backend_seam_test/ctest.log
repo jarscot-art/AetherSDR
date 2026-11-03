@@ -1,0 +1,27 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/source/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/source/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 152
+    Start 152: icom_backend_seam_test
+
+152: Test command: D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe
+152: Working Directory: D:/a/AetherSDR/AetherSDR/source/build
+152: Environment variables: 
+152:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+152:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/source/build/test-fftw-wisdom
+152: Test timeout computed to be: 300
+1/1 Test #152: icom_backend_seam_test ...........***Failed   60.26 sec
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =  60.29 sec
+
+The following tests FAILED:
+	152 - icom_backend_seam_test (Failed)
+Errors while running CTest

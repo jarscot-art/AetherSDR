@@ -1,0 +1,11 @@
+{
+  "originalArtifactFilesByteExactInGitIndex": 181,
+  "rawEvidenceDiffCheckExit": 2,
+  "rawEvidenceDiffCheckDiagnosticLines": 32299,
+  "rawEvidenceDiffCheckLog": "raw-evidence-diff-check.log.gz",
+  "authoredReportsDiffCheckExit": 0,
+  "diagnosticHarnessDiffCheckExit": 0,
+  "frozenCiGate": "PASS",
+  "strictTestRegistration": "PASS",
+  "sourceTestsAndExistingWorkflowsUnchanged": true
+}

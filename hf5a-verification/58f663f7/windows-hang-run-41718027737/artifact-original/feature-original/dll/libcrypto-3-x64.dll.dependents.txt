@@ -1,0 +1,36 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    WS2_32.dll
+    ADVAPI32.dll
+    CRYPT32.dll
+    USER32.dll
+    KERNEL32.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-filesystem-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+
+  Summary
+
+        1000 .00cfg
+        9000 .data
+        3000 .idata
+       2E000 .pdata
+      1BD000 .rdata
+       12000 .reloc
+        1000 .rsrc
+      49A000 .text

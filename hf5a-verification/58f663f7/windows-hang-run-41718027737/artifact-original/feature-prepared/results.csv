@@ -1,0 +1,5 @@
+"phase","sourceCommit","test","status","ctestExitCode","secondsIncludingCapture","testLimitSeconds","captureLimitSeconds","testPid","startedUtc","diagnosticError"
+"feature-prepared","58f663f7bcda25c54e8f4c158929a6e18ce10011","icom_control_profile_test","PASS","0","0.2861971","60","90","0","2026-11-03T21:30:07.0921076Z",
+"feature-prepared","58f663f7bcda25c54e8f4c158929a6e18ce10011","icom_backend_seam_test","PASS","0","0.1866938","60","90","0","2026-11-03T21:30:07.4043618Z",
+"feature-prepared","58f663f7bcda25c54e8f4c158929a6e18ce10011","transmit_model_test","PASS","0","0.1075609","60","90","0","2026-11-03T21:30:07.6045821Z",
+"feature-prepared","58f663f7bcda25c54e8f4c158929a6e18ce10011","backend_family_switch_test","PASS","0","3.5473933","60","90","2992","2026-11-03T21:30:07.7219611Z",

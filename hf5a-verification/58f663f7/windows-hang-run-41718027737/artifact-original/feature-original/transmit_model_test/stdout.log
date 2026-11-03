@@ -1,0 +1,27 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/source/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/source/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 814
+    Start 814: transmit_model_test
+
+814: Test command: D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe
+814: Working Directory: D:/a/AetherSDR/AetherSDR/source/build
+814: Environment variables: 
+814:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+814:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/source/build/test-fftw-wisdom
+814: Test timeout computed to be: 300
+1/1 Test #814: transmit_model_test ..............***Failed   60.27 sec
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =  60.30 sec
+
+The following tests FAILED:
+	814 - transmit_model_test (Failed)
+

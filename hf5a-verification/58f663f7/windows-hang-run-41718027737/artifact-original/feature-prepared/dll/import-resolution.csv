@@ -1,0 +1,320 @@
+"binary","dll","status","resolved"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","api-ms-win-crt-locale-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_civ_test.exe","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","AVRT.dll","FOUND","C:\Windows\System32\AVRT.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","Qt6Multimedia.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","Qt6Gui.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","Qt6SerialPort.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","Qt6WebSockets.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","Qt6Network.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","ole32.dll","FOUND","C:\Windows\System32\ole32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","IPHLPAPI.DLL","FOUND","C:\Windows\System32\IPHLPAPI.DLL"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","VERSION.dll","FOUND","C:\Windows\System32\VERSION.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","WINMM.dll","FOUND","C:\Windows\System32\WINMM.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","hidapi.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","SETUPAPI.dll","FOUND","C:\Windows\System32\SETUPAPI.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","libfftw3-3.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3-3.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","libfftw3f-3.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3f-3.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","deepfilter.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","WS2_32.dll","FOUND","C:\Windows\System32\WS2_32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","libssl-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","libcrypto-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","USER32.dll","FOUND","C:\Windows\System32\USER32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-time-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-utility-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe","api-ms-win-crt-locale-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","Qt6Test.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","AVRT.dll","FOUND","C:\Windows\System32\AVRT.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","Qt6Multimedia.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","Qt6Gui.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","Qt6SerialPort.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","Qt6WebSockets.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","Qt6Network.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","ole32.dll","FOUND","C:\Windows\System32\ole32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","IPHLPAPI.DLL","FOUND","C:\Windows\System32\IPHLPAPI.DLL"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","VERSION.dll","FOUND","C:\Windows\System32\VERSION.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","WINMM.dll","FOUND","C:\Windows\System32\WINMM.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","hidapi.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","SETUPAPI.dll","FOUND","C:\Windows\System32\SETUPAPI.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","libfftw3-3.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3-3.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","libfftw3f-3.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3f-3.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","deepfilter.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","WS2_32.dll","FOUND","C:\Windows\System32\WS2_32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","libssl-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","libcrypto-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","USER32.dll","FOUND","C:\Windows\System32\USER32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-time-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-utility-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe","api-ms-win-crt-locale-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","AVRT.dll","FOUND","C:\Windows\System32\AVRT.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","Qt6Multimedia.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","Qt6Gui.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","Qt6SerialPort.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","Qt6WebSockets.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","Qt6Network.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","ole32.dll","FOUND","C:\Windows\System32\ole32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","IPHLPAPI.DLL","FOUND","C:\Windows\System32\IPHLPAPI.DLL"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","VERSION.dll","FOUND","C:\Windows\System32\VERSION.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","WINMM.dll","FOUND","C:\Windows\System32\WINMM.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","hidapi.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","SETUPAPI.dll","FOUND","C:\Windows\System32\SETUPAPI.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","libfftw3-3.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3-3.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","libfftw3f-3.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3f-3.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","deepfilter.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","WS2_32.dll","FOUND","C:\Windows\System32\WS2_32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","libssl-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","libcrypto-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","USER32.dll","FOUND","C:\Windows\System32\USER32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-time-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-utility-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe","api-ms-win-crt-locale-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","Qt6Test.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","AVRT.dll","FOUND","C:\Windows\System32\AVRT.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","Qt6Multimedia.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","Qt6Gui.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","Qt6SerialPort.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","Qt6WebSockets.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","Qt6Network.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","ole32.dll","FOUND","C:\Windows\System32\ole32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","IPHLPAPI.DLL","FOUND","C:\Windows\System32\IPHLPAPI.DLL"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","VERSION.dll","FOUND","C:\Windows\System32\VERSION.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","WINMM.dll","FOUND","C:\Windows\System32\WINMM.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","hidapi.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","SETUPAPI.dll","FOUND","C:\Windows\System32\SETUPAPI.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","libfftw3-3.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3-3.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","libfftw3f-3.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3f-3.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","deepfilter.dll","FOUND","D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","WS2_32.dll","FOUND","C:\Windows\System32\WS2_32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","libssl-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","libcrypto-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","USER32.dll","FOUND","C:\Windows\System32\USER32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-time-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-utility-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe","api-ms-win-crt-locale-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-core-synch-l1-2-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","MPR.dll","FOUND","C:\Windows\System32\MPR.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","USERENV.dll","FOUND","C:\Windows\System32\USERENV.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","AUTHZ.dll","FOUND","C:\Windows\System32\AUTHZ.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","NETAPI32.dll","FOUND","C:\Windows\System32\NETAPI32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","ntdll.dll","FOUND","C:\Windows\System32\ntdll.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","ole32.dll","FOUND","C:\Windows\System32\ole32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","SHELL32.dll","FOUND","C:\Windows\System32\SHELL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","USER32.dll","FOUND","C:\Windows\System32\USER32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","VERSION.dll","FOUND","C:\Windows\System32\VERSION.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","WINMM.dll","FOUND","C:\Windows\System32\WINMM.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","WS2_32.dll","FOUND","C:\Windows\System32\WS2_32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","icuuc.dll","FOUND","C:\Windows\System32\icuuc.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","MSVCP140_1.dll","FOUND","C:\Windows\System32\MSVCP140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-utility-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-time-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-crt-filesystem-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-core-winrt-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","api-ms-win-core-winrt-error-l1-1-1.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll","OLEAUT32.dll","FOUND","C:\Windows\System32\OLEAUT32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","Qt6Network.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","AVRT.dll","FOUND","C:\Windows\System32\AVRT.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","PROPSYS.dll","FOUND","C:\Windows\System32\PROPSYS.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","Qt6Gui.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","USER32.dll","FOUND","C:\Windows\System32\USER32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","ole32.dll","FOUND","C:\Windows\System32\ole32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","MSVCP140_1.dll","FOUND","C:\Windows\System32\MSVCP140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","d3d11.dll","FOUND","C:\Windows\System32\d3d11.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","dxgi.dll","FOUND","C:\Windows\System32\dxgi.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","d3d12.dll","FOUND","C:\Windows\System32\d3d12.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","GDI32.dll","FOUND","C:\Windows\System32\GDI32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","ole32.dll","FOUND","C:\Windows\System32\ole32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","SHELL32.dll","FOUND","C:\Windows\System32\SHELL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","USER32.dll","FOUND","C:\Windows\System32\USER32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","UxTheme.dll","FOUND","C:\Windows\System32\UxTheme.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","DWrite.dll","FOUND","C:\Windows\System32\DWrite.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","MSVCP140_1.dll","FOUND","C:\Windows\System32\MSVCP140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","MSVCP140_2.dll","FOUND","C:\Windows\System32\MSVCP140_2.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","api-ms-win-crt-utility-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","SETUPAPI.dll","FOUND","C:\Windows\System32\SETUPAPI.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll","Qt6Network.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","DNSAPI.dll","FOUND","C:\Windows\System32\DNSAPI.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","IPHLPAPI.DLL","FOUND","C:\Windows\System32\IPHLPAPI.DLL"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","Secur32.dll","FOUND","C:\Windows\System32\Secur32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","WINHTTP.dll","FOUND","C:\Windows\System32\WINHTTP.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","WS2_32.dll","FOUND","C:\Windows\System32\WS2_32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","MSVCP140_1.dll","FOUND","C:\Windows\System32\MSVCP140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\hidapi.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3-3.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3-3.dll","msvcrt.dll","FOUND","C:\Windows\System32\msvcrt.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3f-3.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3f-3.dll","msvcrt.dll","FOUND","C:\Windows\System32\msvcrt.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","api-ms-win-core-synch-l1-2-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","bcryptprimitives.dll","FOUND","C:\Windows\System32\bcryptprimitives.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","bcrypt.dll","FOUND","C:\Windows\System32\bcrypt.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","kernel32.dll","FOUND","C:\Windows\System32\kernel32.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","ntdll.dll","FOUND","C:\Windows\System32\ntdll.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","libcrypto-3-x64.dll","FOUND","C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","WS2_32.dll","FOUND","C:\Windows\System32\WS2_32.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","api-ms-win-crt-time-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","api-ms-win-crt-utility-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","api-ms-win-crt-filesystem-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","WS2_32.dll","FOUND","C:\Windows\System32\WS2_32.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","ADVAPI32.dll","FOUND","C:\Windows\System32\ADVAPI32.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","CRYPT32.dll","FOUND","C:\Windows\System32\CRYPT32.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","USER32.dll","FOUND","C:\Windows\System32\USER32.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-time-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-utility-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-filesystem-l1-1-0.dll","WINDOWS_API_SET",
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\libcrypto-3-x64.dll","api-ms-win-crt-environment-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","Qt6Core.dll","FOUND","D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","KERNEL32.dll","FOUND","C:\Windows\System32\KERNEL32.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","MSVCP140.dll","FOUND","C:\Windows\System32\MSVCP140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","MSVCP140_1.dll","FOUND","C:\Windows\System32\MSVCP140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","VCRUNTIME140_1.dll","FOUND","C:\Windows\System32\VCRUNTIME140_1.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","VCRUNTIME140.dll","FOUND","C:\Windows\System32\VCRUNTIME140.dll"
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","api-ms-win-crt-heap-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","api-ms-win-crt-string-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","api-ms-win-crt-stdio-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","api-ms-win-crt-runtime-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","api-ms-win-crt-math-l1-1-0.dll","WINDOWS_API_SET",
+"D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll","api-ms-win-crt-convert-l1-1-0.dll","WINDOWS_API_SET",

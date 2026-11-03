@@ -1,0 +1,90 @@
+suspend tid=876 previous=0
+suspend tid=7424 previous=0
+suspend tid=3692 previous=0
+suspend tid=1272 previous=0
+MiniDumpWriteDump=1 error=0
+SymInitialize=1
+module 0x7ff7f8f40000 size=49209344 symbols=140703010390016 D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe
+module 0x7ff941020000 size=2506752 symbols=140708514234368 C:\Windows\SYSTEM32\ntdll.dll
+module 0x7ff93fcd0000 size=823296 symbols=140708493983744 C:\Windows\System32\KERNEL32.DLL
+module 0x7ff93e1e0000 size=4116480 symbols=140708465737728 C:\Windows\System32\KERNELBASE.dll
+module 0x7ff93b060000 size=647168 symbols=140708413833216 C:\Windows\SYSTEM32\apphelp.dll
+module 0x7ff940d30000 size=741376 symbols=140708511154176 C:\Windows\System32\ADVAPI32.dll
+module 0x7ff9403f0000 size=692224 symbols=140708501454848 C:\Windows\System32\msvcrt.dll
+module 0x7ff93fff0000 size=684032 symbols=140708497260544 C:\Windows\System32\sechost.dll
+module 0x7ff93eeb0000 size=1146880 symbols=140708479172608 C:\Windows\System32\RPCRT4.dll
+module 0x7ff935190000 size=45056 symbols=140708314415104 C:\Windows\SYSTEM32\AVRT.dll
+module 0x7ff93f850000 size=1667072 symbols=140708489265152 C:\Windows\System32\ole32.dll
+module 0x7ff93e5e0000 size=667648 symbols=140708469932032 C:\Windows\System32\msvcp_win.dll
+module 0x7ff93ec50000 size=1355776 symbols=140708476682240 C:\Windows\System32\ucrtbase.dll
+module 0x7ff905550000 size=10498048 symbols=140707513040896 D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Core.dll
+module 0x7ff93fbb0000 size=176128 symbols=140708492804096 C:\Windows\System32\GDI32.dll
+module 0x7ff93e120000 size=159744 symbols=140708464951296 C:\Windows\System32\win32u.dll
+module 0x7ff91e770000 size=393216 symbols=140707934699520 D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Test.dll
+module 0x7ff93ea50000 size=1232896 symbols=140708474585088 C:\Windows\System32\gdi32full.dll
+module 0x7ff940e10000 size=1855488 symbols=140708512071680 C:\Windows\System32\USER32.dll
+module 0x7ff909e20000 size=1413120 symbols=140707589390336 D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Multimedia.dll
+module 0x7ff93f0f0000 size=7675904 symbols=140708481531904 C:\Windows\System32\SHELL32.dll
+module 0x7ff9404a0000 size=3698688 symbols=140708502175744 C:\Windows\System32\combase.dll
+module 0x7ff93e8e0000 size=1482752 symbols=140708473077760 C:\Windows\System32\wintypes.dll
+module 0x7ff9408a0000 size=4759552 symbols=140708506370048 C:\Windows\System32\SETUPAPI.dll
+module 0x7ff93fa90000 size=516096 symbols=140708491624448 C:\Windows\System32\WS2_32.dll
+module 0x7ff91e940000 size=139264 symbols=140707936600064 D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6SerialPort.dll
+module 0x7ff93f010000 size=880640 symbols=140708480614400 C:\Windows\System32\OLEAUT32.dll
+module 0x7ff904bf0000 size=9768960 symbols=140707503210496 D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Gui.dll
+module 0x7ff91d420000 size=225280 symbols=140707914448896 D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6WebSockets.dll
+module 0x7ff908ee0000 size=1794048 symbols=140707573399552 D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\Qt6Network.dll
+module 0x7ff938430000 size=135168 symbols=140708367499264 C:\Windows\SYSTEM32\MPR.dll
+module 0x7ff93d430000 size=176128 symbols=140708451385344 C:\Windows\SYSTEM32\USERENV.dll
+module 0x7ff93cb50000 size=327680 symbols=140708442079232 C:\Windows\SYSTEM32\AUTHZ.dll
+module 0x7ff931500000 size=106496 symbols=140708250910720 C:\Windows\SYSTEM32\NETAPI32.dll
+module 0x7ff932ef0000 size=643072 symbols=140708278108160 C:\Windows\SYSTEM32\MSVCP140.dll
+module 0x7ff920f70000 size=36864 symbols=140707976642560 C:\Windows\SYSTEM32\MSVCP140_1.dll
+module 0x7ff932880000 size=49152 symbols=140708271357952 C:\Windows\SYSTEM32\VCRUNTIME140_1.dll
+module 0x7ff932e80000 size=180224 symbols=140708277649408 C:\Windows\SYSTEM32\VCRUNTIME140.dll
+module 0x7ff938130000 size=1060864 symbols=140708364353536 C:\Windows\SYSTEM32\PROPSYS.dll
+module 0x7ff93c980000 size=212992 symbols=140708440178688 C:\Windows\SYSTEM32\IPHLPAPI.DLL
+module 0x7ff932fb0000 size=45056 symbols=140708278894592 C:\Windows\SYSTEM32\VERSION.dll
+module 0x7ff91fc70000 size=217088 symbols=140707956719616 C:\Windows\SYSTEM32\WINMM.dll
+
+THREAD 876
+0 0x7ff941185154 ntdll!NtRaiseHardError+0x14
+1 0x7ff941185154 ntdll!NtRaiseHardError+0x14
+2 0x7ff9410bd0ad ntdll!LdrGetProcedureAddressForCaller+0x110d
+3 0x7ff9410a2f57 ntdll!TpSetWaitEx+0x1e57
+4 0x7ff94105fd07 ntdll!RtlFreeActivationContextStack+0x267
+5 0x7ff9410cadeb ntdll!EtwEventWriteNoRegistration+0x24ab
+6 0x7ff9410c90a0 ntdll!EtwEventWriteNoRegistration+0x760
+7 0x7ff9410c8e8a ntdll!EtwEventWriteNoRegistration+0x54a
+8 0x7ff941108b9e ntdll!LdrInitializeThunk+0xe
+
+THREAD 7424
+0 0x7ff941185154 ntdll!NtRaiseHardError+0x14
+1 0x7ff941185154 ntdll!NtRaiseHardError+0x14
+2 0x7ff9410bd0ad ntdll!LdrGetProcedureAddressForCaller+0x110d
+3 0x7ff9410a2f57 ntdll!TpSetWaitEx+0x1e57
+4 0x7ff9410a3eb0 ntdll!RtlSetThreadSubProcessTag+0xd80
+5 0x7ff9410a4d9c ntdll!RtlSetThreadSubProcessTag+0x1c6c
+6 0x7ff93fcfdd37 KERNEL32!BaseThreadInitThunk+0x17
+7 0x7ff94105f2bc ntdll!RtlUserThreadStart+0x2c
+
+THREAD 3692
+0 0x7ff941185154 ntdll!NtRaiseHardError+0x14
+1 0x7ff941185154 ntdll!NtRaiseHardError+0x14
+2 0x7ff9410bd0ad ntdll!LdrGetProcedureAddressForCaller+0x110d
+3 0x7ff9410a2f57 ntdll!TpSetWaitEx+0x1e57
+4 0x7ff9410a3eb0 ntdll!RtlSetThreadSubProcessTag+0xd80
+5 0x7ff9410a4d9c ntdll!RtlSetThreadSubProcessTag+0x1c6c
+6 0x7ff93fcfdd37 KERNEL32!BaseThreadInitThunk+0x17
+7 0x7ff94105f2bc ntdll!RtlUserThreadStart+0x2c
+
+THREAD 1272
+0 0x7ff941185154 ntdll!NtRaiseHardError+0x14
+1 0x7ff941185154 ntdll!NtRaiseHardError+0x14
+2 0x7ff9410bd0ad ntdll!LdrGetProcedureAddressForCaller+0x110d
+3 0x7ff9410a2f57 ntdll!TpSetWaitEx+0x1e57
+4 0x7ff9410a3eb0 ntdll!RtlSetThreadSubProcessTag+0xd80
+5 0x7ff9410a4d9c ntdll!RtlSetThreadSubProcessTag+0x1c6c
+6 0x7ff93fcfdd37 KERNEL32!BaseThreadInitThunk+0x17
+7 0x7ff94105f2bc ntdll!RtlUserThreadStart+0x2c
+Capture completed; target threads remain suspended until caller terminates this PID.

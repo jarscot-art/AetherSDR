@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="(empty)"
+	tests="1"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname=""
+	time="0"
+	timestamp="2026-11-03T21:30:07"
+	>
+	<testcase name="transmit_model_test" classname="transmit_model_test" time="0.0409199" status="run">
+		<properties/>
+		<system-out>[ OK ] legacy frequency publications preserve their numeric contract
+[ OK ] an explicit TX report preserves the existing ATU reference
+[ OK ] unrelated partial deltas do not erase provenance
+[ OK ] timeout invalidates live TX without zeroing ATU's historical frequency
+[ OK ] a validity flag alone cannot revive an old frequency
+[ OK ] invalid zero readback does not corrupt the last valid number
+[ OK ] nonfinite readback cannot become valid
+[ OK ] ATU reference and actual TX can differ without weakening proof
+[ OK ] a timeout leaves the established ATU reference untouched
+[ OK ] backend replacement clears proof but preserves the legacy getter
+[ OK ] the next legacy backend adopts frequency normally
+[ OK ] frequency observation and expiry issue no control intent
+[ OK ] TX arriving before RX cannot initialize the ATU dial reference
+[ OK ] TX arriving first after reconnect cannot overwrite the retained ATU reference
+[ OK ] an already expired queued report cannot renew freshness without the backend pump
+[ OK ] back...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+</testsuite>

@@ -1,0 +1,29 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\deepfilter.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    api-ms-win-core-synch-l1-2-0.dll
+    bcryptprimitives.dll
+    bcrypt.dll
+    ADVAPI32.dll
+    kernel32.dll
+    ntdll.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+
+  Summary
+
+        3000 .data
+       6D000 .pdata
+      25B000 .rdata
+        F000 .reloc
+      D22000 .text

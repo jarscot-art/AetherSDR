@@ -1,0 +1,185 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe
+
+PE signature found
+
+File Type: EXECUTABLE IMAGE
+
+FILE HEADER VALUES
+            8664 machine (x64)
+               7 number of sections
+        6AEA515F time date stamp Tue Nov  3 21:25:51 2026
+               0 file pointer to symbol table
+               0 number of symbols
+              F0 size of optional header
+              22 characteristics
+                   Executable
+                   Application can handle large (>2GB) addresses
+
+OPTIONAL HEADER VALUES
+             20B magic # (PE32+)
+           14.51 linker version
+          894400 size of code
+         2655000 size of initialized data
+               0 size of uninitialized data
+          801A80 entry point (0000000140801A80) mainCRTStartup
+            1000 base of code
+       140000000 image base (0000000140000000 to 0000000142EEDFFF)
+            1000 section alignment
+             200 file alignment
+            6.00 operating system version
+            0.00 image version
+            6.00 subsystem version
+               0 Win32 version
+         2EEE000 size of image
+             400 size of headers
+               0 checksum
+               3 subsystem (Windows CUI)
+            8160 DLL characteristics
+                   High Entropy Virtual Addresses
+                   Dynamic base
+                   NX compatible
+                   Terminal Server Aware
+          100000 size of stack reserve
+            1000 size of stack commit
+          100000 size of heap reserve
+            1000 size of heap commit
+               0 loader flags
+              10 number of directories
+         2D37160 [    2FA8] RVA [size] of Export Directory
+         2D3A108 [     2E4] RVA [size] of Import Directory
+         2EE0000 [     1E0] RVA [size] of Resource Directory
+         2E7F000 [   5FF88] RVA [size] of Exception Directory
+               0 [       0] RVA [size] of Certificates Directory
+         2EE1000 [    C214] RVA [size] of Base Relocation Directory
+         2C570D0 [      54] RVA [size] of Debug Directory
+               0 [       0] RVA [size] of Architecture Directory
+               0 [       0] RVA [size] of Global Pointer Directory
+         2C57180 [      28] RVA [size] of Thread Storage Directory
+         2C56F90 [     140] RVA [size] of Load Configuration Directory
+               0 [       0] RVA [size] of Bound Import Directory
+          896000 [    3968] RVA [size] of Import Address Table Directory
+               0 [       0] RVA [size] of Delay Import Directory
+               0 [       0] RVA [size] of COM Descriptor Directory
+               0 [       0] RVA [size] of Reserved Directory
+
+
+SECTION HEADER #1
+   .text name
+  8942A8 virtual size
+    1000 virtual address (0000000140001000 to 00000001408952A7)
+  894400 size of raw data
+     400 file pointer to raw data (00000400 to 008947FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+60000020 flags
+         Code
+         Execute Read
+
+SECTION HEADER #2
+  .rdata name
+ 24B8E50 virtual size
+  896000 virtual address (0000000140896000 to 0000000142D4EE4F)
+ 24B9000 size of raw data
+  894800 file pointer to raw data (00894800 to 02D4D7FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+  Debug Directories
+
+        Time Type        Size      RVA  Pointer
+    -------- ------- -------- -------- --------
+    6AEA515F cv            5D 02C6B114  2C69914    Format: RSDS, {3CF174BD-30FB-4124-B80D-5811713AD063}, 1, D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.pdb
+    6AEA515F feat          14 02C6B174  2C69974    Counts: Pre-VC++ 11.00=30, C/C++=777, /GS=777, /sdl=0, guardN=54
+    6AEA515F coffgrp      3AC 02C6B188  2C69988
+
+SECTION HEADER #3
+   .data name
+  12F6D0 virtual size
+ 2D4F000 virtual address (0000000142D4F000 to 0000000142E7E6CF)
+  119800 size of raw data
+ 2D4D800 file pointer to raw data (02D4D800 to 02E66FFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+C0000040 flags
+         Initialized Data
+         Read Write
+
+SECTION HEADER #4
+  .pdata name
+   5FF88 virtual size
+ 2E7F000 virtual address (0000000142E7F000 to 0000000142EDEF87)
+   60000 size of raw data
+ 2E67000 file pointer to raw data (02E67000 to 02EC6FFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #5
+  _RDATA name
+      30 virtual size
+ 2EDF000 virtual address (0000000142EDF000 to 0000000142EDF02F)
+     200 size of raw data
+ 2EC7000 file pointer to raw data (02EC7000 to 02EC71FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #6
+   .rsrc name
+     1E0 virtual size
+ 2EE0000 virtual address (0000000142EE0000 to 0000000142EE01DF)
+     200 size of raw data
+ 2EC7200 file pointer to raw data (02EC7200 to 02EC73FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #7
+  .reloc name
+    C214 virtual size
+ 2EE1000 virtual address (0000000142EE1000 to 0000000142EED213)
+    C400 size of raw data
+ 2EC7400 file pointer to raw data (02EC7400 to 02ED37FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+42000040 flags
+         Initialized Data
+         Discardable
+         Read Only
+
+  Summary
+
+      130000 .data
+       60000 .pdata
+     24B9000 .rdata
+        D000 .reloc
+        1000 .rsrc
+      895000 .text
+        1000 _RDATA

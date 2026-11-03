@@ -1,0 +1,210 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/source/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/source/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 712
+    Start 712: backend_family_switch_test
+
+712: Test command: D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe
+712: Working Directory: D:/a/AetherSDR/AetherSDR/source/build
+712: Environment variables: 
+712:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+712:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/source/build/test-fftw-wisdom
+712: Test timeout computed to be: 300
+712: -- baseline connect edge
+712: [PASS] baseline: simulator connected
+712: [PASS] baseline: simulator disconnected
+712:   baseline: 1 capabilitiesChanged on one connect edge
+712: -- cold cycle
+712: [PASS] -> sim: model reports the family
+712: [PASS] -> sim: backend present
+712: [PASS] -> sim: backendRebuilt announced exactly once
+712: [PASS] -> sim: teardown+setup within budget (1 ms)
+712: [PASS] -> sim: no slice models carried across
+712: [PASS] -> sim: no pan models carried across
+712: [PASS] -> hl2: model reports the family
+712: [PASS] -> hl2: backend present
+712: [PASS] -> hl2: backendRebuilt announced exactly once
+712: [PASS] -> hl2: teardown+setup within budget (2 ms)
+712: [PASS] -> hl2: no slice models carried across
+712: [PASS] -> hl2: no pan models carried across
+712: [PASS] -> anan: model reports the family
+712: [PASS] -> anan: backend present
+712: [PASS] -> anan: backendRebuilt announced exactly once
+712: [PASS] -> anan: teardown+setup within budget (1 ms)
+712: [PASS] -> anan: no slice models carried across
+712: [PASS] -> anan: no pan models carried across
+712: [PASS] -> icom: model reports the family
+712: [PASS] -> icom: backend present
+712: [PASS] -> icom: backendRebuilt announced exactly once
+712: [PASS] -> icom: teardown+setup within budget (1 ms)
+712: [PASS] -> icom: no slice models carried across
+712: [PASS] -> icom: no pan models carried across
+712:   rtl: not built into this binary, skipped
+712: [PASS] -> flex: model reports the family
+712: [PASS] -> flex: backend present
+712: [PASS] -> flex: backendRebuilt announced exactly once
+712: [PASS] -> flex: teardown+setup within budget (0 ms)
+712: [PASS] -> flex: no slice models carried across
+712: [PASS] -> flex: no pan models carried across
+712: [PASS] -> hl2: model reports the family
+712: [PASS] -> hl2: backend present
+712: [PASS] -> hl2: backendRebuilt announced exactly once
+712: [PASS] -> hl2: teardown+setup within budget (1 ms)
+712: [PASS] -> hl2: no slice models carried across
+712: [PASS] -> hl2: no pan models carried across
+712: [PASS] -> sim: model reports the family
+712: [PASS] -> sim: backend present
+712: [PASS] -> sim: backendRebuilt announced exactly once
+712: [PASS] -> sim: teardown+setup within budget (1 ms)
+712: [PASS] -> sim: no slice models carried across
+712: [PASS] -> sim: no pan models carried across
+712: [PASS] -> icom: model reports the family
+712: [PASS] -> icom: backend present
+712: [PASS] -> icom: backendRebuilt announced exactly once
+712: [PASS] -> icom: teardown+setup within budget (1 ms)
+712: [PASS] -> icom: no slice models carried across
+712: [PASS] -> icom: no pan models carried across
+712: [PASS] -> flex: model reports the family
+712: [PASS] -> flex: backend present
+712: [PASS] -> flex: backendRebuilt announced exactly once
+712: [PASS] -> flex: teardown+setup within budget (0 ms)
+712: [PASS] -> flex: no slice models carried across
+712: [PASS] -> flex: no pan models carried across
+712: [PASS] -> anan: model reports the family
+712: [PASS] -> anan: backend present
+712: [PASS] -> anan: backendRebuilt announced exactly once
+712: [PASS] -> anan: teardown+setup within budget (1 ms)
+712: [PASS] -> anan: no slice models carried across
+712: [PASS] -> anan: no pan models carried across
+712: [PASS] -> flex: model reports the family
+712: [PASS] -> flex: backend present
+712: [PASS] -> flex: backendRebuilt announced exactly once
+712: [PASS] -> flex: teardown+setup within budget (1 ms)
+712: [PASS] -> flex: no slice models carried across
+712: [PASS] -> flex: no pan models carried across
+712: [PASS] native TX observation is seeded before family replacement
+712: [PASS] -> icom: model reports the family
+712: [PASS] -> icom: backend present
+712: [PASS] -> icom: backendRebuilt announced exactly once
+712: [PASS] -> icom: teardown+setup within budget (1 ms)
+712: [PASS] -> icom: no slice models carried across
+712: [PASS] -> icom: no pan models carried across
+712: [PASS] production family replacement clears TX proof
+712: [PASS] replacement backend is not masked by the old ATU reference
+712: -- accumulation check (#4599 defect class)
+712: [PASS] accumulation: simulator connected
+712: [PASS] accumulation: simulator disconnected
+712:   after 12 switches: 1 capabilitiesChanged on one connect edge
+712: [PASS] per-connect capabilitiesChanged does not grow with switches (1 -> 1)
+712: -- live simulator -> hl2
+712: [PASS] live: simulator connected
+712: [PASS] -> hl2: model reports the family
+712: [PASS] -> hl2: backend present
+712: [PASS] -> hl2: backendRebuilt announced exactly once
+712: [PASS] -> hl2: teardown+setup within budget (1 ms)
+712: [PASS] -> hl2: no slice models carried across
+712: [PASS] -> hl2: no pan models carried across
+712: -- live simulator -> disconnect -> flex
+712: [PASS] live: simulator reconnected
+712: [PASS] live: disconnect reported
+712: [PASS] live: the clean disconnect reports disconnected EXACTLY once (1)
+712: [PASS] live: disconnect within budget (51 ms)
+712: [PASS] -> flex: model reports the family
+712: [PASS] -> flex: backend present
+712: [PASS] -> flex: backendRebuilt announced exactly once
+712: [PASS] -> flex: teardown+setup within budget (1 ms)
+712: [PASS] -> flex: no slice models carried across
+712: [PASS] -> flex: no pan models carried across
+712: -- stale-status race (secondary)
+712: [PASS] -> hl2: model reports the family
+712: [PASS] -> hl2: backend present
+712: [PASS] -> hl2: backendRebuilt announced exactly once
+712: [PASS] -> hl2: teardown+setup within budget (1 ms)
+712: [PASS] -> hl2: no slice models carried across
+712: [PASS] -> hl2: no pan models carried across
+712: [PASS] race: no stale event removed the new slice (0)
+712: [PASS] race: one seam sliceChanged -> one sliceAdded (1)
+712: -- deterministic stale-status injection
+712: [PASS] inject: simulator connected
+712: [PASS] inject: backend is the simulator
+712: [PASS] inject: the simulator vends a RadioConnection
+712: [PASS] inject: that connection lives on its own thread
+712: [PASS] -> hl2: model reports the family
+712: [PASS] -> hl2: backend present
+712: [PASS] -> hl2: backendRebuilt announced exactly once
+712: [PASS] -> hl2: teardown+setup within budget (1 ms)
+712: [PASS] -> hl2: no slice models carried across
+712: [PASS] -> hl2: no pan models carried across
+712: [PASS] inject: the injected stale status did not remove the new slice (0)
+712: [PASS] inject: one sliceAdded (1)
+712: [PASS] inject: exactly one slice model exists (1)
+712: [PASS] -> sim: model reports the family
+712: [PASS] -> sim: backend present
+712: [PASS] -> sim: backendRebuilt announced exactly once
+712: [PASS] -> sim: teardown+setup within budget (1 ms)
+712: [PASS] -> sim: no slice models carried across
+712: [PASS] -> sim: no pan models carried across
+712: [PASS] -> hl2: model reports the family
+712: [PASS] -> hl2: backend present
+712: [PASS] -> hl2: backendRebuilt announced exactly once
+712: [PASS] -> hl2: teardown+setup within budget (2 ms)
+712: [PASS] -> hl2: no slice models carried across
+712: [PASS] -> hl2: no pan models carried across
+712: [PASS] stale spectrum cannot inherit replacement backend geometry
+712: [PASS] current backend spectrum still reaches the feed
+712: -- power latches across a family switch
+712: [PASS] latch: outgoing radio's drive is confirmed
+712: [PASS] latch: outgoing radio's 500 W ceiling is reported
+712: [PASS] -> sim: model reports the family
+712: [PASS] -> sim: backend present
+712: [PASS] -> sim: backendRebuilt announced exactly once
+712: [PASS] -> sim: teardown+setup within budget (1 ms)
+712: [PASS] -> sim: no slice models carried across
+712: [PASS] -> sim: no pan models carried across
+712: [PASS] latch: drive is unreported again after a family switch
+712: [PASS] latch: the ceiling is unreported again after a family switch
+712: [PASS] latch: drive is not confirmed after a family switch
+712: [PASS] latch: the stale value survives, unvouched-for
+712: -- SmartLink prepare after a non-Flex session
+712: [PASS] -> hl2: model reports the family
+712: [PASS] -> hl2: backend present
+712: [PASS] -> hl2: backendRebuilt announced exactly once
+712: [PASS] -> hl2: teardown+setup within budget (2 ms)
+712: [PASS] -> hl2: no slice models carried across
+712: [PASS] -> hl2: no pan models carried across
+712: [PASS] wan: the hl2 backend has no PanadapterStream
+712: [PASS] wan: prepare reports a stream after hl2
+712: [PASS] wan: prepare switched the family to flex
+712: [PASS] wan: prepare left a PanadapterStream
+712: [PASS] wan: prepare announced backendRebuilt once (1)
+712: [PASS] -> flex: model reports the family
+712: [PASS] -> flex: backend present
+712: [PASS] -> flex: backendRebuilt announced exactly once
+712: [PASS] -> flex: teardown+setup within budget (1 ms)
+712: [PASS] -> flex: no slice models carried across
+712: [PASS] -> flex: no pan models carried across
+712: [PASS] wan: prepare reports a stream on flex
+712: [PASS] wan: prepare on flex kept the same backend
+712: [PASS] wan: prepare on flex rebuilt nothing
+712: [PASS] -> hl2: model reports the family
+712: [PASS] -> hl2: backend present
+712: [PASS] -> hl2: backendRebuilt announced exactly once
+712: [PASS] -> hl2: teardown+setup within budget (1 ms)
+712: [PASS] -> hl2: no slice models carried across
+712: [PASS] -> hl2: no pan models carried across
+712: -- destroy with hl2 attached
+712: [PASS] destroy with a backend attached is bounded (1 ms)
+712: 0 failure(s)
+1/1 Test #712: backend_family_switch_test .......   Passed    3.49 sec
+
+The following tests passed:
+	backend_family_switch_test
+
+100% tests passed out of 1
+
+Total Test time (real) =   3.52 sec

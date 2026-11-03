@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="(empty)"
+	tests="1"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname=""
+	time="3"
+	timestamp="2026-11-03T21:30:07"
+	>
+	<testcase name="backend_family_switch_test" classname="backend_family_switch_test" time="3.48963" status="run">
+		<properties/>
+		<system-out>-- baseline connect edge
+[PASS] baseline: simulator connected
+[PASS] baseline: simulator disconnected
+  baseline: 1 capabilitiesChanged on one connect edge
+-- cold cycle
+[PASS] -&gt; sim: model reports the family
+[PASS] -&gt; sim: backend present
+[PASS] -&gt; sim: backendRebuilt announced exactly once
+[PASS] -&gt; sim: teardown+setup within budget (1 ms)
+[PASS] -&gt; sim: no slice models carried across
+[PASS] -&gt; sim: no pan models carried across
+[PASS] -&gt; hl2: model reports the family
+[PASS] -&gt; hl2: backend present
+[PASS] -&gt; hl2: backendRebuilt announced exactly once
+[PASS] -&gt; hl2: teardown+setup within budget (2 ms)
+[PASS] -&gt; hl2: no slice models carried across
+[PASS] -&gt; hl2: no pan models carried across
+[PASS] -&gt; anan: model reports the family
+[PASS] -&gt; anan: backend present
+[PASS] -&gt; anan: backendRebuilt announced exactly once
+[PASS] -&gt; anan: teardown+setup within budget (1 ms)
+[PASS] -&gt; anan: no slice models carried across
+[PASS] -&gt; anan: no pan models carried across
+[PASS] -&gt; icom: model reports the family
+[PASS] -&gt; ic...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+</testsuite>

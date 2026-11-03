@@ -1,0 +1,21 @@
+
+binary                                                               dll             status  resolved
+------                                                               ---             ------  --------
+D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe  hidapi.dll      MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe  libfftw3-3.dll  MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe  libfftw3f-3.dll MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\icom_control_profile_test.exe  deepfilter.dll  MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe     hidapi.dll      MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe     libfftw3-3.dll  MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe     libfftw3f-3.dll MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\icom_backend_seam_test.exe     deepfilter.dll  MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe        hidapi.dll      MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe        libfftw3-3.dll  MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe        libfftw3f-3.dll MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\transmit_model_test.exe        deepfilter.dll  MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe hidapi.dll      MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe libfftw3-3.dll  MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe libfftw3f-3.dll MISSING 
+D:\a\AetherSDR\AetherSDR\source\build\backend_family_switch_test.exe deepfilter.dll  MISSING 
+
+

@@ -1,0 +1,13 @@
+{
+  "phase": "feature-original",
+  "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "test": "icom_control_profile_test",
+  "status": "TIMEOUT",
+  "ctestExitCode": 8,
+  "secondsIncludingCapture": 60.395689,
+  "testLimitSeconds": 60,
+  "captureLimitSeconds": 90,
+  "testPid": 5328,
+  "startedUtc": "2026-11-03T21:26:03.2906307Z",
+  "diagnosticError": null
+}

@@ -1,0 +1,34 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file D:\a\AetherSDR\AetherSDR\source\build\hf5a-runtime\libfftw3-3.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+    msvcrt.dll
+
+  Summary
+
+        1000 .CRT
+        1000 .bss
+        1000 .data
+        2000 .debug_abbrev
+        1000 .debug_aranges
+        1000 .debug_frame
+        B000 .debug_info
+        2000 .debug_line
+        4000 .debug_loc
+        1000 .debug_ranges
+        1000 .debug_str
+        2000 .edata
+        1000 .idata
+        7000 .pdata
+       42000 .rdata
+        2000 .reloc
+      1CC000 .text
+        1000 .tls
+        B000 .xdata

@@ -1,0 +1,199 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file C:\Program Files\MySQL\MySQL Server 8.4\bin\libssl-3-x64.dll
+
+PE signature found
+
+File Type: DLL
+
+FILE HEADER VALUES
+            8664 machine (x64)
+               8 number of sections
+        6ABCDD85 time date stamp Wed Sep 30 09:59:33 2026
+               0 file pointer to symbol table
+               0 number of symbols
+              F0 size of optional header
+            2022 characteristics
+                   Executable
+                   Application can handle large (>2GB) addresses
+                   DLL
+
+OPTIONAL HEADER VALUES
+             20B magic # (PE32+)
+           14.29 linker version
+           EB800 size of code
+           4EC00 size of initialized data
+               0 size of uninitialized data
+            1096 entry point (0000000180001096)
+            1000 base of code
+       180000000 image base (0000000180000000 to 000000018013FFFF)
+            1000 section alignment
+             200 file alignment
+            6.00 operating system version
+            0.00 image version
+            6.00 subsystem version
+               0 Win32 version
+          140000 size of image
+             400 size of headers
+          13E102 checksum
+               2 subsystem (Windows GUI)
+             160 DLL characteristics
+                   High Entropy Virtual Addresses
+                   Dynamic base
+                   NX compatible
+          100000 size of stack reserve
+            1000 size of stack commit
+          100000 size of heap reserve
+            1000 size of heap commit
+               0 loader flags
+              10 number of directories
+          11C350 [    5F29] RVA [size] of Export Directory
+          134BB8 [     104] RVA [size] of Import Directory
+          13C000 [     669] RVA [size] of Resource Directory
+          128000 [    9840] RVA [size] of Exception Directory
+          13A000 [    2888] RVA [size] of Certificates Directory
+          13D000 [    1450] RVA [size] of Base Relocation Directory
+          10AD94 [      38] RVA [size] of Debug Directory
+               0 [       0] RVA [size] of Architecture Directory
+               0 [       0] RVA [size] of Global Pointer Directory
+               0 [       0] RVA [size] of Thread Storage Directory
+          10ADD0 [     138] RVA [size] of Load Configuration Directory
+               0 [       0] RVA [size] of Bound Import Directory
+          133000 [    1BB8] RVA [size] of Import Address Table Directory
+               0 [       0] RVA [size] of Delay Import Directory
+               0 [       0] RVA [size] of COM Descriptor Directory
+               0 [       0] RVA [size] of Reserved Directory
+
+
+SECTION HEADER #1
+   .text name
+   EB7F4 virtual size
+    1000 virtual address (0000000180001000 to 00000001800EC7F3)
+   EB800 size of raw data
+     400 file pointer to raw data (00000400 to 000EBBFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+60000020 flags
+         Code
+         Execute Read
+
+SECTION HEADER #2
+  .rdata name
+   35279 virtual size
+   ED000 virtual address (00000001800ED000 to 0000000180122278)
+   35400 size of raw data
+   EBC00 file pointer to raw data (000EBC00 to 00120FFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+  Debug Directories
+
+        Time Type        Size      RVA  Pointer
+    -------- ------- -------- -------- --------
+    6ABCDD85 cv            7E 0010BD9C   10A99C    Format: RSDS, {D3EB211F-A5B3-4A3B-81DE-23EC5BFAD089}, 2, C:\build\sb_1-23837435-1790759793.9758172\openssl-3.5.9-export-6120718\openssl-3.5.9\libssl-3-x64.pdb
+    6ABCDD85 feat          14 0010BE1C   10AA1C    Counts: Pre-VC++ 11.00=0, C/C++=128, /GS=128, /sdl=0, guardN=20
+
+SECTION HEADER #3
+   .data name
+    4AF9 virtual size
+  123000 virtual address (0000000180123000 to 0000000180127AF8)
+    4400 size of raw data
+  121000 file pointer to raw data (00121000 to 001253FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+C0000040 flags
+         Initialized Data
+         Read Write
+
+SECTION HEADER #4
+  .pdata name
+    A89C virtual size
+  128000 virtual address (0000000180128000 to 000000018013289B)
+    AA00 size of raw data
+  125400 file pointer to raw data (00125400 to 0012FDFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #5
+  .idata name
+    72B6 virtual size
+  133000 virtual address (0000000180133000 to 000000018013A2B5)
+    7400 size of raw data
+  12FE00 file pointer to raw data (0012FE00 to 001371FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #6
+  .00cfg name
+     151 virtual size
+  13B000 virtual address (000000018013B000 to 000000018013B150)
+     200 size of raw data
+  137200 file pointer to raw data (00137200 to 001373FF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #7
+   .rsrc name
+     669 virtual size
+  13C000 virtual address (000000018013C000 to 000000018013C668)
+     800 size of raw data
+  137400 file pointer to raw data (00137400 to 00137BFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+40000040 flags
+         Initialized Data
+         Read Only
+
+SECTION HEADER #8
+  .reloc name
+    237A virtual size
+  13D000 virtual address (000000018013D000 to 000000018013F379)
+    2400 size of raw data
+  137C00 file pointer to raw data (00137C00 to 00139FFF)
+       0 file pointer to relocation table
+       0 file pointer to line numbers
+       0 number of relocations
+       0 number of line numbers
+42000040 flags
+         Initialized Data
+         Discardable
+         Read Only
+
+  Summary
+
+        1000 .00cfg
+        5000 .data
+        8000 .idata
+        B000 .pdata
+       36000 .rdata
+        3000 .reloc
+        1000 .rsrc
+       EC000 .text

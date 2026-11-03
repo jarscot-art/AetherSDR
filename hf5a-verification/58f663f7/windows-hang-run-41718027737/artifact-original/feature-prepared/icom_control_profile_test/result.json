@@ -1,0 +1,13 @@
+{
+  "phase": "feature-prepared",
+  "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "test": "icom_control_profile_test",
+  "status": "PASS",
+  "ctestExitCode": 0,
+  "secondsIncludingCapture": 0.2861971,
+  "testLimitSeconds": 60,
+  "captureLimitSeconds": 90,
+  "testPid": 0,
+  "startedUtc": "2026-11-03T21:30:07.0921076Z",
+  "diagnosticError": null
+}

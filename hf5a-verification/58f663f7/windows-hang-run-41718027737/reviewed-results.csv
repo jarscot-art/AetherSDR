@@ -1,0 +1,9 @@
+phase,sourceCommit,test,status,ctestExitCode,secondsIncludingCapture,testLimitSeconds,captureLimitSeconds,testPid,startedUtc,diagnosticError,ctestSeconds,evidence
+feature-original,58f663f7bcda25c54e8f4c158929a6e18ce10011,backend_family_switch_test,TIMEOUT,8,60.3123389,60,90,3596,2026-11-03T21:29:04.3712160Z,,60.2545,artifact-original/feature-original/backend_family_switch_test/result.json
+feature-original,58f663f7bcda25c54e8f4c158929a6e18ce10011,icom_backend_seam_test,TIMEOUT,8,60.3182837,60,90,4248,2026-11-03T21:27:03.7029633Z,,60.2619,artifact-original/feature-original/icom_backend_seam_test/result.json
+feature-original,58f663f7bcda25c54e8f4c158929a6e18ce10011,icom_control_profile_test,TIMEOUT,8,60.395689,60,90,5328,2026-11-03T21:26:03.2906307Z,,60.334,artifact-original/feature-original/icom_control_profile_test/result.json
+feature-original,58f663f7bcda25c54e8f4c158929a6e18ce10011,transmit_model_test,TIMEOUT,8,60.3256737,60,90,4348,2026-11-03T21:28:04.0373106Z,,60.2695,artifact-original/feature-original/transmit_model_test/result.json
+feature-prepared,58f663f7bcda25c54e8f4c158929a6e18ce10011,backend_family_switch_test,PASS,0,3.5473933,60,90,2992,2026-11-03T21:30:07.7219611Z,,3.48963,artifact-original/feature-prepared/backend_family_switch_test/result.json
+feature-prepared,58f663f7bcda25c54e8f4c158929a6e18ce10011,icom_backend_seam_test,PASS,0,0.1866938,60,90,0,2026-11-03T21:30:07.4043618Z,,0.129024,artifact-original/feature-prepared/icom_backend_seam_test/result.json
+feature-prepared,58f663f7bcda25c54e8f4c158929a6e18ce10011,icom_control_profile_test,PASS,0,0.2861971,60,90,0,2026-11-03T21:30:07.0921076Z,,0.182944,artifact-original/feature-prepared/icom_control_profile_test/result.json
+feature-prepared,58f663f7bcda25c54e8f4c158929a6e18ce10011,transmit_model_test,PASS,0,0.1075609,60,90,0,2026-11-03T21:30:07.6045821Z,,0.0409199,artifact-original/feature-prepared/transmit_model_test/result.json

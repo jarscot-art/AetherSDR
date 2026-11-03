@@ -1,0 +1,13 @@
+{
+  "phase": "feature-original",
+  "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "test": "transmit_model_test",
+  "status": "TIMEOUT",
+  "ctestExitCode": 8,
+  "secondsIncludingCapture": 60.3256737,
+  "testLimitSeconds": 60,
+  "captureLimitSeconds": 90,
+  "testPid": 4348,
+  "startedUtc": "2026-11-03T21:28:04.0373106Z",
+  "diagnosticError": null
+}

@@ -1,0 +1,11 @@
+{
+  "captureLimitSeconds": 90,
+  "diagnosticLinkerFlags": "/DEBUG:FULL /INCREMENTAL:NO /OPT:REF /OPT:ICF",
+  "dependencyRecipe": "ci.yml:check-windows",
+  "sourceCommit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "runUrl": "https://github.com/jarscot-art/AetherSDR/actions/runs/41718027737",
+  "baselineCommit": "33975b2354972a83bf7a6378ab2786e17cb49767",
+  "testLimitSeconds": 60,
+  "originalRun": "41708318016",
+  "harnessCommit": "a0be0bc3ded557eda3dad79e5bdb006c93acbce4"
+}
