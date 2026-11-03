@@ -1,0 +1,434 @@
+name: HF5A isolated Windows hang diagnostics
+'on':
+  workflow_dispatch: null
+  push:
+    branches:
+    - hf5a/stage1-windows-hang-diagnostics
+    paths:
+    - .github/workflows/hf5a-stage1-hang-diagnostics.yml
+    - hf5a-diagnostics/**
+permissions:
+  contents: read
+env:
+  QT_VERSION: 6.12.0
+  QT_PACKAGE_REVISION: '202609280346'
+  AQTINSTALL_VERSION: 3.3.0
+  AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+  PY7ZR_VERSION: 1.1.3
+  QT_MODULE_FLOOR: '10'
+  SOURCE_COMMIT: 58f663f7bcda25c54e8f4c158929a6e18ce10011
+  BASELINE_COMMIT: 33975b2354972a83bf7a6378ab2786e17cb49767
+jobs:
+  diagnose-windows:
+    runs-on: windows-latest
+    timeout-minutes: 180
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: source
+    env:
+      SCCACHE_DIR: D:\sccache
+      SCCACHE_CACHE_SIZE: 1G
+      QT_ARCH: win64_msvc2022_64
+    steps:
+    - name: Checkout diagnostic harness only
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        repository: jarscot-art/AetherSDR
+        path: harness
+        persist-credentials: false
+    - name: Checkout exact application and test sources
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        repository: jarscot-art/AetherSDR
+        ref: 58f663f7bcda25c54e8f4c158929a6e18ce10011
+        fetch-depth: 2
+        path: source
+        persist-credentials: false
+    - name: Verify source and prepare evidence
+      shell: pwsh
+      run: |
+        $reports = Join-Path $env:GITHUB_WORKSPACE 'hf5a-results'
+        New-Item -ItemType Directory -Force $reports | Out-Null
+        $actual = (git rev-parse HEAD).Trim()
+        $parent = (git rev-parse HEAD^).Trim()
+        if ($actual -ne $env:SOURCE_COMMIT -or $parent -ne $env:BASELINE_COMMIT) { throw 'Unexpected source or parent commit' }
+        git diff --exit-code
+        if ($LASTEXITCODE -ne 0) { throw 'Dirty source before dependency setup' }
+        @{sourceCommit=$actual; baselineCommit=$parent; harnessCommit=$env:GITHUB_SHA;
+          runUrl="https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID";
+          originalRun='41708318016'; testLimitSeconds=60; captureLimitSeconds=90;
+          dependencyRecipe='ci.yml:check-windows'; diagnosticLinkerFlags='/DEBUG:FULL /INCREMENTAL:NO /OPT:REF /OPT:ICF'} |
+          ConvertTo-Json | Set-Content "$reports/source.json"
+    - name: Restore Qt
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-qt-win
+      with:
+        path: ${{ runner.workspace }}\Qt
+        key: qt-${{ env.QT_VERSION }}-${{ env.QT_PACKAGE_REVISION }}-windows-${{ env.QT_ARCH }}-aqt${{ env.AQTINSTALL_GIT_REF
+          }}-mm.ws.sp.st
+    - name: Verify the restored Qt tree
+      id: qt-verify-win
+      if: steps.cache-qt-win.outputs.cache-hit == 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "../hf5a-results/verify-the-restored-qt-tree.log" -Append
+        try {
+          $qtRoot = "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION\" + ($env:QT_ARCH -replace '^win64_', '')
+          $complete = $true
+          # -PathType Leaf so a directory of that name cannot pass. There is no
+          # Windows analogue of the macOS side's executable-bit test.
+          if (-not (Test-Path "$qtRoot\bin\qmake.exe" -PathType Leaf)) {
+            Write-Host "missing: bin\qmake.exe"
+            $complete = $false
+          }
+          # The path Export Qt environment hands find_package(Qt6) as Qt6_DIR.
+          if (-not (Test-Path "$qtRoot\lib\cmake\Qt6\Qt6Config.cmake" -PathType Leaf)) {
+            Write-Host "missing: lib\cmake\Qt6\Qt6Config.cmake"
+            $complete = $false
+          }
+          $targets = @(Get-ChildItem "$qtRoot\lib\cmake" -Filter 'Qt6*Targets*.cmake' -Recurse -File -ErrorAction SilentlyContinue)
+          $modules = @($targets |
+            Select-String -Pattern '\$\{_IMPORT_PREFIX\}/include/(Qt[A-Za-z0-9_]+)' -AllMatches |
+            ForEach-Object { $_.Matches } |
+            ForEach-Object { $_.Groups[1].Value } |
+            Sort-Object -Unique)
+          foreach ($m in $modules) {
+            $dir = "$qtRoot\include\$m"
+            if (-not (Test-Path $dir -PathType Container)) {
+              Write-Host "missing: include\$m"
+              $complete = $false
+            } elseif (-not (Get-ChildItem $dir -File -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+              Write-Host "empty include directory: include\$m"
+              $complete = $false
+            }
+          }
+          # Anti-vacuity, as on macOS, and on the same quantity: declared
+          # modules, not directories found.
+          if ($modules.Count -lt [int]$env:QT_MODULE_FLOOR) {
+            Write-Host "only $($modules.Count) Qt module(s) declared under lib\cmake (floor $env:QT_MODULE_FLOOR)"
+            $complete = $false
+          }
+          if ($complete) {
+            Write-Host "Qt tree complete: $($modules.Count) module(s) declared, every include directory present and populated"
+            "complete=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          } else {
+            $key = "qt-${env:QT_VERSION}-${env:QT_PACKAGE_REVISION}-windows-${env:QT_ARCH}-aqt${env:AQTINSTALL_GIT_REF}-mm.ws.sp.st"
+            Write-Host "::warning title=Qt cache restore incomplete::Restored Qt tree is short; discarding it and reinstalling via aqt. If this repeats on the same key the stored entry is bad, and it can only be cleared by hand: gh cache delete $key --ref refs/heads/main"
+            Remove-Item -Recurse -Force "$env:RUNNER_WORKSPACE\Qt" -ErrorAction SilentlyContinue
+            # A partial delete would leave aqt extracting over the corrupt tree
+            # this step just rejected, which is the state it exists to avoid.
+            if (Test-Path "$env:RUNNER_WORKSPACE\Qt") {
+              Write-Host "ERROR: could not remove the incomplete Qt tree at $env:RUNNER_WORKSPACE\Qt"
+              exit 1
+            }
+            "complete=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+        } finally { Stop-Transcript }
+    - name: Install Qt LTS via aqtinstall
+      if: steps.cache-qt-win.outputs.cache-hit != 'true' || steps.qt-verify-win.outputs.complete != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "../hf5a-results/install-qt-lts-via-aqtinstall.log" -Append
+        try {
+          # aqt goes in a venv and is pinned, for the reason check-macos and
+          # .github/docker/Dockerfile give: it is the tool that decides what
+          # Qt lands here, so an unreviewed aqt upgrade is an unreviewed
+          # change to the Qt this job builds against.
+          python -m venv "$env:RUNNER_TEMP\aqtvenv"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # PyPI 3.3.0 cannot locate Windows 6.11+ Updates.xml (aqtinstall#959).
+          # Install the unreleased #1000 fix from a pinned master commit.
+          & "$env:RUNNER_TEMP\aqtvenv\Scripts\pip.exe" install -q "git+https://github.com/miurahr/aqtinstall.git@$env:AQTINSTALL_GIT_REF" "py7zr==$env:PY7ZR_VERSION"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $sevenZip = (Get-Command 7z.exe -ErrorAction Stop).Source
+          # Parallel 7-Zip workers race while creating the common output root
+          # on a fresh SDK install. Create it once before extraction starts.
+          $qtRoot = "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION\" + ($env:QT_ARCH -replace '^win64_', '')
+          New-Item -ItemType Directory -Force -Path $qtRoot | Out-Null
+          & "$env:RUNNER_TEMP\aqtvenv\Scripts\aqt.exe" install-qt windows desktop $env:QT_VERSION $env:QT_ARCH `
+            -m qtmultimedia qtwebsockets qtserialport qtshadertools `
+            --external $sevenZip `
+            --outputdir "$env:RUNNER_WORKSPACE\Qt"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        } finally { Stop-Transcript }
+    - name: Export Qt environment
+      shell: pwsh
+      run: "Start-Transcript -Path \"../hf5a-results/export-qt-environment.log\" -Append\ntry {\n  # aqt lays the tree down\
+        \ under <version>/<arch minus the win64_ host\n  # prefix>: win64_msvc2022_64 -> msvc2022_64.\n  $qtRoot = \"$env:RUNNER_WORKSPACE\\\
+        Qt\\$env:QT_VERSION\\\" + ($env:QT_ARCH -replace '^win64_', '')\n  if (-not (Test-Path \"$qtRoot\\bin\\qmake.exe\"\
+        )) {\n    # A bad entry on main is only clearable by hand: the key is a\n    # content hash nothing re-saves, and\
+        \ no sweeper matches qt-* there.\n    Write-Host \"ERROR: no qmake at $qtRoot \u2014 aqt layout changed, or a stale\
+        \ cache entry\"\n    Write-Host \"       (clear a stale entry: gh cache delete <the Restore Qt key> --ref refs/heads/main)\"\
+        \n    Get-ChildItem \"$env:RUNNER_WORKSPACE\\Qt\\$env:QT_VERSION\" -ErrorAction SilentlyContinue\n    exit 1\n  }\n\
+        \  @(\n    \"QT_ROOT_DIR=$qtRoot\",\n    \"Qt6_DIR=$qtRoot\\lib\\cmake\\Qt6\",\n    \"CMAKE_PREFIX_PATH=$qtRoot\"\
+        ,\n    \"QT_PLUGIN_PATH=$qtRoot\\plugins\",\n    \"QML2_IMPORT_PATH=$qtRoot\\qml\"\n  ) | Out-File -FilePath $env:GITHUB_ENV\
+        \ -Append\n  \"$qtRoot\\bin\" | Out-File -FilePath $env:GITHUB_PATH -Append\n  & \"$qtRoot\\bin\\qmake.exe\" -query\
+        \ QT_VERSION\n\n  $version = (& \"$qtRoot\\bin\\qmake.exe\" -query QT_VERSION).Trim()\n  if ($version -ne \"6.12.0\"\
+        ) { throw \"Unexpected Qt: $version\" }\n  $version | Set-Content \"../hf5a-results/qt-version.txt\"\n} finally {\
+        \ Stop-Transcript }\n"
+    - name: Restore FFTW3
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-fftw
+      with:
+        path: source/third_party/fftw3
+        key: ${{ runner.os }}-fftw3-3.3.5-${{ hashFiles('source/scripts/setup/setup-fftw.ps1') }}
+    - name: Install FFTW3
+      if: steps.cache-fftw.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "../hf5a-results/install-fftw3.log" -Append
+        try {
+          .\scripts\setup\setup-fftw.ps1
+        } finally { Stop-Transcript }
+    - name: Restore DeepFilterNet3
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-deepfilter
+      with:
+        path: source/third_party/deepfilter
+        key: deepfilter-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('source/scripts/setup/setup-deepfilter.ps1') }}
+    - name: Setup DeepFilterNet3 (DFNR)
+      if: steps.cache-deepfilter.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "../hf5a-results/setup-deepfilternet3-dfnr.log" -Append
+        try {
+          .\scripts\setup\setup-deepfilter.ps1
+        } finally { Stop-Transcript }
+    - name: Restore sccache objects
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: D:\sccache
+        key: sccache-windows-
+        restore-keys: |
+          sccache-windows-
+    - name: Setup sccache
+      uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba
+    - name: Setup MSVC environment
+      uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
+      with:
+        arch: x64
+    - name: Setup hidapi (HID encoder support)
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "../hf5a-results/setup-hidapi-hid-encoder-support.log" -Append
+        try {
+          .\scripts\setup\setup-hidapi.ps1
+        } finally { Stop-Transcript }
+    - name: Setup PortAudio (CW sidetone callback sink)
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "../hf5a-results/setup-portaudio-cw-sidetone-callback-sink.log" -Append
+        try {
+          .\scripts\setup\setup-portaudio.ps1
+        } finally { Stop-Transcript }
+    - name: Test sccache health
+      id: sccache_health
+      shell: pwsh
+      continue-on-error: true
+      run: "Start-Transcript -Path \"../hf5a-results/test-sccache-health.log\" -Append\ntry {\n  'int main(){return 0;}' |\
+        \ Out-File -Encoding ASCII test.cpp\n  # cl.exe's /Fo takes NO colon separator. `/Fo:test.obj` names the\n  # output\
+        \ file \":test.obj\", which is not a legal Windows path, so this\n  # pre-flight failed on EVERY run from #1963 (2026-04-25)\
+        \ to #4655:\n  #   failed to open file `D:\\a\\AetherSDR\\AetherSDR\\:test.obj`:\n  #   The filename, directory name,\
+        \ or volume label syntax is\n  #   incorrect. (os error 123)\n  # Because the step is continue-on-error and its failure\
+        \ path only\n  # sets healthy=false, the job went green while quietly dropping\n  # CMAKE_{C,CXX}_COMPILER_LAUNCHER\
+        \ \u2014 \"Compile requests 0 / Cache hits\n  # 0\" for three months on a required check. Keep it as /Fo<file>.\n\
+        \  sccache cl /c test.cpp /Fotest.obj 2>&1 | Tee-Object -Variable scOut\n  $exit = $LASTEXITCODE\n  Remove-Item test.cpp,test.obj\
+        \ -ErrorAction SilentlyContinue\n  if ($exit -eq 0) {\n    \"healthy=true\" | Out-File -FilePath $env:GITHUB_OUTPUT\
+        \ -Append\n    Write-Host \"sccache OK\"\n  } else {\n    \"healthy=false\" | Out-File -FilePath $env:GITHUB_OUTPUT\
+        \ -Append\n    Write-Host \"::warning::sccache unhealthy (exit $exit) \u2014 building without compiler cache\"\n \
+        \ }\n} finally { Stop-Transcript }\n"
+    - name: Configure
+      shell: pwsh
+      run: "Start-Transcript -Path \"../hf5a-results/configure.log\" -Append\ntry {\n  $launcher = \"${{ steps.sccache_health.outputs.healthy\
+        \ }}\" -eq \"true\"\n  $cargs = @(\n    \"-B\",\"build\",\"-G\",\"Ninja\",\n    \"-DCMAKE_BUILD_TYPE=Release\",\n\
+        \    \"-DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded\",\n    \"-DENABLE_NVIDIA_AFX=ON\",\n    \"-DREQUIRE_SERIALPORT=ON\"\
+        ,\n    # ASR OFF for this PR sanity check: its job is Windows-only APP\n    # regressions (WASAPI, Q_OS_WIN), not\
+        \ ASR. Building whisper/ggml from\n    # source here linked the large static libs into AetherSDR.exe, and that\n \
+        \   # memory-heavy link concurrently starved the small test-exe links on the\n    # 16 GB runner (link.exe stalling\
+        \ on a different test each run \u2014 dstar,\n    # CAT_Flex \u2014 none of which hang on main, which has no ASR).\
+        \ ASR-on-Windows\n    # is fully built + linked + packaged by the windows-installer workflow,\n    # so nothing is\
+        \ lost here.\n    \"-DENABLE_ASR=OFF\",\n    # Stated rather than left to the CMake default so the assertion\n   \
+        \ # below has a request to check against.\n    \"-DAETHER_GPU_SPECTRUM=ON\",\n    \"-DCMAKE_TOOLCHAIN_FILE=$env:CMAKE_TOOLCHAIN_FILE\"\
+        ,\n    \"-DVCPKG_TARGET_TRIPLET=$env:VCPKG_TARGET_TRIPLET\"\n  )\n  if ($launcher) {\n    $cargs += \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\"\
+        \n    $cargs += \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\"\n  }\n  # Tee without `2>&1`: GitHub runs pwsh with $ErrorActionPreference=\n\
+        \  # 'Stop', where merging a native command's stderr into the pipeline\n  # can promote an ordinary CMake warning\
+        \ to a terminating error and\n  # fail configure on a non-problem. Nothing is lost \u2014 every line the\n  # assertion\
+        \ reads is message(STATUS), which CMake writes to stdout.\n  # No pipefail equivalent is needed either: $LASTEXITCODE\
+        \ tracks the\n  # last *native* command (cmake), and Tee-Object is a cmdlet.\n  $cargs += \"-DCMAKE_EXE_LINKER_FLAGS=/DEBUG:FULL\
+        \ /INCREMENTAL:NO /OPT:REF /OPT:ICF\"\n  & cmake @cargs | Tee-Object -FilePath configure.log\n\n  if ($LASTEXITCODE\
+        \ -ne 0) { throw \"Configure failed: $LASTEXITCODE\" }\n} finally { Stop-Transcript }\n"
+      id: configure
+    - name: Assert GPU spectrum rendering actually enabled
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "../hf5a-results/assert-gpu-spectrum-rendering-actually-enabled.log" -Append
+        try {
+          if (-not (Select-String -Path configure.log -Pattern 'GPU spectrum rendering enabled' -Quiet)) {
+            Write-Host "ERROR: -DAETHER_GPU_SPECTRUM=ON but CMake disabled it. Relevant output:"
+            Select-String -Path configure.log -Pattern 'GPU spectrum|Qt6GuiPrivate|private headers'
+            exit 1
+          }
+          Select-String -Path configure.log -Pattern 'GPU spectrum rendering enabled'
+        } finally { Stop-Transcript }
+    - name: Assert PortAudio sidetone sink actually enabled
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "../hf5a-results/assert-portaudio-sidetone-sink-actually-enabled.log" -Append
+        try {
+          if (-not (Select-String -Path configure.log -Pattern 'PortAudio \(third_party\) found' -Quiet)) {
+            Write-Host "ERROR: setup-portaudio.ps1 ran but CMake did not find third_party/portaudio."
+            # NOT Select-String on configure.log: the not-found leg is a
+            # message(WARNING), which CMake writes to stderr, and the configure
+            # step tees stdout only (see the note there). Show the tree the
+            # detection actually keys on instead.
+            Write-Host "--- third_party/portaudio ---"
+            if (Test-Path third_party\portaudio) {
+              Get-ChildItem -Recurse third_party\portaudio | Select-Object -ExpandProperty FullName
+            } else {
+              Write-Host "(third_party/portaudio does not exist)"
+            }
+            exit 1
+          }
+          Select-String -Path configure.log -Pattern 'PortAudio \(third_party\) found'
+          # The line above proves CMake found a lib, not that the lib carries
+          # the #5713 patch set - and CMake's detection is EXISTS-only, so a
+          # stale or partially-restored tree passes it. The stamp records the
+          # patch signature setup-portaudio.ps1 built with, so check it too.
+          if (-not (Test-Path third_party\portaudio\.patched-5713)) {
+            Write-Host "ERROR: third_party/portaudio has no #5713 patch stamp."
+            Write-Host "The PortAudio in this build may still free a stack address in Pa_Initialize."
+            exit 1
+          }
+          Write-Host "PortAudio patch stamp: $(Get-Content -Raw third_party\portaudio\.patched-5713)"
+        } finally { Stop-Transcript }
+    - name: Build Opus dependency
+      shell: pwsh
+      run: |
+        Start-Transcript -Path '../hf5a-results/build-opus.log'
+        try { cmake --build build --target build_opus --parallel $env:NUMBER_OF_PROCESSORS; $code=$LASTEXITCODE }
+        finally { Stop-Transcript }
+        exit $code
+    - name: Build five test executables and dependencies only
+      id: build
+      timeout-minutes: 60
+      shell: pwsh
+      run: |
+        Start-Transcript -Path '../hf5a-results/build-tests.log'
+        try {
+          cmake --build build --parallel $env:NUMBER_OF_PROCESSORS --target icom_civ_test icom_control_profile_test icom_backend_seam_test transmit_model_test backend_family_switch_test -- -k 0
+          $code=$LASTEXITCODE
+          $code | Set-Content '../hf5a-results/build-exit-code.txt'
+        } finally { Stop-Transcript }
+        exit $code
+    - name: Build Windows SDK dump and thread-stack collector
+      shell: pwsh
+      run: |
+        $bin = Join-Path $env:GITHUB_WORKSPACE 'diagnostic-bin'
+        New-Item -ItemType Directory -Force $bin | Out-Null
+        $cpp = Join-Path $env:GITHUB_WORKSPACE 'harness/hf5a-diagnostics/capture-process.cpp'
+        & cl.exe /nologo /std:c++20 /EHsc /W4 /Zi /Od $cpp "/Fo$bin/capture-process.obj" "/Fd$bin/capture-process-compile.pdb" "/Fe$bin/capture-process.exe" /link /DEBUG:FULL Dbghelp.lib User32.lib "/PDB:$bin/capture-process.pdb"
+        if ($LASTEXITCODE -ne 0) { throw "Diagnostic collector failed to build: $LASTEXITCODE" }
+    - name: 'Diagnose feature-original: four tests separately, 60 seconds each'
+      timeout-minutes: 25
+      shell: pwsh
+      run: |
+        & "$env:GITHUB_WORKSPACE/harness/hf5a-diagnostics/diagnose.ps1" -Phase 'feature-original' -Source "$env:GITHUB_WORKSPACE/source" -Reports "$env:GITHUB_WORKSPACE/hf5a-results" -Collector "$env:GITHUB_WORKSPACE/diagnostic-bin/capture-process.exe"
+    - name: 'Diagnose feature-prepared: four tests separately, 60 seconds each'
+      timeout-minutes: 25
+      shell: pwsh
+      run: |
+        & "$env:GITHUB_WORKSPACE/harness/hf5a-diagnostics/diagnose.ps1" -Phase 'feature-prepared' -Source "$env:GITHUB_WORKSPACE/source" -Reports "$env:GITHUB_WORKSPACE/hf5a-results" -Collector "$env:GITHUB_WORKSPACE/diagnostic-bin/capture-process.exe"
+      id: prepared
+    - name: Preserve feature executables and PDBs before any baseline checkout
+      shell: pwsh
+      run: |
+        $destination = Join-Path $env:GITHUB_WORKSPACE 'feature-symbols'
+        New-Item -ItemType Directory -Force $destination | Out-Null
+        foreach ($name in @('icom_civ_test','icom_control_profile_test','icom_backend_seam_test','transmit_model_test','backend_family_switch_test')) {
+          foreach ($extension in @('exe','pdb')) {
+            $path = Join-Path 'build' "$name.$extension"
+            if (Test-Path $path) { Copy-Item $path $destination }
+          }
+        }
+        Get-ChildItem $destination -File | Get-FileHash -Algorithm SHA256 |
+          Select-Object Path,Hash | Export-Csv '../hf5a-results/feature-symbols-sha256.csv' -NoTypeInformation
+    - name: 'Conditional unchanged baseline: same SDK, dependencies, flags and runtime'
+      if: ${{ steps.prepared.outputs.needed == 'true' }}
+      id: baselinebuild
+      timeout-minutes: 60
+      shell: pwsh
+      run: |
+        Start-Transcript -Path '../hf5a-results/baseline-build.log'
+        try {
+          git diff --name-only $env:BASELINE_COMMIT $env:SOURCE_COMMIT -- third_party |
+            Set-Content '../hf5a-results/baseline-dependency-diff.txt'
+          if ((Get-Content '../hf5a-results/baseline-dependency-diff.txt').Length) { throw 'Dependencies differ between source and baseline' }
+          git status --porcelain --untracked-files=no | Set-Content '../hf5a-results/feature-tracked-changes.txt'
+          git checkout --detach $env:BASELINE_COMMIT
+          if ($LASTEXITCODE -ne 0) { throw 'Baseline checkout failed' }
+          if ((git rev-parse HEAD).Trim() -ne $env:BASELINE_COMMIT) { throw 'Wrong baseline commit' }
+          # Keep exactly the existing configure cache and runtime. CMake/Ninja detect the changed sources.
+          cmake -S . -B build | Tee-Object '../hf5a-results/baseline-configure.log'
+          if ($LASTEXITCODE -ne 0) { throw 'Baseline configure failed' }
+          cmake --build build --parallel $env:NUMBER_OF_PROCESSORS --target icom_civ_test icom_control_profile_test icom_backend_seam_test transmit_model_test backend_family_switch_test -- -k 0
+          $code=$LASTEXITCODE
+          $code | Set-Content '../hf5a-results/baseline-build-exit-code.txt'
+        } finally { Stop-Transcript }
+        exit $code
+    - name: 'Diagnose baseline-prepared: four tests separately, 60 seconds each'
+      timeout-minutes: 25
+      shell: pwsh
+      run: |
+        & "$env:GITHUB_WORKSPACE/harness/hf5a-diagnostics/diagnose.ps1" -Phase 'baseline-prepared' -Source "$env:GITHUB_WORKSPACE/source" -Reports "$env:GITHUB_WORKSPACE/hf5a-results" -Collector "$env:GITHUB_WORKSPACE/diagnostic-bin/capture-process.exe"
+      if: ${{ steps.prepared.outputs.needed == 'true' && steps.baselinebuild.outcome == 'success' }}
+    - name: Summarize every actual case and runtime environment
+      if: ${{ always() }}
+      shell: pwsh
+      run: |
+        $reports=Join-Path $env:GITHUB_WORKSPACE 'hf5a-results'
+        New-Item -ItemType Directory -Force $reports | Out-Null
+        $rows=@(Get-ChildItem $reports -Recurse -Filter 'result.json' | ForEach-Object { Get-Content -Raw $_.FullName | ConvertFrom-Json })
+        $rows | ConvertTo-Json -Depth 6 | Set-Content "$reports/all-results.json"
+        $rows | Export-Csv "$reports/all-results.csv" -NoTypeInformation
+        $lines=@('# HF5A Windows hang diagnostics', '', "Source: $env:SOURCE_COMMIT", '', '| Phase | Test | Actual result | Seconds incl. capture |', '|---|---|---|---|')
+        foreach ($r in $rows) { $lines += "| $($r.phase) | $($r.test) | $($r.status) | $([Math]::Round($r.secondsIncludingCapture,2)) |" }
+        $lines += @('', 'icom_civ_test was built and its DLL imports audited; its previous PASS is not repeated.', 'A 60-second execution limit is followed by a separate dump/stack capture budget of at most 90 seconds before termination.', 'Baseline is conditional on a timeout in the prepared feature runtime; missing cases are NOT RUN, never PASS.')
+        $lines | Set-Content "$reports/REPORT.md"
+        $lines | Out-File $env:GITHUB_STEP_SUMMARY -Append
+        git status --porcelain --untracked-files=no | Set-Content "$reports/final-tracked-source-changes.txt"
+        $env:PATH | Set-Content "$reports/runner-PATH.txt"
+        Get-Command cl.exe,cmake.exe,ctest.exe,dumpbin.exe | Select-Object Name,Source,Version |
+          ConvertTo-Json | Set-Content "$reports/tool-paths.json"
+        Copy-Item build/CMakeCache.txt "$reports/CMakeCache.txt" -ErrorAction SilentlyContinue
+        Copy-Item configure.log "$reports/feature-configure.log" -ErrorAction SilentlyContinue
+    - name: Upload diagnostic logs, all individual results, dumps and stacks
+      if: ${{ always() }}
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: hf5a-hang-evidence-${{ github.run_id }}
+        path: hf5a-results/
+        if-no-files-found: error
+        retention-days: 90
+        compression-level: 9
+    - name: Upload exact feature executable and PDB evidence
+      if: ${{ always() }}
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: hf5a-feature-symbols-${{ github.run_id }}
+        path: feature-symbols/
+        if-no-files-found: warn
+        retention-days: 90
+        compression-level: 9
+    - name: Upload collector and optional baseline executable evidence
+      if: ${{ always() }}
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: hf5a-diagnostic-binaries-${{ github.run_id }}
+        path: |-
+          diagnostic-bin/
+          source/build/*_test.exe
+          source/build/*_test.pdb
+        if-no-files-found: warn
+        retention-days: 90
+        compression-level: 9
