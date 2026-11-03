@@ -8,6 +8,8 @@
 #include <QStringList>
 
 #include <iostream>
+#include <limits>
+#include <QDeadlineTimer>
 
 using namespace AetherSDR;
 
@@ -48,6 +50,101 @@ int main(int argc, char** argv)
                      [&blockedMessages](const QString& message) { blockedMessages.append(message); });
 
     bool ok = true;
+
+    // Readback provenance is additive: legacy ATU/KAT500 retain their last
+    // reported frequency, while live consumers can explicitly require evidence.
+    {
+        TransmitModel frequencyTx;
+        int intents = 0;
+        QObject::connect(&frequencyTx, &TransmitModel::controlRequested,
+                         [&intents](const TransmitControlRequest&) { ++intents; });
+        frequencyTx.applyChanges(td([](TransmitDelta& d) { d.transmitFreq = 14.025; }));
+        ok &= expect(frequencyTx.transmitFreq() == 14.025
+                     && !frequencyTx.transmitFreqValidity().has_value()
+                     && !frequencyTx.confirmedTransmitFreq(),
+                     "legacy frequency publications preserve their numeric contract");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) {
+            d.transmitFreq = 14.0265; d.transmitFreqValid = true;
+        }));
+        ok &= expect(frequencyTx.confirmedTransmitFreq() == 14.0265
+                     && frequencyTx.transmitFreq() == 14.025,
+                     "an explicit TX report preserves the existing ATU reference");
+        frequencyTx.applyChanges(TransmitDelta{});
+        ok &= expect(frequencyTx.confirmedTransmitFreq() == 14.0265,
+                     "unrelated partial deltas do not erase provenance");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) { d.transmitFreqValid = false; }));
+        ok &= expect(frequencyTx.transmitFreq() == 14.025
+                     && frequencyTx.transmitFreqValidity() == false
+                     && !frequencyTx.confirmedTransmitFreq(),
+                     "timeout invalidates live TX without zeroing ATU's historical frequency");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) { d.transmitFreqValid = true; }));
+        ok &= expect(!frequencyTx.confirmedTransmitFreq(),
+                     "a validity flag alone cannot revive an old frequency");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) {
+            d.transmitFreq = 0.0; d.transmitFreqValid = true;
+        }));
+        ok &= expect(!frequencyTx.confirmedTransmitFreq() && frequencyTx.transmitFreq() == 14.025,
+                     "invalid zero readback does not corrupt the last valid number");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) {
+            d.transmitFreq = std::numeric_limits<double>::quiet_NaN(); d.transmitFreqValid = true;
+        }));
+        ok &= expect(!frequencyTx.confirmedTransmitFreq() && frequencyTx.transmitFreq() == 14.025,
+                     "nonfinite readback cannot become valid");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) {
+            d.transmitFreq = 7.1; d.transmitFreqValid = true;
+        }));
+        frequencyTx.applyChanges(td([](TransmitDelta& d) { d.legacyTransmitFreq = 14.025; }));
+        ok &= expect(frequencyTx.transmitFreq() == 14.025
+                     && frequencyTx.confirmedTransmitFreq() == 7.1,
+                     "ATU reference and actual TX can differ without weakening proof");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) { d.transmitFreqValid = false; }));
+        ok &= expect(frequencyTx.transmitFreq() == 14.025 && !frequencyTx.confirmedTransmitFreq(),
+                     "a timeout leaves the established ATU reference untouched");
+        frequencyTx.resetTransmitFrequencyObservation();
+        ok &= expect(!frequencyTx.confirmedTransmitFreq() && frequencyTx.transmitFreq() == 14.025,
+                     "backend replacement clears proof but preserves the legacy getter");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) { d.transmitFreq = 28.1; }));
+        ok &= expect(frequencyTx.transmitFreq() == 28.1 && !frequencyTx.transmitFreqValidity(),
+                     "the next legacy backend adopts frequency normally");
+        ok &= expect(intents == 0, "frequency observation and expiry issue no control intent");
+    }
+    {
+        TransmitModel frequencyTx;
+        TransmitDelta report;
+        report.transmitFreq = 14.0265;
+        report.transmitFreqValid = true;
+        frequencyTx.applyChanges(report);
+        ok &= expect(frequencyTx.confirmedTransmitFreq() == 14.0265
+                     && frequencyTx.transmitFreq() == 0.0,
+                     "TX arriving before RX cannot initialize the ATU dial reference");
+        frequencyTx.applyChanges(td([](TransmitDelta& d) { d.legacyTransmitFreq = 14.025; }));
+        frequencyTx.resetTransmitFrequencyObservation();
+        frequencyTx.applyChanges(report);
+        ok &= expect(frequencyTx.confirmedTransmitFreq() == 14.0265
+                     && frequencyTx.transmitFreq() == 14.025,
+                     "TX arriving first after reconnect cannot overwrite the retained ATU reference");
+        report.transmitFreqDeadline = QDeadlineTimer{0, Qt::PreciseTimer};
+        frequencyTx.applyChanges(report);
+        ok &= expect(!frequencyTx.confirmedTransmitFreq()
+                     && frequencyTx.transmitFreqValidity() == false,
+                     "an already expired queued report cannot renew freshness without the backend pump");
+        int invalidated = 0;
+        QObject::connect(&frequencyTx, &TransmitModel::stateChanged, [&] { ++invalidated; });
+        frequencyTx.applyChanges(td([](TransmitDelta& d) { d.transmitFreqValid = false; }));
+        ok &= expect(invalidated == 1,
+                     "backend expiry still notifies observers after getter-level expiry");
+        int renewed = 0;
+        QObject::connect(&frequencyTx, &TransmitModel::stateChanged, [&] { ++renewed; });
+        report.transmitFreqDeadline = QDeadlineTimer{5000, Qt::PreciseTimer};
+        frequencyTx.applyChanges(report);
+        ok &= expect(frequencyTx.confirmedTransmitFreq() == 14.0265 && renewed == 1,
+                     "a fresh report of the same frequency announces restoration of validity");
+        frequencyTx.resetState();
+        ok &= expect(!frequencyTx.confirmedTransmitFreq()
+                     && !frequencyTx.transmitFreqValidity().has_value()
+                     && frequencyTx.transmitFreq() == 14.025,
+                     "session reset clears proof while retaining the legacy reference");
+    }
 
     // A backend's MOX delta is the radio's live PTT answer, not this client's
     // transmit intent. RadioModel publishes it on radioTransmittingChanged;

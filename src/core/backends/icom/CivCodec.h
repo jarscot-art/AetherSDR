@@ -58,6 +58,9 @@ struct CivFrame {
     bool hasSub = false;
     std::uint8_t sub = 0;
     std::vector<std::uint8_t> data;
+    // Retain the wire distinction: FC ends reassembly but is not normal FD.
+    // Legacy decoders keep their policy; strict readbacks require FD.
+    bool hasNormalTerminator = true;
 
     [[nodiscard]] bool isOk() const noexcept { return cmd == kCivOk; }
     [[nodiscard]] bool isNg() const noexcept { return cmd == kCivNg; }
@@ -652,6 +655,10 @@ enum class RepeaterOffsetDirection : std::uint8_t {
 repeaterToneConfirmationForWrite(std::uint8_t to, const CivFrame& write);
 [[nodiscard]] std::optional<RepeaterToneRegister> decodeRepeaterToneRegister(
     std::span<const std::uint8_t> payload);
+// IC-7300MK2 CI-V guide, command table: bare 0F reads SPLIT; the
+// reply's single data byte is 00/01. DUP 10/11/12 is a different dialect.
+[[nodiscard]] std::vector<std::uint8_t> cmdReadSplit(std::uint8_t to);
+[[nodiscard]] std::optional<bool> decodeSplit(std::span<const std::uint8_t> payload);
 [[nodiscard]] std::vector<std::uint8_t> cmdReadTransmitFrequency(std::uint8_t to);
 [[nodiscard]] std::vector<std::uint8_t> cmdSetCtcssTone(std::uint8_t to,
                                                         std::uint8_t which,

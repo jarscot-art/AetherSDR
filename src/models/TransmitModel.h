@@ -4,6 +4,7 @@
 #include <QPointer>
 
 #include <QObject>
+#include <QDeadlineTimer>
 #include <QHash>
 #include <QSet>
 #include <QMap>
@@ -15,6 +16,7 @@
 #include <functional>
 #include <atomic>
 #include <memory>
+#include <optional>
 
 class QTimer;
 
@@ -111,7 +113,25 @@ public:
     bool    admitsCwxSend() const { return !m_tune; }
     bool    isMox()         const { return m_mox; }
     bool    isTransmitting() const { return m_transmitting; }
-    double  transmitFreq()  const { return m_transmitFreq; }  // MHz, from "transmit freq=..."
+    // Compatibility MHz reference retained for existing ATU/KAT500 consumers.
+    // An opted-in backend may keep its dial reference separate from actual TX.
+    // It is not a freshness claim; use confirmedTransmitFreq() for live TX.
+    double  transmitFreq() const { return m_transmitFreq; }
+    std::optional<bool> transmitFreqValidity() const
+    {
+        return m_transmitFreqValid == true && m_transmitFreqDeadline.hasExpired()
+            ? std::optional<bool>{false} : m_transmitFreqValid;
+    }
+    std::optional<double> confirmedTransmitFreq() const
+    {
+        return transmitFreqValidity() == true ? m_confirmedTransmitFreq : std::nullopt;
+    }
+    // No signal on teardown: RadioModel can also call this from destruction.
+    void resetTransmitFrequencyObservation()
+    {
+        m_transmitFreqValid.reset();
+        m_confirmedTransmitFreq.reset();
+    }
     void    setTransmitting(bool tx);
 
     // ── Mic / monitor / processor getters ─────────────────────────────────
@@ -683,6 +703,9 @@ private:
     bool   m_tune{false};
     bool   m_mox{false};
     double m_transmitFreq{0.0};   // MHz — last reported "transmit freq=..."
+    std::optional<bool> m_transmitFreqValid;
+    std::optional<double> m_confirmedTransmitFreq;
+    QDeadlineTimer m_transmitFreqDeadline{QDeadlineTimer::Forever};
     bool m_transmitting{false};
 
     // Mic / monitor / processor state

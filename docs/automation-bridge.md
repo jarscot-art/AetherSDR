@@ -4306,6 +4306,26 @@ past the previously collected ID is an evidence gap, not zero missing activity.
 A new backend starts a new UUID `backendInstanceId`, also present inside
 `stateFreshness`; use it even when a reconnect reuses the same process and radio.
 
+On the IC-7300MK2, the scheduler payload also includes `splitTxReadback`.
+It has independent `split` (0/1) and `txFrequencyHz` observations, each with
+`valid`, `status`, `ageMs`, `source`, and `valuesRedacted`. `value` exists only
+when valid; `lastConfirmedValue` is explicitly historical. Both numeric fields
+are omitted when values are redacted, including default incident diagnostics.
+The block also reports `pollIntervalMs` (2000), `freshnessBudgetMs` (5000),
+`sessionGeneration` and `contextGeneration`. It does not change
+`stateFreshness.trackedStateReady` or grant any TX authority. Unsupported models
+return only `supported:false` in this block.
+
+Statuses include `never-confirmed`, `confirmed`, `previous-context`, `stale`,
+`timeout`, `refused`, `no-data`, `identity-change`, and `disconnected`.
+SPLIT OFF is a valid zero, not an absent observation. Bare ACKs and malformed
+frames never confirm a frequency. The legacy ATU frequency getter can retain a
+dial/reference value while live TX is unknown; authoritative consumers must
+use `TransmitModel::confirmedTransmitFreq()`, not `transmitFreq()`.
+Native TX deltas carry an absolute monotonic deadline, checked by the model
+even before the scheduler pump publishes an expiry notification. A TX reply
+arriving before RX cannot replace the legacy ATU reference.
+
 While a PTT request is awaiting confirmation the reply also carries
 `"pttIntent"` (the requested state) and `"pttIntentRemainingMs"` (how much of
 the bounded window is left). Suppression applies only while `pttIntent` is

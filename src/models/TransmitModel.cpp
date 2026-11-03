@@ -37,6 +37,7 @@ void TransmitModel::resetDaxSessionState()
 
 void TransmitModel::resetState()
 {
+    resetTransmitFrequencyObservation();
     m_confirmReceiveCwPitch = false;
     for (quint64& revision : m_controlIntentRevisions) { ++revision; }
     // A request of the ending session is answered, if at all, by a dead link.
@@ -150,7 +151,29 @@ void TransmitModel::applyChanges(const TransmitDelta& d)
     // and could open this client's mic/DAX/serial-PTT paths when hardware PTT
     // or another network client keys the radio.
     changed |= assign(d.mox, m_mox);
-    changed |= assign(d.transmitFreq, m_transmitFreq);
+    if (d.legacyTransmitFreq && std::isfinite(*d.legacyTransmitFreq) && *d.legacyTransmitFreq >= 0.0) {
+        changed |= assign(d.legacyTransmitFreq, m_transmitFreq);
+    }
+    const auto previousFrequencyValidity = m_transmitFreqValid;
+    const auto previousQualifiedFrequencyValidity = transmitFreqValidity();
+    if (d.transmitFreqValid.has_value()) {
+        if (!*d.transmitFreqValid) {
+            m_transmitFreqValid = false;
+        } else if (d.transmitFreq && std::isfinite(*d.transmitFreq) && *d.transmitFreq > 0.0) {
+            changed |= m_confirmedTransmitFreq != d.transmitFreq;
+            m_confirmedTransmitFreq = d.transmitFreq;
+            m_transmitFreqDeadline = d.transmitFreqDeadline.value_or(QDeadlineTimer{QDeadlineTimer::Forever});
+            m_transmitFreqValid = true;
+        } else {
+            m_transmitFreqValid = false;
+        }
+    } else if (d.transmitFreq) {
+        changed |= assign(d.transmitFreq, m_transmitFreq);
+        m_transmitFreqValid.reset(); // legacy publications make no freshness claim
+        m_confirmedTransmitFreq.reset();
+    }
+    changed |= previousFrequencyValidity != m_transmitFreqValid
+        || previousQualifiedFrequencyValidity != transmitFreqValidity();
 
     // ── Mic / monitor / processor ──
     micChanged |= assign(d.micSelection, m_micSelection);

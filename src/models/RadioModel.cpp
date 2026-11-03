@@ -1808,6 +1808,7 @@ void RadioModel::teardownBackend()
     }
     m_memoryRefreshActive = false;
     m_memoryImportFailures = 0;
+    m_transmitModel.resetTransmitFrequencyObservation();
     // Drop the backend and everything it owns (RadioConnection, PanadapterStream
     // and their worker threads). Qt removes any connection whose sender or
     // receiver is destroyed, so the wiring made by setupBackend() goes with it.

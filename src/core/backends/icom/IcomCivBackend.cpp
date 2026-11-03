@@ -3,6 +3,7 @@
 #include <QPointer>
 
 #include <QDateTime>
+#include <QDeadlineTimer>
 #include <QHash>
 #include <QJsonDocument>
 #include <QLoggingCategory>
@@ -994,11 +995,13 @@ void IcomCivBackend::connectRadio(const RadioConnectRequest& request)
 
 void IcomCivBackend::disconnectRadio()
 {
+    const QPointer<IcomCivBackend> alive(this);
     retirePcmStreams();
     finishAx25PostResampleCapture();
     finishMemoryRefresh(false);
     m_tuneTimer->stop();
     ++m_sessionGeneration;
+    const std::uint64_t session = m_sessionGeneration;
     m_civRecoveryStartedAtMs = 0;
     m_lastCivRecoveryAttemptAtMs = 0;
     m_civRecoveryAttempts = 0;
@@ -1071,6 +1074,8 @@ void IcomCivBackend::disconnectRadio()
     m_repeaterDtcsTxReverse.reset();
     m_repeaterDtcsRxReverse.reset();
     m_repeaterTxFrequencyHz.reset();
+    resetSplitTxReadback(QStringLiteral("disconnected"));
+    if (!alive || session != m_sessionGeneration) { return; }
     // Same reasoning, applied to every OTHER control: the scrub mirrors are
     // stale the moment the session ends, so a scrub run after a reconnect that
     // dropped a read must report NOT-TESTED rather than re-asserting the
@@ -1119,6 +1124,8 @@ void IcomCivBackend::sendConnectReadBurst()
 {
     if (!m_session)
         return;
+    const QPointer<IcomCivBackend> alive(this);
+    const std::uint64_t session = m_sessionGeneration;
     // A valid identity ends discovery before the model-shaped snapshot starts.
     if (m_civDetectTimer)
         m_civDetectTimer->stop();
@@ -1130,6 +1137,10 @@ void IcomCivBackend::sendConnectReadBurst()
     // Still DIRECTED, alongside the broadcast the caller sent: this one confirms
     // that the address we are actually using has something behind it, which the
     // broadcast cannot tell us on a bus with more than one device.
+    if (profileFor(*m_model).splitTxReadback) {
+        resetSplitTxReadback(QStringLiteral("never-confirmed"));
+        if (!alive || session != m_sessionGeneration || !m_session) { return; }
+    }
     const auto queueStartupRead = [this](const std::vector<std::uint8_t>& frame) {
         queueRead(frame, semanticKey(frame), IcomCivScheduler::Priority::Maintenance);
     };
@@ -1271,6 +1282,7 @@ void IcomCivBackend::sendConnectReadBurst()
         queueStartupRead(cmdReadTuneOffset(m_session->civAddress(), sub));
     queueTunerReadIfSupported(m_session->civAddress(),
                               IcomCivScheduler::Priority::Maintenance);
+    queueSplitTxReadback(IcomCivScheduler::Priority::Maintenance);
 
 }
 
@@ -1384,6 +1396,8 @@ bool IcomCivBackend::adoptCivIdentity(std::uint8_t address, std::uint8_t modelId
     if (m_civAmbiguous || !m_session) {
         return false;
     }
+    const QPointer<IcomCivBackend> alive(this);
+    const std::uint64_t session = m_sessionGeneration;
     if (m_civAddressPinned && address != m_session->civAddress()) {
         return false; // a reply from another bus device cannot identify our selection
     }
@@ -1392,6 +1406,8 @@ bool IcomCivBackend::adoptCivIdentity(std::uint8_t address, std::uint8_t modelId
             return false; // directed confirmation must not restart the snapshot
         }
         m_civAmbiguous = true;
+        resetSplitTxReadback(QStringLiteral("identity-change"));
+        if (!alive || session != m_sessionGeneration || !m_session) { return false; }
         terminateScheduler(IcomCivScheduler::TerminalOutcome::Cancelled,
                            SchedulerWaiterOutcome::Cancelled);
         // Native CW may still be queued in the radio even when PTT reads RX.
@@ -1433,6 +1449,8 @@ bool IcomCivBackend::adoptCivIdentity(std::uint8_t address, std::uint8_t modelId
         return false;
     }
 
+    resetSplitTxReadback(QStringLiteral("identity-change"));
+    if (!alive || session != m_sessionGeneration || !m_session) { return false; }
     m_civReported = address;
     m_civModelId = modelId;
     const IcomModel* identified = modelForId(modelId);
@@ -1445,6 +1463,7 @@ bool IcomCivBackend::adoptCivIdentity(std::uint8_t address, std::uint8_t modelId
     m_scopeStarted = false;
     resetScopeEdgeState();
     sendConnectReadBurst();
+    if (!alive || session != m_sessionGeneration || !m_session) { return false; }
     qCInfo(lcIcomAddr) << "CI-V identity: model ID" << Qt::hex << modelId
                      << "at address" << address;
     if (!identified) {
@@ -1658,6 +1677,10 @@ void IcomCivBackend::onSessionDisconnected(const QString& reason)
     }
     m_connected = false;
     ++m_sessionGeneration;
+    const QPointer<IcomCivBackend> alive(this);
+    const std::uint64_t session = m_sessionGeneration;
+    resetSplitTxReadback(QStringLiteral("disconnected"));
+    if (!alive || session != m_sessionGeneration) { return; }
     if (m_session) {
         disconnect(m_session.get(), nullptr, this, nullptr);
     }
@@ -2442,6 +2465,42 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
     if (!m_connected || sessionGeneration != m_sessionGeneration) {
         return;
     }
+    const QPointer<IcomCivBackend> alive(this);
+    const auto sessionCurrent = [alive, sessionGeneration, model = m_model,
+                                 ambiguous = m_civAmbiguous, identity = frame.cmd == cmd::kReadId] {
+        return alive && alive->m_connected && alive->m_sessionGeneration == sessionGeneration
+            && (identity || (alive->m_model == model && alive->m_civAmbiguous == ambiguous));
+    };
+    const bool nativeReadback = profileFor(*m_model).splitTxReadback.has_value();
+    const bool splitReply = nativeReadback && frame.cmd == cmd::kDuplex;
+    const bool txReply = nativeReadback && frame.cmd == cmd::kControl
+        && frame.sub == control::kReadTxFreq;
+    const std::string inFlightKey = m_civScheduler.stats().inFlightKey;
+    const bool readbackAck = nativeReadback && (frame.isOk() || frame.isNg())
+        && (inFlightKey == "split" || inFlightKey == "tx.frequency");
+    std::optional<QDeadlineTimer> txReadbackDeadline;
+    if (splitReply || txReply || readbackAck) {
+        if (!frame.hasNormalTerminator || !m_session || m_civReported == 0 || m_civAmbiguous
+            || frame.from != m_session->civAddress()
+            || (frame.to != kControllerAddress && frame.to != kBroadcastAddress)) {
+            return;
+        }
+        if (splitReply && (frame.hasSub || !decodeSplit(frame.data).has_value())) {
+            return;
+        }
+        if (txReply) {
+            const auto hz = decodeFreqExact(frame.data, m_model->freqBytes);
+            if (!frame.hasSub || !hz || *hz < m_model->tuningMinHz
+                || *hz > m_model->tuningMaxHz || *hz == 0) {
+                return;
+            }
+            txReadbackDeadline.emplace(profileFor(*m_model).splitTxReadback->freshnessMs,
+                                       Qt::PreciseTimer);
+        }
+        if (readbackAck && (frame.hasSub || !frame.data.empty())) {
+            return;
+        }
+    }
     // Reject invalid/foreign ID replies before they can retire a scheduler
     // transaction. Model ID and source need not match on a customized bus.
     if (frame.cmd == cmd::kReadId) {
@@ -2661,8 +2720,23 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
         // A window placed for the refused tune must not stay on screen either.
         resetScopeEdgeState();
     }
-    if (!identityReply)
+    if (readbackAck && observation == IcomCivScheduler::Observation::Accepted) {
+        ReadbackSample& sample = inFlightKey == "split" ? m_splitReadback : m_txReadback;
+        if (sample.serial == sample.attemptSerial) {
+            const QString status = frame.isNg() ? QStringLiteral("refused") : QStringLiteral("no-data");
+            if (inFlightKey == "tx.frequency") {
+                invalidateTxReadback(status, false);
+                if (!sessionCurrent()) { return; }
+            } else {
+                sample.valid = false;
+                sample.status = status;
+            }
+        }
+    }
+    if (!identityReply) {
         pumpCiv(frameAtMs);
+        if (!sessionCurrent()) { return; }
+    }
     const bool isPttState = frame.cmd == cmd::kControl && frame.hasSub
         && frame.sub == control::kPtt && !frame.data.empty();
     if (observation == IcomCivScheduler::Observation::Stale && !isPttState) {
@@ -2710,8 +2784,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
 
     switch (frame.cmd) {
     case cmd::kReadId: {
-        if (const auto id = parseModelIdReply(frame);
-            id && adoptCivIdentity(frame.from, *id)) {
+        const auto id = parseModelIdReply(frame);
+        const bool adopted = id && adoptCivIdentity(frame.from, *id);
+        if (!sessionCurrent()) { return; }
+        if (adopted) {
             const auto widths = availableBandwidthsHz();
             if (!widths.empty() && m_model->hasScope) {
                 emit panBandwidthLimitsChanged(panId(), widths.front() / 1e6,
@@ -2739,6 +2815,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             const std::uint64_t previousHz = m_frequencyHz;
             const auto oldPreampLabels = preampLabelsFor(*m_model, m_frequencyHz);
             m_frequencyHz = *hz;
+            if (previousHz != *hz) {
+                invalidateTxReadback(QStringLiteral("previous-context"));
+                if (!sessionCurrent()) { return; }
+            }
             m_frequencyEchoAtMs = nowMs();
             onScopeVfoMoved(previousHz, *hz);
             if (!std::ranges::equal(oldPreampLabels, preampLabelsFor(*m_model, m_frequencyHz))) {
@@ -2756,10 +2836,14 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             emit sliceChanged(sliceId(), s);
             // TxApplet's ATU toggle is deliberately frequency-aware: a second
             // click bypasses only the match made at the current TX frequency.
-            // Icom has one VFO here, so publish that same authoritative dial
-            // frequency on the transmit model instead of leaving it at 0 MHz.
+            // Legacy profiles use the selected dial for ATU context. Native
+            // TX-readback profiles publish only the radio's 1C 03 answer.
             TransmitDelta t;
-            t.transmitFreq = s.frequency;
+            if (nativeReadback) {
+                t.legacyTransmitFreq = s.frequency;
+            } else {
+                t.transmitFreq = s.frequency;
+            }
             emit transmitChanged(t);
         }
         return;
@@ -2769,6 +2853,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
     case cmd::kSetModeTrx: {
         if (frame.data.empty())
             return;
+        if (m_mode != static_cast<CivMode>(frame.data[0])) {
+            invalidateTxReadback(QStringLiteral("previous-context"));
+            if (!sessionCurrent()) { return; }
+        }
         m_mode = static_cast<CivMode>(frame.data[0]);
         // THE SECOND BYTE IS THE FILTER SLOT (1..3), and it was being discarded.
         // It is the only way to know which of the three IF filters is in use —
@@ -2805,6 +2893,20 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
     }
 
     case cmd::kDuplex: {
+        if (nativeReadback) {
+            const bool on = *decodeSplit(frame.data); // validated before observe()
+            const bool moved = !m_splitReadback.value || *m_splitReadback.value != on;
+            m_splitReadback.value = on;
+            m_splitReadback.atMs = frameAtMs;
+            m_splitReadback.valid = true;
+            m_splitReadback.status = QStringLiteral("confirmed");
+            ++m_splitReadback.serial;
+            if (moved) {
+                invalidateTxReadback(QStringLiteral("previous-context"));
+                if (!sessionCurrent()) { return; }
+            }
+            return;
+        }
         const FmRepeaterProfile* fm = basicFmProfileFor(m_model);
         if (!fm || !fm->hasDuplex) {
             return;
@@ -3276,6 +3378,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             return;
         confirmState(QStringLiteral("mode"), QStringLiteral("%1/%2/%3")
             .arg(static_cast<int>(st->mode)).arg(st->dataMode).arg(st->filter));
+        if (m_mode != st->mode || m_dataMode != st->dataMode) {
+            invalidateTxReadback(QStringLiteral("previous-context"));
+            if (!sessionCurrent()) { return; }
+        }
         const bool previousData = m_dataMode;
         m_mode = st->mode;
         m_dataMode = st->dataMode;
@@ -3852,6 +3958,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
                 return;
             }
             const int restoreTunePower = !keyed ? stopTuneProducer() : -1;
+            if (m_keyed != keyed) {
+                invalidateTxReadback(QStringLiteral("previous-context"));
+                if (!sessionCurrent()) { return; }
+            }
             m_keyed = keyed;
             m_meters.setTransmitting(m_keyed);
             if (!keyed && m_session) {
@@ -3897,12 +4007,17 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             // Apply frequency and tuner status in ONE delta. That makes the
             // successful-state callback capture the right frequency even if a
             // tuner reply overtakes the separate connect-time frequency read.
-            if (m_frequencyHz > 0)
+            if (m_frequencyHz > 0 && !profileFor(*m_model).splitTxReadback)
                 t.transmitFreq = static_cast<double>(m_frequencyHz) / 1e6;
             t.atuEnabled = (v != 0);
             t.atuStatusRaw = v == 0x02 ? QStringLiteral("TUNE_IN_PROGRESS")
                            : v == 0x01 ? QStringLiteral("TUNE_SUCCESSFUL")
                                        : QStringLiteral("TUNE_BYPASS");
+            // Keep the existing ATU-status/reference pair synchronous: it also
+            // completes an operator's ATU intent. The reference is not TX proof.
+            if (nativeReadback && m_frequencyHz > 0) {
+                t.legacyTransmitFreq = static_cast<double>(m_frequencyHz) / 1.0e6;
+            }
             emit transmitChanged(t);
         }
         if (frame.hasSub && frame.sub == control::kXfc && !frame.data.empty()) {
@@ -3919,11 +4034,27 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
                 m_xfcReleaseRequired = false;
             }
             if (on != m_transmitFrequencyCheck) {
+                invalidateTxReadback(QStringLiteral("previous-context"));
+                if (!sessionCurrent()) { return; }
                 m_transmitFrequencyCheck = on;
                 emit transmitFrequencyCheckChanged(on);
             }
         }
         if (frame.hasSub && frame.sub == control::kReadTxFreq) {
+            if (nativeReadback) {
+                const auto hz = decodeFreqExact(frame.data, m_model->freqBytes);
+                m_txReadback.value = *hz; // validated before observe()
+                m_txReadback.atMs = frameAtMs;
+                m_txReadback.valid = true;
+                m_txReadback.status = QStringLiteral("confirmed");
+                ++m_txReadback.serial;
+                TransmitDelta t;
+                t.transmitFreq = static_cast<double>(*hz) / 1.0e6;
+                t.transmitFreqValid = true;
+                t.transmitFreqDeadline = txReadbackDeadline;
+                emit transmitChanged(t);
+                return;
+            }
             if (!extendedFmReadbackProfileFor(m_model)) {
                 return;
             }
@@ -3940,12 +4071,20 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
         if (!frame.hasSub)
             return;
         if (frame.sub == tuneOffset::kRitOnOff && !frame.data.empty()) {
+            if (m_ritOn != (frame.data[0] != 0)) {
+                invalidateTxReadback(QStringLiteral("previous-context"));
+                if (!sessionCurrent()) { return; }
+            }
             m_ritOn = frame.data[0] != 0;
             SliceDelta d; d.ritOn = m_ritOn;
             emit sliceChanged(sliceId(), d);
             return;
         }
         if (frame.sub == tuneOffset::kXitOnOff && !frame.data.empty()) {
+            if (m_xitOn != (frame.data[0] != 0)) {
+                invalidateTxReadback(QStringLiteral("previous-context"));
+                if (!sessionCurrent()) { return; }
+            }
             m_xitOn = frame.data[0] != 0;
             SliceDelta d; d.xitOn = m_xitOn;
             emit sliceChanged(sliceId(), d);
@@ -3965,6 +4104,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             // applies to receive, transmit or both, so the same offset is
             // published to each — a slice that showed RIT 0 while the radio was
             // offset is exactly the reconnect bug this read exists to close.
+            if (m_ritOffsetHz != hz) {
+                invalidateTxReadback(QStringLiteral("previous-context"));
+                if (!sessionCurrent()) { return; }
+            }
             m_ritOffsetHz = hz;
             SliceDelta d;
             d.ritFreq = hz;
@@ -4210,6 +4353,11 @@ std::string IcomCivBackend::semanticKey(std::span<const std::uint8_t> frame) con
     if (!parsed) {
         return {};
     }
+    if (profileFor(*m_model).splitTxReadback) {
+        if (parsed->cmd == cmd::kDuplex) { return "split"; }
+        if (parsed->cmd == cmd::kControl && parsed->hasSub
+            && parsed->sub == control::kReadTxFreq) { return "tx.frequency"; }
+    }
     switch (parsed->cmd) {
     case cmd::kRxAntenna:
         return "rx.antenna";
@@ -4321,7 +4469,7 @@ void IcomCivBackend::queueRead(const std::vector<std::uint8_t>& frame,
                                const std::string& key,
                                IcomCivScheduler::Priority priority,
                                qint64 notBeforeMs,
-                               std::vector<std::uint8_t> replyDataPrefix, bool coalesce)
+                               std::vector<std::uint8_t> replyDataPrefix, bool coalesce, bool supersedes)
 {
     const std::optional<CivFrame> parsed = parseFrame(frame);
     if (!parsed) {
@@ -4344,6 +4492,7 @@ void IcomCivBackend::queueRead(const std::vector<std::uint8_t>& frame,
     }
     request.replyDataPrefix = std::move(replyDataPrefix);
     request.coalesce = coalesce;
+    request.supersedes = supersedes;
     request.notBeforeMs = notBeforeMs;
     m_civScheduler.enqueue(std::move(request), nowMs());
 }
@@ -4396,16 +4545,31 @@ void IcomCivBackend::pumpCiv(qint64 nowMs)
         serviceSchedulerWaiters(nowMs);
         return;
     }
+    const QPointer<IcomCivBackend> alive(this);
+    const std::uint64_t session = m_sessionGeneration;
+    const IcomModel* model = m_model;
+    const bool ambiguous = m_civAmbiguous;
     const std::optional<IcomCivScheduler::Dispatch> dispatch = m_civScheduler.takeNext(nowMs);
-    if (!dispatch) {
-        serviceSchedulerWaiters(nowMs);
-        return;
-    }
-    const auto consumed = qScopeGuard([command = dispatch->txCommand] {
+    const auto consumed = qScopeGuard([command = dispatch ? dispatch->txCommand
+                                                        : std::optional<TxCoordinator::Command>{}] {
         if (command) {
             command->completion.finish();
         }
     });
+    serviceSplitTxReadback(nowMs);
+    if (!alive || session != m_sessionGeneration || !m_connected || !m_session
+        || model != m_model || ambiguous != m_civAmbiguous) {
+        return; // validity publication can synchronously retire session or identity
+    }
+    if (!dispatch) {
+        serviceSchedulerWaiters(nowMs);
+        return;
+    }
+    if (dispatch->key == "split" || dispatch->key == "tx.frequency") {
+        ReadbackSample& sample = dispatch->key == "split" ? m_splitReadback : m_txReadback;
+        sample.attemptSerial = sample.serial;
+        sample.attemptGeneration = dispatch->generation;
+    }
     // ROUTINE = the high-rate loops only.  `>= Ptt` also swept up Control and
     // Maintenance, which hid the startup snapshot and the scope on/output
     // writes from the default `civ trace` — the frames behind the documented
@@ -4414,7 +4578,8 @@ void IcomCivBackend::pumpCiv(qint64 nowMs)
     const bool routineDispatch = dispatch->priority == IcomCivScheduler::Priority::Ptt
         || dispatch->priority == IcomCivScheduler::Priority::ActiveMeter;
     traceCiv(/*outbound=*/true, dispatch->frame, routineDispatch);
-    if (dispatch->supersedes) {
+    if (dispatch->supersedes && dispatch->key != "tx.frequency") {
+        // Native TX reads supersede observations, not radio settings.
         if (dispatch->frame.size() > 5) {
             noteControlSent(dispatch->frame[4], dispatch->frame[5], true);
         } else if (dispatch->frame.size() > 4) {
@@ -4438,6 +4603,128 @@ void IcomCivBackend::pumpCiv(qint64 nowMs)
         m_scopeBlankSweepUntilMs = nowMs + kScopeBlankSweepMs;
     }
     serviceSchedulerWaiters(nowMs);
+}
+
+void IcomCivBackend::queueSplitTxReadback(IcomCivScheduler::Priority priority)
+{
+    if (!m_connected || !m_session || !profileFor(*m_model).splitTxReadback
+        || m_civReported == 0 || m_civAmbiguous) {
+        return;
+    }
+    const std::uint8_t addr = m_session->civAddress();
+    queueRead(cmdReadSplit(addr), "split", priority);
+    queueRead(cmdReadTransmitFrequency(addr), "tx.frequency", priority);
+    m_splitTxPollAtMs = nowMs();
+}
+
+void IcomCivBackend::invalidateTxReadback(const QString& reason, bool refresh)
+{
+    if (!profileFor(*m_model).splitTxReadback) {
+        return;
+    }
+    const bool wasValid = m_txReadback.valid;
+    m_txReadback.valid = false;
+    m_txReadback.status = reason;
+    if (refresh) {
+        ++m_txReadbackContext;
+    }
+    if (refresh && m_connected && m_session && m_civReported != 0 && !m_civAmbiguous) {
+        // A context change supersedes reads queued or in flight before it.
+        // It never changes a radio setting and uses the existing paced stream.
+        queueRead(cmdReadTransmitFrequency(m_session->civAddress()), "tx.frequency",
+                  IcomCivScheduler::Priority::Control, 0, {}, true, true);
+    }
+    if (wasValid) {
+        TransmitDelta t;
+        t.transmitFreqValid = false;
+        emit transmitChanged(t);
+    }
+}
+
+void IcomCivBackend::resetSplitTxReadback(const QString& reason)
+{
+    const bool publishInvalid = m_txReadback.valid || profileFor(*m_model).splitTxReadback.has_value();
+    m_splitReadback = {};
+    m_txReadback = {};
+    m_splitReadback.status = reason;
+    m_txReadback.status = reason;
+    m_splitTxPollAtMs = -1;
+    ++m_txReadbackContext;
+    const auto& events = m_civScheduler.recentTransactions();
+    if (!events.empty()) { m_splitTxEventId = events.back().eventId; }
+    if (publishInvalid) {
+        TransmitDelta t;
+        t.transmitFreqValid = false;
+        emit transmitChanged(t);
+    }
+}
+
+void IcomCivBackend::serviceSplitTxReadback(qint64 now)
+{
+    const auto profile = profileFor(*m_model).splitTxReadback;
+    if (!profile) { return; }
+    std::optional<QString> invalidTxReason;
+    for (const auto& event : m_civScheduler.recentTransactions()) {
+        if (event.eventId <= m_splitTxEventId) { continue; }
+        m_splitTxEventId = event.eventId;
+        if (event.completion != IcomCivScheduler::Completion::Timeout
+            || (event.key != "split" && event.key != "tx.frequency")) {
+            continue;
+        }
+        ReadbackSample& sample = event.key == "split" ? m_splitReadback : m_txReadback;
+        if (event.generation != sample.attemptGeneration
+            || sample.serial != sample.attemptSerial) {
+            continue; // a newer radio report already superseded this attempt
+        }
+        if (event.key == "tx.frequency") {
+            invalidTxReason = QStringLiteral("timeout");
+        } else {
+            sample.valid = false;
+            sample.status = QStringLiteral("timeout");
+        }
+    }
+    if (m_splitReadback.valid && now - m_splitReadback.atMs > profile->freshnessMs) {
+        m_splitReadback.valid = false;
+        m_splitReadback.status = QStringLiteral("stale");
+    }
+    if (!invalidTxReason && m_txReadback.valid && now - m_txReadback.atMs > profile->freshnessMs) {
+        invalidTxReason = QStringLiteral("stale");
+    }
+    // Emit only after iterating: a direct observer may clear scheduler history.
+    if (invalidTxReason) { invalidateTxReadback(*invalidTxReason, false); }
+}
+
+QVariantMap IcomCivBackend::splitTxReadbackDiagnostics(qint64 now, bool withValues) const
+{
+    const auto profile = profileFor(*m_model).splitTxReadback;
+    QVariantMap out{{QStringLiteral("supported"), profile.has_value()}};
+    if (!profile) { return out; }
+    const auto describe = [&](const ReadbackSample& sample, const QString& key) {
+        const qint64 age = sample.atMs < 0 ? -1 : std::max<qint64>(0, now - sample.atMs);
+        const bool fresh = m_connected && sample.valid && age >= 0 && age <= profile->freshnessMs;
+        QVariantMap row{{QStringLiteral("valid"), fresh},
+            {QStringLiteral("ageMs"), age},
+            {QStringLiteral("status"), sample.valid && !fresh ? QStringLiteral("stale") : sample.status},
+            {QStringLiteral("source"), key},
+            {QStringLiteral("valuesRedacted"), !withValues}};
+        // Historical values are labelled explicitly and never exposed as current.
+        if (withValues && sample.value) {
+            row.insert(QStringLiteral("lastConfirmedValue"), QVariant::fromValue<qulonglong>(*sample.value));
+            if (fresh) { row.insert(QStringLiteral("value"), QVariant::fromValue<qulonglong>(*sample.value)); }
+        }
+        return row;
+    };
+    out.insert(QStringLiteral("split"), describe(m_splitReadback, QStringLiteral("0F")));
+    out.insert(QStringLiteral("txFrequencyHz"), describe(m_txReadback, QStringLiteral("1C 03")));
+    out.insert(QStringLiteral("freshnessBudgetMs"), profile->freshnessMs);
+    out.insert(QStringLiteral("pollIntervalMs"), profile->pollIntervalMs);
+    out.insert(QStringLiteral("sessionGeneration"), QVariant::fromValue<qulonglong>(m_sessionGeneration));
+    out.insert(QStringLiteral("contextGeneration"), QVariant::fromValue<qulonglong>(m_txReadbackContext));
+    out.insert(QStringLiteral("limitation"), QStringLiteral(
+        "Radio-reported samples, not an atomic snapshot. CI-V has no transaction IDs; "
+        "unrecognizable delayed broadcasts can only be reconciled by subsequent reads. "
+        "Legacy transmitFreq() retains the last value; confirmedTransmitFreq() requires valid readback."));
+    return out;
 }
 
 void IcomCivBackend::confirmState(const QString& key, const QVariant& value,
@@ -4528,6 +4815,7 @@ QVariantMap IcomCivBackend::schedulerDiagnostics(std::size_t traceLimit,
     QVariantMap out;
     out.insert(QStringLiteral("backendInstanceId"), m_diagnosticInstanceId);
     out.insert(QStringLiteral("stateFreshness"), stateFreshness(withValues));
+    out.insert(QStringLiteral("splitTxReadback"), splitTxReadbackDiagnostics(nowMs(), withValues));
     // Callers that already publish their own trace (incidentSnapshot) or that
     // only need the freshness block pass a shallow limit. Only the explicit
     // `civ scheduler` verb asks for the full ring.
@@ -4770,10 +5058,21 @@ void IcomCivBackend::sendUserCommand(const std::vector<std::uint8_t>& frame,
     }
     if (!m_session || !m_connected)
         return;
+    const QPointer<IcomCivBackend> alive(this);
+    const std::uint64_t session = m_sessionGeneration;
     const qint64 now = nowMs();
     const std::string key = semanticKey(frame);
     const std::optional<CivFrame> parsed = parseFrame(frame);
     if (parsed) {
+        if (parsed->cmd == cmd::kSetFreq || parsed->cmd == cmd::kSetMode
+            || parsed->cmd == cmd::kVfoMode || parsed->cmd == cmd::kTuneOffset
+            || parsed->cmd == 0x07) {
+            invalidateTxReadback(QStringLiteral("previous-context"));
+            if (!alive || session != m_sessionGeneration || !m_connected || !m_session
+                || m_civAmbiguous) {
+                return;
+            }
+        }
         noteControlScheduled(parsed->cmd, parsed->sub, parsed->hasSub);
     }
     const bool failSafeUnkey = parsed && parsed->cmd == cmd::kControl
@@ -6555,6 +6854,11 @@ QVariantMap IcomCivBackend::profileMap() const
         features.append(row);
     }
     out.insert(QStringLiteral("features"), features);
+    if (profile.splitTxReadback) {
+        out.insert(QStringLiteral("splitTxReadback"), QVariantMap{
+            {QStringLiteral("pollIntervalMs"), profile.splitTxReadback->pollIntervalMs},
+            {QStringLiteral("freshnessMs"), profile.splitTxReadback->freshnessMs}});
+    }
     if (profile.fmRepeater) {
         QVariantMap fm;
         fm.insert(QStringLiteral("dialect"),
@@ -7878,6 +8182,10 @@ void IcomCivBackend::onLinkTick()
         queueControl(cmdReadFunction(addr, func::kRepeaterTone));
     }
 
+    if (profile.splitTxReadback && (m_splitTxPollAtMs < 0
+        || now - m_splitTxPollAtMs >= profile.splitTxReadback->pollIntervalMs)) {
+        queueSplitTxReadback(IcomCivScheduler::Priority::Control);
+    }
     if (phase % 2 == 0) {
         queueControl(cmdReadFrequency(addr));
         queueControl(profileFor(*m_model).supports(IcomFeature::VfoMode)

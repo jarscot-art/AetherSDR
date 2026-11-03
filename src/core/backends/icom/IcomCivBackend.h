@@ -11,6 +11,7 @@
 #include <QElapsedTimer>
 
 #include <deque>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <span>
@@ -280,7 +281,8 @@ private:
     void applyKeying(bool key, const std::optional<TxCoordinator::Command>& command);
     void queueRead(const std::vector<std::uint8_t>& frame, const std::string& key,
                    IcomCivScheduler::Priority priority, qint64 notBeforeMs = 0,
-                   std::vector<std::uint8_t> replyDataPrefix = {}, bool coalesce = true);
+                   std::vector<std::uint8_t> replyDataPrefix = {}, bool coalesce = true,
+                   bool supersedes = false);
     void queueWrite(const std::vector<std::uint8_t>& frame, const std::string& key,
                     IcomCivScheduler::Priority priority, bool supersedes = true,
                     bool coalesce = true, const std::optional<TxCoordinator::Command>& command = {});
@@ -334,6 +336,11 @@ private:
     void finishMemoryRefresh(bool success);
     void finishMemoryRefreshWhenDrained(quint64 generation);
     void publishExtendedRepeaterState();
+    void queueSplitTxReadback(IcomCivScheduler::Priority priority);
+    void invalidateTxReadback(const QString& reason, bool refresh = true);
+    void resetSplitTxReadback(const QString& reason);
+    void serviceSplitTxReadback(qint64 nowMs);
+    [[nodiscard]] QVariantMap splitTxReadbackDiagnostics(qint64 nowMs, bool withValues) const;
     // Adopt (or refuse) the address the radio reported in its 0x19 0x00 reply.
     bool adoptCivIdentity(std::uint8_t address, std::uint8_t modelId);
     void publishModelControls();
@@ -411,6 +418,21 @@ private:
     MeterPoller m_meters;
     IcomCivScheduler m_civScheduler;
     QElapsedTimer m_clock;
+
+    struct ReadbackSample {
+        std::optional<std::uint64_t> value;
+        qint64 atMs = -1;
+        bool valid = false;
+        QString status = QStringLiteral("never-confirmed");
+        std::uint64_t serial = 0;
+        std::uint64_t attemptSerial = 0;
+        std::uint64_t attemptGeneration = 0;
+    };
+    ReadbackSample m_splitReadback;
+    ReadbackSample m_txReadback;
+    qint64 m_splitTxPollAtMs = -1;
+    std::uint64_t m_splitTxEventId = 0;
+    std::uint64_t m_txReadbackContext = 0;
 
     // 48 kHz mono from the radio -> 24 kHz interleaved stereo for the engine.
     //

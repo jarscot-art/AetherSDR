@@ -4,6 +4,7 @@
 // is unstarted and frames/state are injected through the existing test seam.
 #include "core/backends/icom/IcomCivBackend.h"
 #include "core/backends/icom/IcomScope.h"
+#include "core/backends/icom/IcomControls.h"
 #include "core/backends/icom/IcomSession.h"
 #include "core/backends/flex/FlexBackend.h"
 #include "core/backends/hl2/Hl2Backend.h"
@@ -233,6 +234,31 @@ int main(int argc, char** argv)
     }
     QCoreApplication app(argc, argv);
     using namespace AetherSDR::icom;
+    const IcomModel* mk2 = modelForId(0xB6);
+    check(mk2 && profileFor(*mk2).splitTxReadback.has_value()
+              && profileFor(*mk2).supports(IcomFeature::SplitTxReadback)
+              && profileFor(*mk2).fmRepeater.has_value()
+              && !profileFor(*mk2).fmRepeater->hasDuplex
+              && !profileFor(*mk2).supports(IcomFeature::FmRepeaterExtendedReadback),
+          "MK2 native readback neither enables FM DUP nor extended FM traffic");
+    if (mk2) {
+        for (const auto& spec : controlSpecs()) {
+            if (spec.id == "repeater.shift" || spec.id == "repeater.offset") {
+                check(!controlSupported(*mk2, profileFor(*mk2), spec),
+                      "MK2 SPLIT replies cannot be credited to FM DUP registry rows");
+            }
+            if (spec.id == "split.status" || spec.id == "tx.frequency") {
+                check(spec.readAtConnect && spec.wiring == Wiring::DecodeOnly && spec.seamVerb.empty(),
+                      "native readbacks are connect-read, read-only and excluded from scrub");
+            }
+        }
+    }
+    for (const auto id : {0xA4, 0xA2, 0x94, 0x98}) {
+        const auto* other = modelForId(static_cast<std::uint8_t>(id));
+        check(other && !profileFor(*other).splitTxReadback,
+              "other Icom models do not inherit the new polling policy");
+    }
+
     {
         FlexBackend flex;
         const RadioCapabilities caps = flex.capabilities();

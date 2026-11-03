@@ -2,6 +2,7 @@
 
 #include <optional>
 
+#include <QDeadlineTimer>
 #include <QMetaType>
 #include <QString>
 #include <QStringList>
@@ -22,7 +23,18 @@ struct TransmitDelta {
     std::optional<int>     tunePower;        // clamped 0..100
     std::optional<bool>    tune;
     std::optional<bool>    mox;
-    std::optional<double>  transmitFreq;     // MHz
+    std::optional<double>  transmitFreq;     // MHz; last reported value
+    // Explicit observation validity, independent of legacy ATU frequency memory.
+    // true requires a positive finite transmitFreq in the SAME delta. Absent
+    // leaves provenance alone; a legacy frequency-only publication clears it.
+    std::optional<bool>    transmitFreqValid;
+    // Absolute monotonic deadline, so a queued delta cannot restart freshness.
+    // Absent preserves compatibility for backends without an expiry policy.
+    std::optional<QDeadlineTimer> transmitFreqDeadline;
+    // Compatibility reference for existing ATU consumers. Native readback can
+    // report TX independently while keeping the established selected-dial
+    // ATU contract. This field never confirms or invalidates actual TX.
+    std::optional<double>  legacyTransmitFreq;
     std::optional<int>     maxPowerLevel;    // unclamped
     std::optional<QString> tuneMode;
     std::optional<QString> txSliceMode;

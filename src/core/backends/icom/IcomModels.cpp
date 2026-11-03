@@ -237,7 +237,9 @@ constexpr std::array<FeatureEvidence, 17> kIc705Evidence{{
      "IC-705 CI-V Reference Guide 2020, command 1C 01"},
 }};
 
-constexpr std::array<FeatureEvidence, 15> kIc7300Mk2Evidence{{
+constexpr std::array<FeatureEvidence, 16> kIc7300Mk2Evidence{{
+    {IcomFeature::SplitTxReadback, EvidenceKind::OfficialGuide,
+     "IC-7300MK2_ENG_CI-V_0.pdf, PDF pp. 4, 14, 16: 0F and 1C 03 (read only)"},
     {IcomFeature::Core, EvidenceKind::OfficialGuideAndLiveHardware,
      "IC-7300MK2 CI-V Reference Guide; live IC-7300MK2 bring-up"},
     {IcomFeature::Scope, EvidenceKind::OfficialGuide,
@@ -632,6 +634,7 @@ const IcomModelProfile& profileFor(const IcomModel& model) noexcept
         .fmRepeater = FmRepeaterProfile{FmRepeaterDialect::Basic,
                                        kToneSquelchFmAccessModes,
                                        false, true, true, false, true, true},
+        .splitTxReadback = SplitTxReadbackProfile{},
         .cwTextKeyer = CwTextKeyerProfile{},
         .rxAntenna = RxAntennaProfile{true, true},
         .setMenu = SetMenuProfile{267, 89},
@@ -694,6 +697,7 @@ std::string_view featureName(IcomFeature feature) noexcept
         return "fm-repeater-extended-readback";
     case IcomFeature::FmRepeaterCtcssRx:   return "fm-repeater-ctcss-rx";
     case IcomFeature::TxFrequencyCheck:    return "tx-frequency-check";
+    case IcomFeature::SplitTxReadback:     return "split-tx-readback";
     case IcomFeature::DialLock:            return "dial-lock";
     case IcomFeature::CivDataRestart:      return "civ-data-restart";
     case IcomFeature::GpsPosition:         return "gps-position";

@@ -281,6 +281,7 @@ enum class IcomFeature : std::uint8_t {
     GpsTimeConfiguration,
     MemoryChannels,
     AntennaTuner,
+    SplitTxReadback,
 };
 
 enum class MemoryDialect : std::uint8_t {
@@ -417,6 +418,13 @@ struct SquelchScaleProfile {
     std::span<const std::string_view> modes;
 };
 
+// Read-only native SPLIT and effective TX frequency. Independent of FM DUP
+// and XFC; only activated from this model's own CI-V guide.
+struct SplitTxReadbackProfile {
+    int pollIntervalMs = 2000;
+    int freshnessMs = 5000;
+};
+
 // The immutable, backend-private capability profile from RFC #4984. IcomModel
 // remains transport/identity geometry; every command-table difference lives
 // here. Adding a radio is intentionally metadata-first and conservative: code
@@ -440,6 +448,7 @@ struct IcomModelProfile {
     std::optional<ModulationProfile> modulation;
     std::optional<TxBandwidthProfile> txBandwidth;
     std::optional<FmRepeaterProfile> fmRepeater;
+    std::optional<SplitTxReadbackProfile> splitTxReadback;
     std::optional<CwTextKeyerProfile> cwTextKeyer;
     std::optional<RxAntennaProfile> rxAntenna;
     std::optional<GpsProfile> gps;
