@@ -1,0 +1,6 @@
+"test","status","seconds","diagnostic"
+"icom_civ_test","NOT RUN",,"No executed JUnit testcase; consult setup, configure and build logs."
+"icom_backend_seam_test","NOT RUN",,"No executed JUnit testcase; consult setup, configure and build logs."
+"icom_control_profile_test","NOT RUN",,"No executed JUnit testcase; consult setup, configure and build logs."
+"transmit_model_test","NOT RUN",,"No executed JUnit testcase; consult setup, configure and build logs."
+"backend_family_switch_test","NOT RUN",,"No executed JUnit testcase; consult setup, configure and build logs."

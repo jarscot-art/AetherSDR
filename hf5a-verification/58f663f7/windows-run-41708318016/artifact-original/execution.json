@@ -1,0 +1,26 @@
+{
+  "requestedTests": [
+    "icom_civ_test",
+    "icom_backend_seam_test",
+    "icom_control_profile_test",
+    "transmit_model_test",
+    "backend_family_switch_test"
+  ],
+  "runnerOS": "Windows",
+  "source": {
+    "workflowCommit": "ec085b04bacef21077e4831e86f7de18527dd974",
+    "actualSource": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+    "dependencyRecipe": "58f663f7bcda25c54e8f4c158929a6e18ce10011/.github/workflows/ci.yml:check-windows",
+    "expectedSource": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+    "runUrl": "https://github.com/jarscot-art/AetherSDR/actions/runs/41708318016"
+  },
+  "qtVersion": "6.12.0",
+  "ctest": "failure",
+  "runnerImage": "win25-vs2026",
+  "trackedSourcesClean": false,
+  "runnerImageVersion": "20261030.294.1",
+  "msvcVersion": "14.51.36260.0",
+  "build": "success",
+  "junitTestcases": 0,
+  "configure": "success"
+}

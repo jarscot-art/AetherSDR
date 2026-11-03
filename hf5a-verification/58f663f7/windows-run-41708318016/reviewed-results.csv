@@ -1,0 +1,6 @@
+test,status,seconds,diagnostic,log_line
+icom_civ_test,PASS,0.03,CTest completed successfully on Windows.,2991
+icom_control_profile_test,FAIL_TIMEOUT,300.01,CTest per-test timeout of 300 seconds; no test stdout or stack trace was recorded.,3001
+icom_backend_seam_test,INTERRUPTED,,"Started, then killed by the 10-minute GitHub Actions CTest step limit. No terminal CTest result.",3004
+transmit_model_test,NOT_RUN,,Not reached before the CTest step timed out.,
+backend_family_switch_test,NOT_RUN,,Not reached before the CTest step timed out.,

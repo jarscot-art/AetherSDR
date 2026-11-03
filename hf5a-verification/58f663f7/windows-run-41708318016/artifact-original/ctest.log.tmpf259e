@@ -1,0 +1,39 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 137
+    Start 137: icom_civ_test
+
+137: Test command: D:\a\AetherSDR\AetherSDR\build\icom_civ_test.exe
+137: Working Directory: D:/a/AetherSDR/AetherSDR/build
+137: Environment variables: 
+137:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+137:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+137: Test timeout computed to be: 300
+137: icom_civ_test: all checks passed
+1/5 Test #137: icom_civ_test ....................   Passed    0.03 sec
+test 140
+    Start 140: icom_control_profile_test
+
+140: Test command: D:\a\AetherSDR\AetherSDR\build\icom_control_profile_test.exe
+140: Working Directory: D:/a/AetherSDR/AetherSDR/build
+140: Environment variables: 
+140:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+140:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+140: Test timeout computed to be: 300
+2/5 Test #140: icom_control_profile_test ........***Timeout 300.01 sec
+
+test 152
+    Start 152: icom_backend_seam_test
+
+152: Test command: D:\a\AetherSDR\AetherSDR\build\icom_backend_seam_test.exe
+152: Working Directory: D:/a/AetherSDR/AetherSDR/build
+152: Environment variables: 
+152:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+152:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+152: Test timeout computed to be: 300

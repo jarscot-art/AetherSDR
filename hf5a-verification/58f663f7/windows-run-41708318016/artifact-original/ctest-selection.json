@@ -1,0 +1,257 @@
+{
+  "backtraceGraph" : 
+  {
+    "commands" : 
+    [
+      "add_test",
+      "include"
+    ],
+    "files" : 
+    [
+      "D:/a/AetherSDR/AetherSDR/tests/tests.cmake",
+      "D:/a/AetherSDR/AetherSDR/CMakeLists.txt"
+    ],
+    "nodes" : 
+    [
+      {
+        "file" : 1
+      },
+      {
+        "command" : 1,
+        "file" : 1,
+        "line" : 3720,
+        "parent" : 0
+      },
+      {
+        "file" : 0,
+        "parent" : 1
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 1384,
+        "parent" : 2
+      },
+      {
+        "file" : 1
+      },
+      {
+        "command" : 1,
+        "file" : 1,
+        "line" : 3720,
+        "parent" : 4
+      },
+      {
+        "file" : 0,
+        "parent" : 5
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 1409,
+        "parent" : 6
+      },
+      {
+        "file" : 1
+      },
+      {
+        "command" : 1,
+        "file" : 1,
+        "line" : 3720,
+        "parent" : 8
+      },
+      {
+        "file" : 0,
+        "parent" : 9
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 1507,
+        "parent" : 10
+      },
+      {
+        "file" : 1
+      },
+      {
+        "command" : 1,
+        "file" : 1,
+        "line" : 3720,
+        "parent" : 12
+      },
+      {
+        "file" : 0,
+        "parent" : 13
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 7843,
+        "parent" : 14
+      },
+      {
+        "file" : 1
+      },
+      {
+        "command" : 1,
+        "file" : 1,
+        "line" : 3720,
+        "parent" : 16
+      },
+      {
+        "file" : 0,
+        "parent" : 17
+      },
+      {
+        "command" : 0,
+        "file" : 0,
+        "line" : 9139,
+        "parent" : 18
+      }
+    ]
+  },
+  "kind" : "ctestInfo",
+  "tests" : 
+  [
+    {
+      "backtrace" : 3,
+      "command" : 
+      [
+        "D:/a/AetherSDR/AetherSDR/build/icom_civ_test.exe"
+      ],
+      "name" : "icom_civ_test",
+      "properties" : 
+      [
+        {
+          "name" : "ENVIRONMENT",
+          "value" : 
+          [
+            "AETHER_WDSP_FFTW_TIMELIMIT=0.001",
+            "AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom"
+          ]
+        },
+        {
+          "name" : "TIMEOUT",
+          "value" : 300.0
+        },
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "D:/a/AetherSDR/AetherSDR/build"
+        }
+      ]
+    },
+    {
+      "backtrace" : 7,
+      "command" : 
+      [
+        "D:/a/AetherSDR/AetherSDR/build/icom_control_profile_test.exe"
+      ],
+      "name" : "icom_control_profile_test",
+      "properties" : 
+      [
+        {
+          "name" : "ENVIRONMENT",
+          "value" : 
+          [
+            "AETHER_WDSP_FFTW_TIMELIMIT=0.001",
+            "AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom"
+          ]
+        },
+        {
+          "name" : "TIMEOUT",
+          "value" : 300.0
+        },
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "D:/a/AetherSDR/AetherSDR/build"
+        }
+      ]
+    },
+    {
+      "backtrace" : 11,
+      "command" : 
+      [
+        "D:/a/AetherSDR/AetherSDR/build/icom_backend_seam_test.exe"
+      ],
+      "name" : "icom_backend_seam_test",
+      "properties" : 
+      [
+        {
+          "name" : "ENVIRONMENT",
+          "value" : 
+          [
+            "AETHER_WDSP_FFTW_TIMELIMIT=0.001",
+            "AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom"
+          ]
+        },
+        {
+          "name" : "TIMEOUT",
+          "value" : 300.0
+        },
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "D:/a/AetherSDR/AetherSDR/build"
+        }
+      ]
+    },
+    {
+      "backtrace" : 15,
+      "command" : 
+      [
+        "D:/a/AetherSDR/AetherSDR/build/backend_family_switch_test.exe"
+      ],
+      "name" : "backend_family_switch_test",
+      "properties" : 
+      [
+        {
+          "name" : "ENVIRONMENT",
+          "value" : 
+          [
+            "AETHER_WDSP_FFTW_TIMELIMIT=0.001",
+            "AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom"
+          ]
+        },
+        {
+          "name" : "TIMEOUT",
+          "value" : 300.0
+        },
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "D:/a/AetherSDR/AetherSDR/build"
+        }
+      ]
+    },
+    {
+      "backtrace" : 19,
+      "command" : 
+      [
+        "D:/a/AetherSDR/AetherSDR/build/transmit_model_test.exe"
+      ],
+      "name" : "transmit_model_test",
+      "properties" : 
+      [
+        {
+          "name" : "ENVIRONMENT",
+          "value" : 
+          [
+            "AETHER_WDSP_FFTW_TIMELIMIT=0.001",
+            "AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom"
+          ]
+        },
+        {
+          "name" : "TIMEOUT",
+          "value" : 300.0
+        },
+        {
+          "name" : "WORKING_DIRECTORY",
+          "value" : "D:/a/AetherSDR/AetherSDR/build"
+        }
+      ]
+    }
+  ],
+  "version" : 
+  {
+    "major" : 1,
+    "minor" : 0
+  }
+}

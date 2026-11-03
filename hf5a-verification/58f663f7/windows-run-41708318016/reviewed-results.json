@@ -1,0 +1,52 @@
+{
+  "source_commit": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "workflow_commit": "ec085b04bacef21077e4831e86f7de18527dd974",
+  "run_id": 41708318016,
+  "job_id": 126169462439,
+  "run_url": "https://github.com/jarscot-art/AetherSDR/actions/runs/41708318016",
+  "platform": "Windows / MSVC 19.51.36260.0 / Qt 6.12.0",
+  "configure": "success",
+  "build_five_targets": "success",
+  "ctest": "incomplete",
+  "artifact_id": 13268322896,
+  "artifact_sha256": "573e4be6f5e4385e9e1222b1096e304a3860fb96bfa64c5a29e429bf72f4c023",
+  "interpretation": "Reviewed from CTest console output. The original JUnit-based report is incomplete because JUnit was not finalized.",
+  "tests": [
+    {
+      "test": "icom_civ_test",
+      "status": "PASS",
+      "seconds": 0.03,
+      "diagnostic": "CTest completed successfully on Windows.",
+      "log_line": 2991
+    },
+    {
+      "test": "icom_control_profile_test",
+      "status": "FAIL_TIMEOUT",
+      "seconds": 300.01,
+      "diagnostic": "CTest per-test timeout of 300 seconds; no test stdout or stack trace was recorded.",
+      "log_line": 3001
+    },
+    {
+      "test": "icom_backend_seam_test",
+      "status": "INTERRUPTED",
+      "seconds": null,
+      "observed_seconds_approx": 298.33,
+      "diagnostic": "Started, then killed by the 10-minute GitHub Actions CTest step limit. No terminal CTest result.",
+      "log_line": 3004
+    },
+    {
+      "test": "transmit_model_test",
+      "status": "NOT_RUN",
+      "seconds": null,
+      "diagnostic": "Not reached before the CTest step timed out.",
+      "log_line": null
+    },
+    {
+      "test": "backend_family_switch_test",
+      "status": "NOT_RUN",
+      "seconds": null,
+      "diagnostic": "Not reached before the CTest step timed out.",
+      "log_line": null
+    }
+  ]
+}

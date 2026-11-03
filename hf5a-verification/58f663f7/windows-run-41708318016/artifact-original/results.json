@@ -1,0 +1,32 @@
+[
+  {
+    "test": "icom_civ_test",
+    "status": "NOT RUN",
+    "seconds": null,
+    "diagnostic": "No executed JUnit testcase; consult setup, configure and build logs."
+  },
+  {
+    "test": "icom_backend_seam_test",
+    "status": "NOT RUN",
+    "seconds": null,
+    "diagnostic": "No executed JUnit testcase; consult setup, configure and build logs."
+  },
+  {
+    "test": "icom_control_profile_test",
+    "status": "NOT RUN",
+    "seconds": null,
+    "diagnostic": "No executed JUnit testcase; consult setup, configure and build logs."
+  },
+  {
+    "test": "transmit_model_test",
+    "status": "NOT RUN",
+    "seconds": null,
+    "diagnostic": "No executed JUnit testcase; consult setup, configure and build logs."
+  },
+  {
+    "test": "backend_family_switch_test",
+    "status": "NOT RUN",
+    "seconds": null,
+    "diagnostic": "No executed JUnit testcase; consult setup, configure and build logs."
+  }
+]

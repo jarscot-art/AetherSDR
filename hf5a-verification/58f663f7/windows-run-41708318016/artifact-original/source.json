@@ -1,0 +1,7 @@
+{
+  "workflowCommit": "ec085b04bacef21077e4831e86f7de18527dd974",
+  "actualSource": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "dependencyRecipe": "58f663f7bcda25c54e8f4c158929a6e18ce10011/.github/workflows/ci.yml:check-windows",
+  "expectedSource": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "runUrl": "https://github.com/jarscot-art/AetherSDR/actions/runs/41708318016"
+}
