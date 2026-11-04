@@ -59,7 +59,9 @@ bool IcomOutboundPolicy::allowsDatagram(std::span<const std::uint8_t> p, const C
     default: return false;
     }
     if (h.type == static_cast<std::uint16_t>(PacketType::AreYouThere)) {
-        return !c.remoteKnown && !c.ready && h.rcvdId == 0 && p.size() == kLenControl;
+        // beginHandshake retries AreYouThere while waiting for IAmReady, even
+        // after IAmHere has established the peer SID. This is still our handshake.
+        return !c.ready && h.rcvdId == 0 && p.size() == kLenControl;
     }
     if (!c.remoteKnown || c.remoteSid == 0 || h.rcvdId != c.remoteSid) { return false; }
     if (h.type == static_cast<std::uint16_t>(PacketType::AreYouReady)) {
@@ -68,10 +70,10 @@ bool IcomOutboundPolicy::allowsDatagram(std::span<const std::uint8_t> p, const C
     if (h.type == static_cast<std::uint16_t>(PacketType::Disconnect)) {
         return p.size() == kLenControl;
     }
-    if (!c.ready) { return false; }
     if (h.type == static_cast<std::uint16_t>(PacketType::Ping)) {
         return p.size() == kLenPing && p[0x10] <= 1;
     }
+    if (!c.ready) { return false; }
     if (h.type == static_cast<std::uint16_t>(PacketType::Retransmit)) {
         return p.size() == kLenRetransmitOne; // only the implemented single-sequence request
     }

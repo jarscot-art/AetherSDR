@@ -7,6 +7,7 @@
 #include <QAbstractSocket>
 #include <QCoreApplication>
 #include <QFile>
+#include <QFileInfo>
 #include <QHostAddress>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -72,7 +73,12 @@ int main(int argc, char** argv)
     };
     const quint16 controlPort = port("control-port"), civPort = port("civ-port"), audioPort = port("audio-port");
     if (!controlPort || !civPort || !audioPort) { return 2; }
-    QFile credentials(parser.value(QStringLiteral("credentials")));
+    const QFileInfo credentialFile(parser.value(QStringLiteral("credentials")));
+    if (!credentialFile.isFile() || credentialFile.isSymLink()) {
+        std::fprintf(stderr, "Credentials must be a regular file, not a device or link; no connection attempted.\n");
+        return 2;
+    }
+    QFile credentials(credentialFile.absoluteFilePath());
     if (!credentials.open(QIODevice::ReadOnly) || credentials.size() > 4096) {
         std::fprintf(stderr, "Cannot read bounded credentials file; no connection attempted.\n");
         return 2;
@@ -109,8 +115,12 @@ int main(int argc, char** argv)
         report();
         app.exit(code);
     };
-    QObject::connect(&backend, &IRadioBackend::connectionError, &app, [&](const QString&) { finish(3); });
-    QObject::connect(&backend, &IRadioBackend::disconnected, &app, [&] { if (!closing) { finish(3); } });
+    // A failure can be emitted from inside IcomSession/IcomStream. Retire the
+    // session only after that callback has returned to the event loop.
+    QObject::connect(&backend, &IRadioBackend::connectionError, &app,
+                     [&](const QString&) { finish(3); }, Qt::QueuedConnection);
+    QObject::connect(&backend, &IRadioBackend::disconnected, &app,
+                     [&] { if (!closing) { finish(3); } }, Qt::QueuedConnection);
     QTimer status;
     QObject::connect(&status, &QTimer::timeout, &app, report);
     status.start(1000);

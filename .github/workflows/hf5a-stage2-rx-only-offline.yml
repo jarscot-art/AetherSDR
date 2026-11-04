@@ -361,6 +361,33 @@ jobs:
         $code=$LASTEXITCODE
         $code | Set-Content hf5a-stage2-results/ctest-exit-code.txt
         exit $code
+    - name: Prepare portable audit executable without an installer
+      run: |
+        New-Item -ItemType Directory -Force hf5a-stage2-portable | Out-Null
+        Copy-Item build/aether-icom-rx-audit.exe hf5a-stage2-portable/
+        Copy-Item LICENSE hf5a-stage2-portable/
+        Copy-Item docs/hf5a-stage2-rx-only-audit.md hf5a-stage2-portable/README.md
+        Copy-Item build/*.dll hf5a-stage2-portable/
+        & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations --no-compiler-runtime --dir hf5a-stage2-portable hf5a-stage2-portable/aether-icom-rx-audit.exe |
+          Tee-Object hf5a-stage2-results/portable-deploy.log
+        if ($LASTEXITCODE -ne 0) { throw 'Qt portable deployment failed' }
+        $crt=Get-ChildItem "$env:VCToolsRedistDir/x64" -Directory -Filter 'Microsoft.VC*.CRT' |
+          Sort-Object Name -Descending | Select-Object -First 1
+        if (-not $crt) { throw 'App-local MSVC runtime DLL directory not found' }
+        Copy-Item "$($crt.FullName)/*.dll" hf5a-stage2-portable/
+        if (@(Get-ChildItem hf5a-stage2-portable -Recurse -Filter '*.exe' | Where-Object Name -ne 'aether-icom-rx-audit.exe').Count) { throw 'Unexpected executable in portable bundle' }
+        Copy-Item hf5a-stage2-results/source.json hf5a-stage2-portable/
+        $savedPath=$env:PATH
+        try {
+          # Prove the bundle does not borrow Qt or the compiler runtime from setup PATH.
+          $env:PATH="$env:SystemRoot/System32;$env:SystemRoot"
+          & ./hf5a-stage2-portable/aether-icom-rx-audit.exe --self-check |
+            Tee-Object hf5a-stage2-results/portable-self-check.log
+          if ($LASTEXITCODE -ne 0) { throw 'Portable tool self-check failed' }
+        } finally { $env:PATH=$savedPath }
+        Get-ChildItem hf5a-stage2-portable -File -Recurse | Get-FileHash -Algorithm SHA256 |
+          Select-Object Path,Hash | Export-Csv hf5a-stage2-results/portable-sha256.csv -NoTypeInformation
+        Copy-Item hf5a-stage2-results/portable-sha256.csv hf5a-stage2-portable/
     - name: Preserve actual results and source integrity
       if: ${{ always() }}
       run: |
@@ -380,6 +407,13 @@ jobs:
         $integrity | Set-Content hf5a-stage2-results/source-integrity-exit-code.txt
         $rows | Format-Table | Out-String | Out-File $env:GITHUB_STEP_SUMMARY -Append
         if ($integrity -ne 0) { throw 'Source was not restored to the tested commit' }
+    - name: Upload portable audit tool (no installer, no hardware invocation)
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: aether-icom-rx-audit-${{ github.sha }}
+        path: hf5a-stage2-portable/
+        retention-days: 90
+        if-no-files-found: error
     - name: Upload offline evidence
       if: ${{ always() }}
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9

@@ -1133,13 +1133,15 @@ void IcomCivBackend::sendConnectReadBurst()
 {
     if (!m_session)
         return;
+    const QPointer<IcomCivBackend> alive(this);
+    const std::uint64_t session = m_sessionGeneration;
     if (m_outboundPolicy.isAudit()) {
+        if (m_civDetectTimer) { m_civDetectTimer->stop(); }
         resetSplitTxReadback(QStringLiteral("never-confirmed"));
+        if (!alive || session != m_sessionGeneration || !m_session) { return; }
         queueSplitTxReadback(IcomCivScheduler::Priority::Maintenance);
         return;
     }
-    const QPointer<IcomCivBackend> alive(this);
-    const std::uint64_t session = m_sessionGeneration;
     // A valid identity ends discovery before the model-shaped snapshot starts.
     if (m_civDetectTimer)
         m_civDetectTimer->stop();
@@ -2480,6 +2482,7 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
     if (!m_connected || sessionGeneration != m_sessionGeneration) {
         return;
     }
+    if (m_outboundPolicy.isAudit() && frame.cmd == cmd::kScope) { return; }
     const QPointer<IcomCivBackend> alive(this);
     const auto sessionCurrent = [alive, sessionGeneration, model = m_model,
                                  ambiguous = m_civAmbiguous, identity = frame.cmd == cmd::kReadId] {

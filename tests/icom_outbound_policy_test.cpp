@@ -91,7 +91,10 @@ int main()
         check(policy.allowsDatagram(buildAreYouThere(context.localSid), context), "first handshake");
         check(!policy.allowsDatagram(datagram, context), "payload before handshake denied");
         context.remoteKnown = true;
+        check(policy.allowsDatagram(buildAreYouThere(context.localSid), context), "own handshake retry after IAmHere");
         check(policy.allowsDatagram(buildAreYouReady(context.localSid, context.remoteSid), context), "ready handshake");
+        check(policy.allowsDatagram(buildPingRequest(context.localSid, context.remoteSid, 1, {}), context),
+              "own peer ping while waiting for IAmReady");
         context.ready = true;
     }
     context.role = IcomOutboundPolicy::Role::Control;

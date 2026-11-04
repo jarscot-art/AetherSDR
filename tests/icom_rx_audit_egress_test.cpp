@@ -6,8 +6,11 @@
 #include "TxTestAuthority.h"
 
 #include <QCoreApplication>
+#include <QPointer>
 #include <QTimer>
 #include <cstdio>
+#include <cstdint>
+#include <memory>
 #include <vector>
 
 using namespace AetherSDR::icom;
@@ -98,6 +101,18 @@ struct IcomCivBackendTestAccess {
     }
     static void startScope(IcomCivBackend& backend) { backend.applyScopeStartup(); }
     static void tick(IcomCivBackend& backend) { backend.onLinkTick(); backend.onMeterTick(); }
+    static void burst(IcomCivBackend& backend) { backend.sendConnectReadBurst(); }
+    static void scopeTraffic(IcomCivBackend& backend)
+    {
+        CivFrame frame; frame.cmd = cmd::kScope;
+        backend.onCivFrame(frame, backend.m_sessionGeneration);
+    }
+    static IcomSession* current(IcomCivBackend& backend) { return backend.m_session.get(); }
+    static void wireDisconnect(IcomCivBackend& backend)
+    {
+        QObject::connect(backend.m_session.get(), &IcomSession::disconnected,
+                         &backend, &IcomCivBackend::onSessionDisconnected);
+    }
 };
 }
 
@@ -131,6 +146,8 @@ int main(int argc, char** argv)
             IcomStreamTestAccess::replay(serial, 600);
         }
         check(writes.size() == before, "raw/tracked/emergency/authorized-TX/replay cannot leak PTT, OFF, CW, scope or XFC");
+        std::printf("EVIDENCE serial: packets_before=%zu packets_after_forbidden=%zu denied=%llu\n",
+                    before, writes.size(), static_cast<unsigned long long>(serial.deniedDatagrams()));
         check(IcomStreamTestAccess::sequence(serial) == seq, "denied writes consume no sequence");
         check(serial.deniedDatagrams() >= 25, "denials counted at actual egress boundary");
         IcomStreamTestAccess::remote(serial, remoteSid + 1);
@@ -153,6 +170,8 @@ int main(int argc, char** argv)
         audio.retainForTest(99, packet);
         IcomStreamTestAccess::replay(audio, 99);
         check(writes.empty(), "audio including silence is denied even with a valid TX grant and replay");
+        std::printf("EVIDENCE audio: packets=%zu denied=%llu\n", writes.size(),
+                    static_cast<unsigned long long>(audio.deniedDatagrams()));
         check(audio.retainedSequences().size() == 1, "only deliberately injected forbidden replay exists");
         audio.stop();
         check(writes.size() == 2, "audio transport disconnect allowed without PCM");
@@ -200,6 +219,7 @@ int main(int argc, char** argv)
         IcomCivBackend backend(nullptr, IcomOutboundPolicy::rxAudit());
         IcomCivBackendTestAccess::backend(backend, writes);
         IcomCivBackendTestAccess::startScope(backend);
+        IcomCivBackendTestAccess::scopeTraffic(backend);
         IcomCivBackendTestAccess::forbidden(backend);
         check(writes.empty(), "scope startup and emergency/user writes suppressed before scheduling");
         IcomCivBackendTestAccess::tick(backend);
@@ -217,6 +237,30 @@ int main(int argc, char** argv)
             }
         }
         check(noCleanupCiv, "backend disconnect cannot issue CW abort or PTT OFF");
+    }
+    {
+        Packets writes;
+        IcomCivBackend backend(nullptr, IcomOutboundPolicy::rxAudit());
+        IcomCivBackendTestAccess::backend(backend, writes);
+        IcomCivBackendTestAccess::wireDisconnect(backend);
+        QPointer<IcomSession> session(IcomCivBackendTestAccess::current(backend));
+        bool retired = false;
+        QObject::connect(&backend, &AetherSDR::IRadioBackend::disconnected, &backend, [&] {
+            backend.disconnectRadio(); retired = true;
+        }, Qt::QueuedConnection);
+        IcomCivBackendTestAccess::busy(*session);
+        check(session && !retired, "failure callback does not synchronously destroy its session");
+        QCoreApplication::processEvents();
+        check(!session && retired, "queued failure cleanup safely retires only the test session");
+    }
+    {
+        Packets writes;
+        auto backend = std::make_unique<IcomCivBackend>(nullptr, IcomOutboundPolicy::rxAudit());
+        IcomCivBackendTestAccess::backend(*backend, writes);
+        QObject::connect(backend.get(), &AetherSDR::IRadioBackend::transmitChanged, &app,
+                         [&](const AetherSDR::TransmitDelta&) { backend.reset(); });
+        IcomCivBackendTestAccess::burst(*backend);
+        check(!backend, "readback-reset observer may retire backend without a subsequent dispatch");
     }
     {
         Packets writes;

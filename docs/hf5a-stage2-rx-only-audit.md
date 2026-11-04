@@ -13,6 +13,9 @@ It links the existing engine and uses QCoreApplication, without GUI, automation
 server, discovery, microphone, device startup, proxy or helper process. Include
 the same Qt and vendor runtime DLLs required by the Windows test executables.
 Building the desktop app is not required.
+The dedicated workflow also preserves an app-local portable bundle and SHA256
+manifest as a CI artifact. It contains the audit executable, Qt/vendor/MSVC
+runtime DLLs and source provenance, with no redistributable installer or service.
 
 `aether-icom-rx-audit --help` and `aether-icom-rx-audit --self-check` do not create
 a session or sockets. With no arguments it refuses to connect (exit 2).
@@ -21,6 +24,7 @@ Future hardware invocation requires BOTH `--connect` and
 `--exclusive-lan-confirmed`, an explicit IPv4 `--host`, and a private JSON
 `--credentials` file containing string fields `username` and `password`.
 Credentials are neither passed on the command line nor written to the report.
+The credentials path must identify a regular file, not a device or symbolic link.
 Existing UDP ports can be supplied with `--control-port`, `--civ-port` and
 `--audio-port`; these are not Windows COM ports. No radio network setting is
 changed. Observation is bounded by `--seconds` (5..120, default 30).
@@ -39,6 +43,9 @@ outbound request was denied; 1 means incomplete/failed observation, 2 means
 refused invocation, and 3 means connection failure. A radio-reported TX frequency
 in RX is not an RF measurement. Original CI-V freshness/correlation limitations
 remain: replies have no transaction IDs and SPLIT/TX are not atomic snapshots.
+Failure teardown is queued onto the event loop, so it cannot delete an active
+session from inside its own failure callback. Scope frames are ignored in audit
+mode; no panadapter-follow logic runs in response to unsolicited sweeps.
 
 ## Immutable policy and last writer
 
