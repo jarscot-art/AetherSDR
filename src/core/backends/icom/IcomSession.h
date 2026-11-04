@@ -9,6 +9,8 @@
 #include <QVariantMap>
 
 #include <cstdint>
+#include <chrono>
+#include <optional>
 #include <span>
 #include <vector>
 
@@ -157,6 +159,10 @@ private:
     std::string m_auditOwnerName;
     std::uint32_t m_auditOwnerIpv4 = 0;
     bool m_auditAvailable = false;
+    bool m_auditLoginAccepted = false;
+    QByteArray m_auditEarlyConnInfo;
+    std::optional<std::chrono::steady_clock::time_point> m_auditEarlyReceivedAt;
+    static constexpr qint64 kAuditEarlyConnInfoMaxAgeMs = 5000;
 
     Params m_params;
 

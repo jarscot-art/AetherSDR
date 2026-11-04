@@ -9,6 +9,7 @@
 #include <QTimer>
 
 #include <algorithm>
+#include <utility>
 
 namespace AetherSDR::icom {
 
@@ -200,6 +201,9 @@ void IcomSession::stop()
     m_auditOwnerName.clear();
     m_auditOwnerIpv4 = 0;
     m_auditAvailable = false;
+    m_auditLoginAccepted = false;
+    m_auditEarlyConnInfo.clear();
+    m_auditEarlyReceivedAt.reset();
     m_advertisedCivAddress = 0;
     m_streamsRequested = false;
     m_streamGranted = false;
@@ -277,6 +281,9 @@ void IcomSession::onControlReady()
                  10, 16, QLatin1Char('0')).toStdString();
         m_auditOwnerIpv4 = m_control->localAddress().toIPv4Address();
         m_auditAvailable = false;
+        m_auditLoginAccepted = false;
+        m_auditEarlyConnInfo.clear();
+        m_auditEarlyReceivedAt.reset();
     }
     qCInfo(lcIcom) << "control stream ready — sending login for user"
                    << m_params.username << "(password"
@@ -302,6 +309,13 @@ void IcomSession::onControlPayload(const QByteArray& packet)
     // 0x00, and the length is the only thing that distinguishes them.
     switch (packet.size()) {
     case static_cast<qsizetype>(kLenLoginReply): {
+        if (m_outboundPolicy.isAudit()
+            && (!isCurrentControlPacket(pkt) || m_auditLoginAccepted || m_authOk
+                || m_streamsRequested)) {
+            ++m_ignoredControlPackets;
+            qCWarning(lcIcom) << "RX audit ignoring login reply outside the current negotiation";
+            return;
+        }
         qCInfo(lcIcom) << "got login reply";
         AuthId id{};
         switch (parseLoginReply(pkt, id)) {
@@ -312,6 +326,15 @@ void IcomSession::onControlPayload(const QByteArray& packet)
             return;
         case LoginResult::Ok:
             break;
+        }
+        if (m_outboundPolicy.isAudit()) {
+            if (id[0] != (m_tokenRequestId & 0xff)
+                || id[1] != (m_tokenRequestId >> 8)) {
+                ++m_ignoredControlPackets;
+                qCWarning(lcIcom) << "RX audit ignoring uncorrelated or repeated login reply";
+                return;
+            }
+            m_auditLoginAccepted = true;
         }
         m_authId = id;
         qCInfo(lcIcom) << "login accepted — sending first auth + token request";
@@ -398,6 +421,12 @@ void IcomSession::onControlPayload(const QByteArray& packet)
     }
 
     case static_cast<qsizetype>(kLenCapabilities):
+        if (m_outboundPolicy.isAudit()
+            && (!isCurrentControlPacket(pkt) || !m_auditLoginAccepted)) {
+            ++m_ignoredControlPackets;
+            qCWarning(lcIcom) << "RX audit ignoring capabilities outside the current login";
+            return;
+        }
         qCInfo(lcIcom) << "got capabilities packet";
         if (parseCapabilities(pkt, m_radioId)) {
             m_haveRadioId = true;
@@ -489,6 +518,35 @@ void IcomSession::onControlPayload(const QByteArray& packet)
 void IcomSession::onAuditConnectionUsage(std::span<const std::uint8_t> packet)
 {
     if (!m_control) { return; }
+    if ((!m_authOk || !m_haveRadioId) && !m_streamsRequested && !m_streamGranted) {
+        // A current login may receive conninfo before capabilities/token ACK.
+        // Retain bytes, never permission. The final classifier is unchanged.
+        if (!m_auditLoginAccepted || !isCurrentControlPacket(packet)) {
+            ++m_ignoredControlPackets;
+            return;
+        }
+        const auto usage = parseConnectionUsage(packet);
+        if (usage.kind == ConnectionUsageKind::Invalid) {
+            fail(QStringLiteral("RX audit refused: malformed early RS-BA1 conninfo"));
+            return;
+        }
+        if (m_auditEarlyConnInfo.isEmpty()) {
+            m_auditEarlyConnInfo = QByteArray(reinterpret_cast<const char*>(packet.data()),
+                                             static_cast<qsizetype>(packet.size()));
+            m_auditEarlyReceivedAt = std::chrono::steady_clock::now();
+            qCInfo(lcIcom) << "RX audit retained early conninfo pending full correlation";
+        } else {
+            const auto previous = parseConnectionUsage(asSpan(m_auditEarlyConnInfo));
+            // Retransmitted sequence fields may differ, ownership claims may not.
+            // Never refresh the age: duplicate traffic cannot extend this lease.
+            if (usage.kind != previous.kind || usage.authId != previous.authId
+                || usage.radioId != previous.radioId || usage.ownerName != previous.ownerName
+                || usage.ownerIpv4 != previous.ownerIpv4) {
+                fail(QStringLiteral("RX audit refused: conflicting early RS-BA1 conninfo"));
+            }
+        }
+        return;
+    }
     const AuditConnectionContext context{
         m_control->remoteSessionId(), m_control->localSessionId(), m_authId, m_radioId,
         m_authOk, m_haveRadioId, m_auditAvailable, m_streamsRequested, m_streamGranted,
@@ -530,6 +588,25 @@ void IcomSession::onAuditConnectionUsage(std::span<const std::uint8_t> packet)
 
 void IcomSession::requestStreamsIfReady()
 {
+    if (m_outboundPolicy.isAudit()) {
+        if (m_failing) { return; }
+        if (!m_auditEarlyConnInfo.isEmpty() && m_authOk && m_haveRadioId
+            && m_auditLoginAccepted && !m_streamsRequested && !m_streamGranted) {
+            const QByteArray packet = std::exchange(m_auditEarlyConnInfo, QByteArray{});
+            const bool fresh = m_auditEarlyReceivedAt
+                && std::chrono::steady_clock::now() - *m_auditEarlyReceivedAt
+                    <= std::chrono::milliseconds(kAuditEarlyConnInfoMaxAgeMs);
+            m_auditEarlyReceivedAt.reset();
+            if (fresh) {
+                qCInfo(lcIcom) << "RX audit revalidating early conninfo after token/capabilities";
+                // Available may re-enter this method after full validation. The
+                // single-use buffer is already empty, so no recursive replay.
+                onAuditConnectionUsage(asSpan(packet));
+                return;
+            }
+            qCWarning(lcIcom) << "RX audit discarded expired early conninfo; waiting for fresh confirmation";
+        }
+    }
     if (m_outboundPolicy.isAudit() && !m_auditAvailable) {
         qCInfo(lcIcom) << "RX audit waiting for a correlated owner-free RS-BA1 notification";
         return;
