@@ -361,6 +361,15 @@ jobs:
         $code=$LASTEXITCODE
         $code | Set-Content hf5a-stage2-results/ctest-exit-code.txt
         exit $code
+    - name: Preserve compiled audit inputs for packaging diagnostics
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: hf5a-stage2-built-audit-inputs-${{ github.sha }}
+        path: |-
+          build/aether-icom-rx-audit.exe
+          build/*.dll
+        retention-days: 90
+        if-no-files-found: error
     - name: Prepare portable audit executable without an installer
       run: |
         New-Item -ItemType Directory -Force hf5a-stage2-portable | Out-Null
@@ -375,15 +384,36 @@ jobs:
           Sort-Object Name -Descending | Select-Object -First 1
         if (-not $crt) { throw 'App-local MSVC runtime DLL directory not found' }
         Copy-Item "$($crt.FullName)/*.dll" hf5a-stage2-portable/
+        # Preserve every direct/delay import and the initial dependency diagnosis.
+        $images=Get-ChildItem hf5a-stage2-portable -Recurse -File | Where-Object Extension -in '.exe','.dll'
+        foreach ($image in $images) {
+          "IMAGE: $($image.FullName)" | Add-Content hf5a-stage2-results/portable-imports.log
+          & dumpbin /nologo /DEPENDENTS $image.FullName | Add-Content hf5a-stage2-results/portable-imports.log
+          if ($LASTEXITCODE -ne 0) { throw 'dumpbin failed' }
+        }
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage2-portable |
+          Tee-Object hf5a-stage2-results/portable-dependencies-before.log
+        $LASTEXITCODE | Set-Content hf5a-stage2-results/portable-dependencies-before-exit-code.txt
+        # Use the existing version-matched CRT + OpenMP staging recipe; no installer.
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/stage-msvc-runtime.ps1 -OutputDir hf5a-stage2-portable |
+          Tee-Object hf5a-stage2-results/portable-runtime.log
+        if ($LASTEXITCODE -ne 0) { throw 'MSVC runtime staging failed' }
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage2-portable |
+          Tee-Object hf5a-stage2-results/portable-dependencies.log
+        if ($LASTEXITCODE -ne 0) { throw 'Portable import validation failed' }
         if (@(Get-ChildItem hf5a-stage2-portable -Recurse -Filter '*.exe' | Where-Object Name -ne 'aether-icom-rx-audit.exe').Count) { throw 'Unexpected executable in portable bundle' }
         Copy-Item hf5a-stage2-results/source.json hf5a-stage2-portable/
         $savedPath=$env:PATH
         try {
           # Prove the bundle does not borrow Qt or the compiler runtime from setup PATH.
           $env:PATH="$env:SystemRoot/System32;$env:SystemRoot"
+          '' | Set-Content hf5a-stage2-results/portable-self-check.log
           & ./hf5a-stage2-portable/aether-icom-rx-audit.exe --self-check |
             Tee-Object hf5a-stage2-results/portable-self-check.log
-          if ($LASTEXITCODE -ne 0) { throw 'Portable tool self-check failed' }
+          $portableCode=$LASTEXITCODE
+          @{exitCode=$portableCode; hex=('0x{0:X8}' -f $portableCode)} |
+            ConvertTo-Json | Set-Content hf5a-stage2-results/portable-self-check-exit.json
+          if ($portableCode -ne 0) { throw "Portable tool self-check failed: $portableCode" }
         } finally { $env:PATH=$savedPath }
         Get-ChildItem hf5a-stage2-portable -File -Recurse | Get-FileHash -Algorithm SHA256 |
           Select-Object Path,Hash | Export-Csv hf5a-stage2-results/portable-sha256.csv -NoTypeInformation
