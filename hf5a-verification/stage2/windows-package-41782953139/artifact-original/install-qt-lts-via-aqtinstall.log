@@ -1,0 +1,27 @@
+**********************
+PowerShell transcript start
+Start time: 20261104060313
+Username: runnervmhao91\runneradmin
+RunAs User: runnervmhao91\runneradmin
+Configuration Name: 
+Machine: runnervmhao91 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -command . 'D:\a\_temp\328697b8-2c1c-44f1-8088-199f6f6bb470.ps1'
+Process ID: 6516
+PSVersion: 7.6.9
+PSEdition: Core
+GitCommitId: 7.6.9
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is hf5a-stage2-results/install-qt-lts-via-aqtinstall.log
+
+
+
+**********************
+PowerShell transcript end
+End time: 20261104060353
+**********************

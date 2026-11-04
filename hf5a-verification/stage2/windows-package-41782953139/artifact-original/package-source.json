@@ -1,0 +1,8 @@
+{
+  "sourceCommit": "b058dcc2b2d6365f2ffed78462745830fc8ff85e",
+  "qt": "6.12.0",
+  "packageWorkflowCommit": "88370a51314c7ab2fd8b306f9775d29173ec1792",
+  "buildRun": 41780111902,
+  "hardwareTest": false,
+  "runUrl": "https://github.com/jarscot-art/AetherSDR/actions/runs/41782953139"
+}

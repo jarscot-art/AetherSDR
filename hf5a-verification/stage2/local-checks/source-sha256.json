@@ -1,0 +1,69 @@
+{
+  "revision": "88370a51314c7ab2fd8b306f9775d29173ec1792",
+  "files": [
+    {
+      "path": ".github/workflows/hf5a-stage2-rx-only-offline.yml",
+      "sha256": "1626ecf1d9da188a2e7ea53df5ccb740aaad2fea84b2ae3d593d176144fd3b42"
+    },
+    {
+      "path": ".github/workflows/hf5a-stage2-rx-only-repackage.yml",
+      "sha256": "65b78d76b2375a500aa2444746a9dc3a65dc2460b35760f3fe7647d2d201dd76"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "sha256": "89fcb896fa8e90db4a32d7bdef1b3f6829970f19dc9c21a99c9c81efe5a049d0"
+    },
+    {
+      "path": "docs/hf5a-stage2-rx-only-audit.md",
+      "sha256": "ee1c72bfe2c760238c5518c79e772083519670aafa95f3fa059e3c281d1e4025"
+    },
+    {
+      "path": "src/core/backends/icom/IcomCivBackend.cpp",
+      "sha256": "b232239e442c36553778587dc6fa7ae1580c3947d1b09e3f83e7974b058b47ea"
+    },
+    {
+      "path": "src/core/backends/icom/IcomCivBackend.h",
+      "sha256": "e6c84bc8cd29997eaf58f5976d457f43447ab1faaad3a96270e4064c26721ce4"
+    },
+    {
+      "path": "src/core/backends/icom/IcomOutboundPolicy.cpp",
+      "sha256": "483491e440b0599cf61975aec9b8e1095c5d592c7686c980b8cc838dfef038dd"
+    },
+    {
+      "path": "src/core/backends/icom/IcomOutboundPolicy.h",
+      "sha256": "8509dd770353c5835f1f7c52c48ec7b335a97a0845dc2aafa8c5651aa95bac65"
+    },
+    {
+      "path": "src/core/backends/icom/IcomRxAuditMain.cpp",
+      "sha256": "156d8bbff3aedd5ec4a4ec116cf8814d72dc05c52fc60746ccb20aac15c8ca53"
+    },
+    {
+      "path": "src/core/backends/icom/IcomSession.cpp",
+      "sha256": "21c493a615b9cfce88f0f80d0623a58aa8ffa78806ced9f3bf430754eb92c2e9"
+    },
+    {
+      "path": "src/core/backends/icom/IcomSession.h",
+      "sha256": "f5229d70a5270b002629bc0934bb87f983ca0535ae4df21df2899ee061527cbd"
+    },
+    {
+      "path": "src/core/backends/icom/IcomStream.cpp",
+      "sha256": "aa99b8e9d6379b742adbb2cf73a98b33141914a455edcd1be04cd545d1744715"
+    },
+    {
+      "path": "src/core/backends/icom/IcomStream.h",
+      "sha256": "cae5df55b61dd8a81c92749505b9298a21bf4dac2285a02de91b67b88e7d89a8"
+    },
+    {
+      "path": "tests/icom_outbound_policy_test.cpp",
+      "sha256": "0b5030e6d522bb7186ad014e181a8a311fc03ef7ade452546b0ffd165a44b6f5"
+    },
+    {
+      "path": "tests/icom_rx_audit_egress_test.cpp",
+      "sha256": "61beb5de80576d064b7713022f9a12b56ebab38ddcca209b43d645ecdd54aae9"
+    },
+    {
+      "path": "tests/tests.cmake",
+      "sha256": "f6c46a253d2c5e131fc6588f20b216381b42e5c36ee733c00940e3ea868f3248"
+    }
+  ]
+}

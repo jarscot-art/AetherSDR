@@ -1,0 +1,34 @@
+**********************
+PowerShell transcript start
+Start time: 20261104051022
+Username: runnervmhao91\runneradmin
+RunAs User: runnervmhao91\runneradmin
+Configuration Name: 
+Machine: runnervmhao91 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -command . 'D:\a\_temp\7b4b2cb2-1ac4-4bd3-a998-4ba6c12aceaa.ps1'
+Process ID: 4464
+PSVersion: 7.6.9
+PSEdition: Core
+GitCommitId: 7.6.9
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is hf5a-stage2-results/setup-hidapi-hid-encoder-support.log
+Downloading hidapi 0.14.0 source...
+Verified SHA256 of hidapi-0.14.0.tar.gz
+Extracting...
+Building hidapi from source with MSVC...
+
+
+hidapi ready in third_party\hidapi
+  Header: third_party\hidapi\include\hidapi\hidapi.h
+  Lib:    third_party\hidapi\lib\hidapi.lib
+  DLL:    third_party\hidapi\bin\hidapi.dll
+**********************
+PowerShell transcript end
+End time: 20261104051039
+**********************

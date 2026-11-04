@@ -1,0 +1,1324 @@
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\aether-icom-rx-audit.exe
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\aether-icom-rx-audit.exe
+
+File Type: EXECUTABLE IMAGE
+
+  Image has the following dependencies:
+
+    Qt6Core.dll
+    AVRT.dll
+    ADVAPI32.dll
+    Qt6Multimedia.dll
+    Qt6Gui.dll
+    Qt6SerialPort.dll
+    Qt6WebSockets.dll
+    Qt6Network.dll
+    ole32.dll
+    IPHLPAPI.DLL
+    VERSION.dll
+    WINMM.dll
+    hidapi.dll
+    SETUPAPI.dll
+    libfftw3-3.dll
+    libfftw3f-3.dll
+    deepfilter.dll
+    WS2_32.dll
+    libssl-3-x64.dll
+    libcrypto-3-x64.dll
+    KERNEL32.dll
+    USER32.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-locale-l1-1-0.dll
+
+  Summary
+
+      130000 .data
+       60000 .pdata
+     24B9000 .rdata
+        D000 .reloc
+        1000 .rsrc
+      891000 .text
+        1000 _RDATA
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\avcodec-63.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\avcodec-63.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    swresample-7.dll
+    avutil-61.dll
+    ole32.dll
+    KERNEL32.dll
+
+  Summary
+
+      6A8000 .data
+        1000 .fptable
+       3E000 .pdata
+      31E000 .rdata
+        9000 .reloc
+        1000 .rsrc
+      A0F000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\avformat-63.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\avformat-63.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    avcodec-63.dll
+    avutil-61.dll
+    Secur32.dll
+    ncrypt.dll
+    CRYPT32.dll
+    WS2_32.dll
+    KERNEL32.dll
+
+  Summary
+
+        3000 .data
+        1000 .fptable
+       15000 .pdata
+       BF000 .rdata
+        5000 .reloc
+        1000 .rsrc
+      1DD000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\avutil-61.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\avutil-61.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    USER32.dll
+    bcrypt.dll
+    KERNEL32.dll
+
+  Summary
+
+      112000 .data
+        1000 .fptable
+        8000 .pdata
+       43000 .rdata
+        2000 .reloc
+        1000 .rsrc
+       CD000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\concrt140.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\concrt140.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    MSVCP140.dll
+    VCRUNTIME140_1.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        4000 .data
+        5000 .pdata
+       17000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       37000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\d3dcompiler_47.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\d3dcompiler_47.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+    ADVAPI32.dll
+    RPCRT4.dll
+
+  Summary
+
+       1A000 .data
+        1000 .fptable
+       1F000 .pdata
+       E5000 .rdata
+        9000 .reloc
+        1000 .rsrc
+      362000 .text
+        1000 fothk
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\deepfilter.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\deepfilter.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    api-ms-win-core-synch-l1-2-0.dll
+    bcryptprimitives.dll
+    bcrypt.dll
+    ADVAPI32.dll
+    kernel32.dll
+    ntdll.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+
+  Summary
+
+        3000 .data
+       6D000 .pdata
+      25B000 .rdata
+        F000 .reloc
+      D22000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\dxcompiler.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\dxcompiler.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+    ole32.dll
+    OLEAUT32.dll
+    ADVAPI32.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-locale-l1-1-0.dll
+
+  Summary
+
+       21000 .data
+       59000 .pdata
+      211000 .rdata
+       14000 .reloc
+        1000 .rsrc
+      AFD000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\dxil.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\dxil.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+    ole32.dll
+    ADVAPI32.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+
+  Summary
+
+        9000 .data
+        C000 .pdata
+       41000 .rdata
+        2000 .reloc
+        1000 .rsrc
+      118000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\hidapi.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\hidapi.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        3000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        7000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\libcrypto-3-x64.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\libcrypto-3-x64.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    WS2_32.dll
+    ADVAPI32.dll
+    CRYPT32.dll
+    USER32.dll
+    KERNEL32.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-filesystem-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+
+  Summary
+
+        1000 .00cfg
+        9000 .data
+        3000 .idata
+       30000 .pdata
+      1C3000 .rdata
+       13000 .reloc
+        1000 .rsrc
+      4B6000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\libfftw3-3.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\libfftw3-3.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+    msvcrt.dll
+
+  Summary
+
+        1000 .CRT
+        1000 .bss
+        1000 .data
+        2000 .debug_abbrev
+        1000 .debug_aranges
+        1000 .debug_frame
+        B000 .debug_info
+        2000 .debug_line
+        4000 .debug_loc
+        1000 .debug_ranges
+        1000 .debug_str
+        2000 .edata
+        1000 .idata
+        7000 .pdata
+       42000 .rdata
+        2000 .reloc
+      1CC000 .text
+        1000 .tls
+        B000 .xdata
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\libfftw3f-3.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\libfftw3f-3.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+    msvcrt.dll
+
+  Summary
+
+        1000 .CRT
+        1000 .bss
+        1000 .data
+        2000 .debug_abbrev
+        1000 .debug_aranges
+        1000 .debug_frame
+        B000 .debug_info
+        2000 .debug_line
+        4000 .debug_loc
+        1000 .debug_ranges
+        1000 .debug_str
+        2000 .edata
+        1000 .idata
+        7000 .pdata
+       4B000 .rdata
+        2000 .reloc
+      1D1000 .text
+        1000 .tls
+        B000 .xdata
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\libssl-3-x64.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\libssl-3-x64.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    libcrypto-3-x64.dll
+    WS2_32.dll
+    KERNEL32.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-filesystem-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+
+  Summary
+
+        1000 .00cfg
+        5000 .data
+        8000 .idata
+        B000 .pdata
+       35000 .rdata
+        3000 .reloc
+        1000 .rsrc
+       EE000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140_1.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140_1.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        2000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        2000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140_2.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140_2.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-locale-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        3000 .data
+        3000 .pdata
+        D000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       2D000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140_atomic_wait.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140_atomic_wait.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    MSVCP140.dll
+    VCRUNTIME140_1.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-locale-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    ADVAPI32.dll
+    api-ms-win-core-synch-l1-2-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        9000 .data
+        1000 .pdata
+        5000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        4000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140_codecvt_ids.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140_codecvt_ids.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    VCRUNTIME140.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        1000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        1000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\msvcp140.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-locale-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-filesystem-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        4000 .data
+        5000 .pdata
+       2F000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       62000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\opengl32sw.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\opengl32sw.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    imagehlp.dll
+    SHELL32.dll
+    ADVAPI32.dll
+    GDI32.dll
+    USER32.dll
+    KERNEL32.dll
+
+  Summary
+
+       73000 .data
+        1000 .gfids
+       A4000 .pdata
+      4EB000 .rdata
+       17000 .reloc
+      DEC000 .text
+        1000 .tls
+        2000 _RDATA
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Core.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Core.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    api-ms-win-core-synch-l1-2-0.dll
+    MPR.dll
+    USERENV.dll
+    ADVAPI32.dll
+    AUTHZ.dll
+    KERNEL32.dll
+    NETAPI32.dll
+    ntdll.dll
+    ole32.dll
+    SHELL32.dll
+    USER32.dll
+    VERSION.dll
+    WINMM.dll
+    WS2_32.dll
+    icuuc.dll
+    MSVCP140.dll
+    MSVCP140_1.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    api-ms-win-crt-filesystem-l1-1-0.dll
+    api-ms-win-core-winrt-l1-1-0.dll
+    api-ms-win-core-winrt-error-l1-1-1.dll
+    OLEAUT32.dll
+
+  Summary
+
+       16000 .data
+       2A000 .pdata
+        C000 .qtmimed
+      5C9000 .rdata
+        5000 .reloc
+        1000 .rsrc
+      3E7000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Gui.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Gui.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    d3d11.dll
+    dxgi.dll
+    d3d12.dll
+    GDI32.dll
+    ole32.dll
+    SHELL32.dll
+    USER32.dll
+    UxTheme.dll
+    DWrite.dll
+    Qt6Core.dll
+    KERNEL32.dll
+    MSVCP140.dll
+    MSVCP140_1.dll
+    MSVCP140_2.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-utility-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+
+  Summary
+
+       31000 .data
+       5E000 .pdata
+      202000 .rdata
+        7000 .reloc
+        1000 .rsrc
+      6B7000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Multimedia.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Multimedia.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Network.dll
+    AVRT.dll
+    PROPSYS.dll
+    Qt6Gui.dll
+    Qt6Core.dll
+    KERNEL32.dll
+    USER32.dll
+    ole32.dll
+    MSVCP140.dll
+    MSVCP140_1.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+
+  Summary
+
+       10000 .data
+        D000 .pdata
+       88000 .rdata
+        3000 .reloc
+        1000 .rsrc
+       AF000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Network.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Network.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Core.dll
+    ADVAPI32.dll
+    DNSAPI.dll
+    IPHLPAPI.DLL
+    Secur32.dll
+    WINHTTP.dll
+    WS2_32.dll
+    KERNEL32.dll
+    MSVCP140.dll
+    MSVCP140_1.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+
+  Summary
+
+        A000 .data
+       13000 .pdata
+       86000 .rdata
+        3000 .reloc
+        1000 .rsrc
+      10E000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6SerialPort.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6SerialPort.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    ADVAPI32.dll
+    SETUPAPI.dll
+    Qt6Core.dll
+    KERNEL32.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+
+  Summary
+
+        2000 .data
+        2000 .pdata
+        A000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       11000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Svg.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6Svg.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Gui.dll
+    Qt6Core.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        2000 .data
+        6000 .pdata
+       2B000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       5E000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6WebSockets.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\Qt6WebSockets.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Network.dll
+    Qt6Core.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        2000 .data
+        2000 .pdata
+       14000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       1C000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\swresample-7.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\swresample-7.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    avutil-61.dll
+    KERNEL32.dll
+
+  Summary
+
+        2000 .data
+        1000 .fptable
+        2000 .pdata
+       10000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       25000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\swscale-10.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\swscale-10.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    avutil-61.dll
+    KERNEL32.dll
+
+  Summary
+
+       46000 .data
+        1000 .fptable
+        9000 .pdata
+       2F000 .rdata
+        2000 .reloc
+        1000 .rsrc
+       F8000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\vccorlib140.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\vccorlib140.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    KERNEL32.dll
+    VCRUNTIME140_1.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    MSVCP140.dll
+    ole32.dll
+    OLEAUT32.dll
+    api-ms-win-core-winrt-string-l1-1-0.dll
+    api-ms-win-core-winrt-error-l1-1-0.dll
+    api-ms-win-core-winrt-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+
+  Summary
+
+        B000 .data
+        2000 .pdata
+       19000 .rdata
+        2000 .reloc
+        1000 .rsrc
+       29000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\vcruntime140_1.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\vcruntime140_1.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    VCRUNTIME140.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        3000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        4000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\vcruntime140_threads.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\vcruntime140_threads.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-time-l1-1-0.dll
+    VCRUNTIME140.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        2000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        3000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\vcruntime140.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\vcruntime140.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        2000 .pdata
+        6000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       1E000 .text
+        1000 _RDATA
+        1000 fothk
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\generic\qtuiotouchplugin.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\generic\qtuiotouchplugin.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Network.dll
+    Qt6Gui.dll
+    Qt6Core.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        1000 .qtmetad
+        6000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        F000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\iconengines\qsvgicon.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\iconengines\qsvgicon.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Svg.dll
+    Qt6Gui.dll
+    Qt6Core.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        1000 .qtmetad
+        4000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        9000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\imageformats\qgif.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\imageformats\qgif.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Gui.dll
+    Qt6Core.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        1000 .qtmetad
+        3000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        5000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\imageformats\qico.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\imageformats\qico.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Gui.dll
+    Qt6Core.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        1000 .qtmetad
+        4000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        4000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\imageformats\qjpeg.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\imageformats\qjpeg.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Gui.dll
+    Qt6Core.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        5000 .pdata
+        1000 .qtmetad
+       1E000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       6B000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\imageformats\qsvg.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\imageformats\qsvg.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Svg.dll
+    Qt6Gui.dll
+    Qt6Core.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        1000 .pdata
+        1000 .qtmetad
+        3000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        3000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\multimedia\ffmpegmediaplugin.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\multimedia\ffmpegmediaplugin.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Multimedia.dll
+    Qt6Gui.dll
+    d3d11.dll
+    dxgi.dll
+    Qt6Core.dll
+    MF.dll
+    MFPlat.DLL
+    MFReadWrite.dll
+    dwmapi.dll
+    dxva2.dll
+    avformat-63.dll
+    avcodec-63.dll
+    swresample-7.dll
+    swscale-10.dll
+    avutil-61.dll
+    USER32.dll
+    GDI32.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-core-synch-l1-1-0.dll
+    api-ms-win-core-synch-l1-2-0.dll
+    api-ms-win-core-rtlsupport-l1-1-0.dll
+    api-ms-win-core-debug-l1-1-0.dll
+    api-ms-win-core-errorhandling-l1-1-0.dll
+    api-ms-win-core-processthreads-l1-1-0.dll
+    api-ms-win-core-processthreads-l1-1-1.dll
+    api-ms-win-core-libraryloader-l1-2-0.dll
+    api-ms-win-core-profile-l1-1-0.dll
+    api-ms-win-core-sysinfo-l1-1-0.dll
+    api-ms-win-core-interlocked-l1-1-0.dll
+    api-ms-win-core-heap-l2-1-0.dll
+    api-ms-win-core-localization-l1-2-0.dll
+    api-ms-win-core-winrt-l1-1-0.dll
+    api-ms-win-core-winrt-error-l1-1-1.dll
+    OLEAUT32.dll
+    api-ms-win-core-com-l1-1-0.dll
+    api-ms-win-core-heap-l1-1-0.dll
+
+  Summary
+
+        8000 .data
+        6000 .pdata
+        1000 .qtmetad
+       32000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       77000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\multimedia\windowsmediaplugin.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\multimedia\windowsmediaplugin.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    d3d9.dll
+    dxva2.dll
+    EVR.dll
+    MF.dll
+    MFPlat.DLL
+    MFReadWrite.dll
+    ole32.dll
+    PROPSYS.dll
+    USER32.dll
+    WINMM.dll
+    Qt6Multimedia.dll
+    Qt6Gui.dll
+    Qt6Core.dll
+    KERNEL32.dll
+    SHELL32.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+
+  Summary
+
+        3000 .data
+        3000 .pdata
+        1000 .qtmetad
+       19000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       2C000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\networkinformation\qnetworklistmanager.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\networkinformation\qnetworklistmanager.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    OLEAUT32.dll
+    Qt6Network.dll
+    Qt6Core.dll
+    ole32.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    KERNEL32.dll
+    api-ms-win-core-winrt-l1-1-0.dll
+    api-ms-win-core-winrt-error-l1-1-1.dll
+
+  Summary
+
+        2000 .data
+        1000 .pdata
+        1000 .qtmetad
+        8000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        7000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\platforms\qwindows.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\platforms\qwindows.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    ADVAPI32.dll
+    dwmapi.dll
+    GDI32.dll
+    IMM32.dll
+    ole32.dll
+    OLEAUT32.dll
+    SETUPAPI.dll
+    SHELL32.dll
+    SHLWAPI.dll
+    USER32.dll
+    WINMM.dll
+    WTSAPI32.dll
+    api-ms-win-shcore-scaling-l1-1-1.dll
+    COMDLG32.dll
+    d3d9.dll
+    api-ms-win-core-winrt-string-l1-1-0.dll
+    api-ms-win-core-winrt-l1-1-0.dll
+    mscms.dll
+    UIAutomationCore.DLL
+    Qt6Gui.dll
+    Qt6Core.dll
+    KERNEL32.dll
+    MSVCP140.dll
+    VCRUNTIME140_1.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-core-winrt-error-l1-1-1.dll
+
+  Summary
+
+        7000 .data
+        6000 .pdata
+        1000 .qtmetad
+       4C000 .rdata
+        2000 .reloc
+        1000 .rsrc
+       9A000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\tls\qcertonlybackend.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\tls\qcertonlybackend.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    Qt6Network.dll
+    Qt6Core.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        1000 .data
+        2000 .pdata
+        1000 .qtmetad
+        6000 .rdata
+        1000 .reloc
+        1000 .rsrc
+        F000 .text
+IMAGE: D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\tls\qschannelbackend.dll
+
+Dump of file D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\tls\qschannelbackend.dll
+
+File Type: DLL
+
+  Image has the following dependencies:
+
+    CRYPT32.dll
+    Secur32.dll
+    bcrypt.dll
+    ncrypt.dll
+    Qt6Network.dll
+    Qt6Core.dll
+    KERNEL32.dll
+    MSVCP140.dll
+    VCRUNTIME140.dll
+    api-ms-win-crt-string-l1-1-0.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+
+  Summary
+
+        2000 .data
+        3000 .pdata
+        1000 .qtmetad
+        E000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       29000 .text

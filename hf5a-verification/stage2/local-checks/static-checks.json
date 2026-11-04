@@ -1,0 +1,37 @@
+[
+  {
+    "command": "python tools/check_engine_boundary.py --strict",
+    "exitCode": 0,
+    "lastLine": "engine-boundary: 1748 file(s) scanned (1034 engine, 1748 above-seam), 101 finding(s), 0 would block under --strict"
+  },
+  {
+    "command": "python tools/gen_touchpoint_manifest.py --check",
+    "exitCode": 0,
+    "lastLine": "manifest up to date"
+  },
+  {
+    "command": "python tools/check_capability_records.py --strict",
+    "exitCode": 0,
+    "lastLine": "capability-records: 70 boolean(s), at the frozen 70 \u2014 ok (shrink only)"
+  },
+  {
+    "command": "python tools/check_command_plane.py --strict",
+    "exitCode": 0,
+    "lastLine": "command-plane: 16 file(s), 125 raw Flex command(s) above the seam; baseline 125 across 16 file(s); 0 would block under --strict"
+  },
+  {
+    "command": "python tools/check_test_registration.py --strict",
+    "exitCode": 0,
+    "lastLine": "test registration: OK \u2014 all test targets declared in tests/tests.cmake"
+  },
+  {
+    "command": "python tools/check_ci_test_gate.py",
+    "exitCode": 0,
+    "lastLine": "ok: per-PR gate matches the frozen list"
+  },
+  {
+    "command": "python tools/gen_seam_probe_table.py --check",
+    "exitCode": 0,
+    "lastLine": "seam probe table up to date (57 signals)"
+  }
+]

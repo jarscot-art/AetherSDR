@@ -1,0 +1,12 @@
+[
+  {
+    "command": "python tools/check_test_registration.py --strict",
+    "exitCode": 0,
+    "output": "test registration: OK \u2014 all test targets declared in tests/tests.cmake"
+  },
+  {
+    "command": "python tools/check_ci_test_gate.py",
+    "exitCode": 0,
+    "output": "4 workflow(s) scanned: 7 test(s) selected by -R; .github/ci-test-gate.txt: 7 frozen; 919 registered in tests/tests.cmake\nok: per-PR gate matches the frozen list"
+  }
+]

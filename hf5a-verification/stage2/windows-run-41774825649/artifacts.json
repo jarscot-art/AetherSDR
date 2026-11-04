@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "id": 13297925766,
+      "name": "hf5a-stage2-offline-41774825649",
+      "size_in_bytes": 28451,
+      "url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/artifacts/13297925766",
+      "archive_download_url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/artifacts/13297925766/zip",
+      "expired": false,
+      "created_at": "2026-11-04T05:07:01Z",
+      "expires_at": "2027-02-02T04:42:34Z",
+      "updated_at": "2026-11-04T05:07:01Z",
+      "digest": "sha256:6a96860fbfb88a694318dd91f4c71b02fd5e9fba18dd133c7dca1e4890dd2f83",
+      "workflow_run": {
+        "id": 41774825649,
+        "repository_id": 1444403538,
+        "head_repository_id": 1444403538,
+        "head_branch": "hf5a/stage2-rx-only-audit",
+        "head_sha": "a200ce5d0298e9e751f015d64d9c416be27b8f92"
+      }
+    }
+  ]
+}

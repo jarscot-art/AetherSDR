@@ -1,0 +1,42 @@
+{
+  "artifacts": [
+    {
+      "id": 13300445627,
+      "name": "hf5a-stage2-repackage-41782953139",
+      "size_in_bytes": 11406,
+      "url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/artifacts/13300445627",
+      "archive_download_url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/artifacts/13300445627/zip",
+      "expired": false,
+      "created_at": "2026-11-04T06:04:13Z",
+      "expires_at": "2027-02-02T06:02:49Z",
+      "updated_at": "2026-11-04T06:04:13Z",
+      "digest": "sha256:26d5d27a43a42f603f3fd93e9a2aa5c56af0f1dadaa9705cf78e94220ea26621",
+      "workflow_run": {
+        "id": 41782953139,
+        "repository_id": 1444403538,
+        "head_repository_id": 1444403538,
+        "head_branch": "hf5a/stage2-rx-only-audit",
+        "head_sha": "88370a51314c7ab2fd8b306f9775d29173ec1792"
+      }
+    },
+    {
+      "id": 13299434867,
+      "name": "aether-icom-rx-audit-verified-b058dcc2b2d6365f2ffed78462745830fc8ff85e",
+      "size_in_bytes": 86560069,
+      "url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/artifacts/13299434867",
+      "archive_download_url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/artifacts/13299434867/zip",
+      "expired": false,
+      "created_at": "2026-11-04T06:04:11Z",
+      "expires_at": "2027-02-02T06:02:49Z",
+      "updated_at": "2026-11-04T06:04:11Z",
+      "digest": "sha256:70ec3da6f5ae4d9bbdcd1a3d336885546c4a06286db9e026c954a936e26cd365",
+      "workflow_run": {
+        "id": 41782953139,
+        "repository_id": 1444403538,
+        "head_repository_id": 1444403538,
+        "head_branch": "hf5a/stage2-rx-only-audit",
+        "head_sha": "88370a51314c7ab2fd8b306f9775d29173ec1792"
+      }
+    }
+  ]
+}

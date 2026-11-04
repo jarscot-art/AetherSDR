@@ -1,0 +1,22 @@
+{
+  "runId": 41777405546,
+  "sourceCommit": "31b6b418779ec9c492a17bfe2e0cbdbf3d8110e0",
+  "build": "PASS",
+  "ctest": {
+    "total": 12,
+    "pass": 12,
+    "fail": 0,
+    "notRun": 0
+  },
+  "mutationExpectedExit": 8,
+  "sourceRestoredExact": true,
+  "sourceIntegrityExit": 0,
+  "portableBundle": "FAIL: self-check with minimal PATH; exact dependency unresolved in this run",
+  "egressEvidence": [
+    "packets_before=2 packets_after_forbidden=2 denied=30",
+    "audio: packets=0 denied=4",
+    "PASS queued failure cleanup safely retires only the test session",
+    "PASS readback-reset observer may retire backend without a subsequent dispatch",
+    "No connection attempted."
+  ]
+}

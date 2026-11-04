@@ -1,0 +1,182 @@
+[
+  {
+    "path": "artifact-original/PATH.txt",
+    "bytes": 4618,
+    "sha256": "b2379c6908e945582238235ca8ce18226f98a9e70afe02d50bd013b82dbb9659"
+  },
+  {
+    "path": "artifact-original/assert-gpu-spectrum-rendering-actually-enabled.log",
+    "bytes": 941,
+    "sha256": "293257cd3812886fa4c8a0b008b91bb01a718d1316d6fc0174953dd699b6d044"
+  },
+  {
+    "path": "artifact-original/assert-portaudio-sidetone-sink-actually-enabled.log",
+    "bytes": 1037,
+    "sha256": "77b1788ae83e3b4b15f22477f39618498631102da4a3dacbb7130a03f96bd1df"
+  },
+  {
+    "path": "artifact-original/build-exit-code.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "artifact-original/build.log",
+    "bytes": 830,
+    "sha256": "ad9b2761fb6be9d162ace81d3f6c62c89c2c234da200d1e61bfe6787d8e14eaf"
+  },
+  {
+    "path": "artifact-original/configure.log",
+    "bytes": 4066,
+    "sha256": "2b7093dbbcf2f066babcb41ac57836d1d5fee420f9b25d8e905fd1f3eabc9fc9"
+  },
+  {
+    "path": "artifact-original/ctest-exit-code.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "artifact-original/ctest-selection-original.json",
+    "bytes": 11825,
+    "sha256": "c2cbe01b0b0579f1c9e9358fbd84dfa5cfa0a1a74574d0b9ea9f45d9dd09d352"
+  },
+  {
+    "path": "artifact-original/ctest-selection.json",
+    "bytes": 12396,
+    "sha256": "302504ba1685d33723ac640d9a6104801ad6ad5d8d31d501f54e773548ed63f2"
+  },
+  {
+    "path": "artifact-original/ctest.log",
+    "bytes": 25979,
+    "sha256": "c5aacf1a9aa5f6f2018c0f9d3ca7ddd6f182ce2982c5b42d824ef6327cb0c181"
+  },
+  {
+    "path": "artifact-original/egress-baseline.junit.xml",
+    "bytes": 1508,
+    "sha256": "49b5f17236c8a3928effa094130a85ba2906f606e5d8385b0a4a23f101d0fe85"
+  },
+  {
+    "path": "artifact-original/egress-baseline.log",
+    "bytes": 2597,
+    "sha256": "6fe8d667ae47a75c1818056e009f6749553c0216fd01598da163a97952409014"
+  },
+  {
+    "path": "artifact-original/export-qt-environment.log",
+    "bytes": 846,
+    "sha256": "b2a84a45c08ce15ac06aec1ed7c4f4386bcc4e11a4787a0d861e43ae7d4299e1"
+  },
+  {
+    "path": "artifact-original/install-fftw3.log",
+    "bytes": 1286,
+    "sha256": "d9005f7b73c9eb4d570cd9fdcefdc65362a7f4c787b1cfdf31f2320e68b3d3ab"
+  },
+  {
+    "path": "artifact-original/install-qt-lts-via-aqtinstall.log",
+    "bytes": 858,
+    "sha256": "94a7618044dde8c36d81bb5e5afc3c0a1552547767c5177f5013f26f213e098c"
+  },
+  {
+    "path": "artifact-original/mutation-build.log",
+    "bytes": 436,
+    "sha256": "4ce388c9bfa84f5b423e4386d5976ea0b8fbae3d20739a40ccf3731abd028d59"
+  },
+  {
+    "path": "artifact-original/mutation.json",
+    "bytes": 169,
+    "sha256": "6596b27f97fc4ec126611c0aa46a03a199d3cc3a5b5f5c0304e3af35a9928334"
+  },
+  {
+    "path": "artifact-original/mutation.junit.xml",
+    "bytes": 1957,
+    "sha256": "2aa3e306e21ab1a0a1e6f0e4fcd711dcd99557ab41f1bd1950a1d8bdb4de30ab"
+  },
+  {
+    "path": "artifact-original/mutation.log",
+    "bytes": 4207,
+    "sha256": "d5d929e706abde3d84e5128b719561a67bb6f6e00c7a110f369fda3e21417e3b"
+  },
+  {
+    "path": "artifact-original/restoration.json",
+    "bytes": 210,
+    "sha256": "ea0b12540f33e633d9fcd21dd46eefd461a75b17afd1fa05e5974d28fec9345e"
+  },
+  {
+    "path": "artifact-original/restored-build.log",
+    "bytes": 436,
+    "sha256": "4ce388c9bfa84f5b423e4386d5976ea0b8fbae3d20739a40ccf3731abd028d59"
+  },
+  {
+    "path": "artifact-original/results.csv",
+    "bytes": 576,
+    "sha256": "2e7ae01112ed5470e900ef62d2c2416e947311fad65fc1473c0f278bb51ec394"
+  },
+  {
+    "path": "artifact-original/results.json",
+    "bytes": 1226,
+    "sha256": "8b4b098c932b762ddecdc06425aa491d4d8a3fd010d7be48f0f6414d1eea9f46"
+  },
+  {
+    "path": "artifact-original/results.junit.xml",
+    "bytes": 6117,
+    "sha256": "960792ae3b8d0ad9db87de63fe5893f029dabe5548610cb41881f8ba81190b2e"
+  },
+  {
+    "path": "artifact-original/runtime-dlls.csv",
+    "bytes": 768,
+    "sha256": "e510a8582dcfc532f4444e73b8bfce7320b54a638844ddd717d9bb5a7387ced4"
+  },
+  {
+    "path": "artifact-original/setup-deepfilternet3-dfnr.log",
+    "bytes": 1120,
+    "sha256": "c9b2ae9d1237fd4a9fc4a37777f8331fb6b5c95ad4f383e6f10faf78c31f08b3"
+  },
+  {
+    "path": "artifact-original/setup-hidapi-hid-encoder-support.log",
+    "bytes": 1174,
+    "sha256": "d28707ee8263e3356675c239e7ab8bbc1f204f4473d24b1a3d01084173d6c786"
+  },
+  {
+    "path": "artifact-original/setup-portaudio-cw-sidetone-callback-sink.log",
+    "bytes": 1433,
+    "sha256": "0c11f5e059dabdc289e12ae20235fbdfdfa7d9f3fffe918e5389d25dd9595c73"
+  },
+  {
+    "path": "artifact-original/source-integrity-exit-code.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "artifact-original/source.json",
+    "bytes": 303,
+    "sha256": "415272b6d023b5e48e5eed0e14160601385402db6dfbc2b3b3cd77bd530dfbee"
+  },
+  {
+    "path": "artifact-original/test-sccache-health.log",
+    "bytes": 995,
+    "sha256": "df52d658a5a58e0d07038e4d25877b4f1f7546987905e679f0632cd8e7e6f503"
+  },
+  {
+    "path": "artifact-original/tracked-changes.txt",
+    "bytes": 155,
+    "sha256": "79158bf5cb3d0655c4f10f6751b96e80cf5ba7191244213c20445c24adf5d152"
+  },
+  {
+    "path": "artifact-original.zip",
+    "bytes": 28451,
+    "sha256": "6a96860fbfb88a694318dd91f4c71b02fd5e9fba18dd133c7dca1e4890dd2f83"
+  },
+  {
+    "path": "artifacts.json",
+    "bytes": 856,
+    "sha256": "49e30de97fbe01cc61169827d5fe7e92933625e12a9758db0bdc74c374d6b531"
+  },
+  {
+    "path": "job-metadata.json",
+    "bytes": 9638,
+    "sha256": "f912d2a1422f73364fdce094d9b113424b10c644677671e8aace14a4df9f5d70"
+  },
+  {
+    "path": "windows-job.log",
+    "bytes": 529340,
+    "sha256": "de6ac8b11bb0960e5e10d47a7f52c80e607b25ef26cbcc1eeca784669d08d34e"
+  }
+]

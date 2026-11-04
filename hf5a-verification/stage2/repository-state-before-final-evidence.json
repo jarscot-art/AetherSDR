@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-11-04T06:06:51Z",
+  "remoteMain": "33975b2354972a83bf7a6378ab2786e17cb49767",
+  "remoteStage1": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "remoteStage2BeforeEvidence": "88370a51314c7ab2fd8b306f9775d29173ec1792",
+  "localMainRef": "not present; main was not checked out or created",
+  "originalStage1WorktreeClean": true,
+  "sourceTestsCMakeIdenticalTo": "31b6b418779ec9c492a17bfe2e0cbdbf3d8110e0",
+  "pr1": {
+    "head": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+    "base": "33975b2354972a83bf7a6378ab2786e17cb49767",
+    "draft": true,
+    "merged": false,
+    "updatedAt": "2026-11-03T18:43:29Z"
+  }
+}

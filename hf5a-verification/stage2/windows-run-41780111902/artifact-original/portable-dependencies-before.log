@@ -1,0 +1,3 @@
+Auditing D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable with C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\dumpbin.exe
+MISSING: aether-icom-rx-audit.exe imports libssl-3-x64.dll -- not in the payload and not a system DLL
+MISSING: aether-icom-rx-audit.exe imports libcrypto-3-x64.dll -- not in the payload and not a system DLL

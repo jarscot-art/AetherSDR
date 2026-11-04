@@ -1,0 +1,81 @@
+**********************
+PowerShell transcript start
+Start time: 20261104053640
+Username: runnervmhao91\runneradmin
+RunAs User: runnervmhao91\runneradmin
+Configuration Name: 
+Machine: runnervmhao91 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -command . 'D:\a\_temp\ce889c44-6027-44ca-b3c0-3918a5923069.ps1'
+Process ID: 8644
+PSVersion: 7.6.9
+PSEdition: Core
+GitCommitId: 7.6.9
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is hf5a-stage2-results/configure.log
+-- The C compiler identification is MSVC 19.51.36260.0
+-- The CXX compiler identification is MSVC 19.51.36260.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test HAVE_STDATOMIC
+-- Performing Test HAVE_STDATOMIC - Success
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR)
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of off64_t
+-- Check size of off64_t - failed
+-- Looking for fseeko
+-- Looking for fseeko - not found
+-- Looking for unistd.h
+-- Looking for unistd.h - not found
+-- Qt6::SerialPort found — serial PTT/CW support enabled
+-- Qt6::WebSockets found — FreeDV Reporter spot source enabled
+-- Qt6Keychain not found — credential persistence disabled
+-- PortAudio (third_party) found — CW sidetone callback sink enabled
+-- Will build vendored opus with FARGAN
+-- RADE enabled (bundled vendored Opus snapshot)
+-- Opus: using RADE's bundled build
+-- GPU spectrum rendering enabled (QRhi, Qt 6.12.0)
+-- NR4 (libspecbleach) enabled — building with clang-cl
+-- DFNR (DeepFilterNet3) enabled — D:/a/AetherSDR/AetherSDR/third_party/deepfilter/lib/windows-x86_64/deepfilter.dll.lib
+-- Found OpenSSL: optimized;C:/Program Files/OpenSSL/lib/VC/x64/MD/libcrypto.lib;debug;C:/Program Files/OpenSSL/lib/VC/x64/MDd/libcrypto.lib (found version "3.6.5")
+-- MQTT client support enabled (bundled libmosquitto, TLS via OpenSSL 3.6.5)
+-- AetherAFSKDemod: Direwolf profile-A (VHF 1200 baud), GPL-2.0-or-later
+-- Vendored SQLite D:/a/AetherSDR/AetherSDR/third_party/sqlite (settings store, RFC #4603)
+-- DFNR model will be embedded in Qt resources
+-- Found Threads: TRUE
+-- ASR: disabled (-DENABLE_ASR=OFF)
+-- Build SHA: b058dcc
+-- HL2 transmit modulator ... WDSP TXA (AETHER_HL2_TX_TXA=ON)
+-- MIDI controller support enabled (RtMidi)
+-- RTL-SDR ... disabled — librtlsdr not found
+-- hidapi found — USB HID encoder support enabled
+-- ONNX Runtime not found — ASR ONNX features + signal classifier disabled (set REQUIRE_ASR_ONNX=ON to make this a hard error in release builds)
+-- sherpa-onnx not found — non-whisper ASR backend disabled (run scripts/setup/setup-sherpa-onnx.sh to enable)
+-- NVIDIA AFX GPU denoiser enabled (runtime-loaded)
+-- tests/tests.cmake: 913 tests and 814 executables checked / 0 opted out of the wisdom isolation / FFTW planner cap 0.001 s
+-- Configuring done (10.2s)
+-- Generating done (10.9s)
+-- Build files have been written to: D:/a/AetherSDR/AetherSDR/build
+**********************
+PowerShell transcript end
+End time: 20261104053702
+**********************

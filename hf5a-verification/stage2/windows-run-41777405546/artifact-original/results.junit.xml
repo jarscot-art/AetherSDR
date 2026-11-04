@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="(empty)"
+	tests="12"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname=""
+	time="3"
+	timestamp="2026-11-04T05:31:30"
+	>
+	<testcase name="icom_outbound_policy_test" classname="icom_outbound_policy_test" time="0.0134765" status="run">
+		<properties/>
+		<system-out>policy: 9 exact queries; 2304 added-data mutations; failures=0
+</system-out>
+	</testcase>
+	<testcase name="icom_rx_audit_egress_test" classname="icom_rx_audit_egress_test" time="0.0373739" status="run">
+		<properties/>
+		<system-out>PASS approved query reaches last writer
+PASS approved query retransmits unchanged
+PASS raw/tracked/emergency/authorized-TX/replay cannot leak PTT, OFF, CW, scope or XFC
+EVIDENCE serial: packets_before=2 packets_after_forbidden=2 denied=30
+PASS denied writes consume no sequence
+PASS denials counted at actual egress boundary
+PASS old-session retained packet cannot cross new SID
+PASS stop uses guarded writer and closes only own stream
+PASS audio including silence is denied even with a valid TX grant and replay
+EVIDENCE audio: packets=0 denied=4
+PASS only deliberately injected forbidden replay exists
+PASS audio transport disconnect allowed without PCM
+PASS real session factory propagates immutable audit policy to all streams
+PASS canonical login/auth/renew/RX negotiation permitted; caller cannot enable TX
+PASS non-ID query cannot leave before radio identification
+PASS real decoder unlocks approved polling after directed MK2 reply
+PASS audit cannot automatically restart CI-V
+PASS audit never creates a TX timer or ...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="icom_rx_audit_self_check" classname="icom_rx_audit_self_check" time="0.0355343" status="run">
+		<properties/>
+		<system-out>RX policy self-check: PASS; no session or sockets created
+</system-out>
+	</testcase>
+	<testcase name="icom_rx_audit_refuses_implicit_connection" classname="icom_rx_audit_refuses_implicit_connection" time="0.0262822" status="run">
+		<properties/>
+		<system-out>No connection attempted. Hardware use needs --connect and --exclusive-lan-confirmed.
+</system-out>
+	</testcase>
+	<testcase name="icom_protocol_test" classname="icom_protocol_test" time="0.0117421" status="run">
+		<properties/>
+		<system-out>icom_protocol_test: all checks passed
+</system-out>
+	</testcase>
+	<testcase name="icom_civ_test" classname="icom_civ_test" time="0.0117923" status="run">
+		<properties/>
+		<system-out>icom_civ_test: all checks passed
+</system-out>
+	</testcase>
+	<testcase name="icom_control_profile_test" classname="icom_control_profile_test" time="0.048944" status="run">
+		<properties/>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="icom_session_lease_test" classname="icom_session_lease_test" time="0.041118" status="run">
+		<properties/>
+		<system-out>icom_session_lease_test: all checks passed
+</system-out>
+	</testcase>
+	<testcase name="icom_backend_seam_test" classname="icom_backend_seam_test" time="0.129584" status="run">
+		<properties/>
+		<system-out>icom_backend_seam_test: all checks passed
+</system-out>
+	</testcase>
+	<testcase name="backend_family_switch_test" classname="backend_family_switch_test" time="3.51137" status="run">
+		<properties/>
+		<system-out>-- baseline connect edge
+[PASS] baseline: simulator connected
+[PASS] baseline: simulator disconnected
+  baseline: 1 capabilitiesChanged on one connect edge
+-- cold cycle
+[PASS] -&gt; sim: model reports the family
+[PASS] -&gt; sim: backend present
+[PASS] -&gt; sim: backendRebuilt announced exactly once
+[PASS] -&gt; sim: teardown+setup within budget (1 ms)
+[PASS] -&gt; sim: no slice models carried across
+[PASS] -&gt; sim: no pan models carried across
+[PASS] -&gt; hl2: model reports the family
+[PASS] -&gt; hl2: backend present
+[PASS] -&gt; hl2: backendRebuilt announced exactly once
+[PASS] -&gt; hl2: teardown+setup within budget (2 ms)
+[PASS] -&gt; hl2: no slice models carried across
+[PASS] -&gt; hl2: no pan models carried across
+[PASS] -&gt; anan: model reports the family
+[PASS] -&gt; anan: backend present
+[PASS] -&gt; anan: backendRebuilt announced exactly once
+[PASS] -&gt; anan: teardown+setup within budget (1 ms)
+[PASS] -&gt; anan: no slice models carried across
+[PASS] -&gt; anan: no pan models carried across
+[PASS] -&gt; icom: model reports the family
+[PASS] -&gt; ic...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="transmit_model_test" classname="transmit_model_test" time="0.0486429" status="run">
+		<properties/>
+		<system-out>[ OK ] legacy frequency publications preserve their numeric contract
+[ OK ] an explicit TX report preserves the existing ATU reference
+[ OK ] unrelated partial deltas do not erase provenance
+[ OK ] timeout invalidates live TX without zeroing ATU's historical frequency
+[ OK ] a validity flag alone cannot revive an old frequency
+[ OK ] invalid zero readback does not corrupt the last valid number
+[ OK ] nonfinite readback cannot become valid
+[ OK ] ATU reference and actual TX can differ without weakening proof
+[ OK ] a timeout leaves the established ATU reference untouched
+[ OK ] backend replacement clears proof but preserves the legacy getter
+[ OK ] the next legacy backend adopts frequency normally
+[ OK ] frequency observation and expiry issue no control intent
+[ OK ] TX arriving before RX cannot initialize the ATU dial reference
+[ OK ] TX arriving first after reconnect cannot overwrite the retained ATU reference
+[ OK ] an already expired queued report cannot renew freshness without the backend pump
+[ OK ] back...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="icom_replay_test" classname="icom_replay_test" time="0.0354432" status="run">
+		<properties/>
+		<system-out>icom_replay_test: all checks passed
+</system-out>
+	</testcase>
+</testsuite>

@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "b058dcc2b2d6365f2ffed78462745830fc8ff85e",
+  "build": "PASS",
+  "ctest": {
+    "total": 12,
+    "pass": 12,
+    "fail": 0,
+    "notRun": 0
+  },
+  "mutation": "expected FAIL, seven assertions, exit 8",
+  "sourceRestoredExact": true,
+  "sourceIntegrityExit": 0,
+  "package": "FAIL: two direct OpenSSL imports missing",
+  "missingDLLs": [
+    "libssl-3-x64.dll",
+    "libcrypto-3-x64.dll"
+  ],
+  "opensslSdkVersion": "3.6.5",
+  "compiledInputsArtifactId": 13299995805
+}

@@ -1,0 +1,112 @@
+[
+  {
+    "path": "artifact-original/export-qt-environment.log",
+    "bytes": 846,
+    "sha256": "8f80256d566682925f6ae0ce190efe31ffa315ff0edf71604ac9d558a76fefa0"
+  },
+  {
+    "path": "artifact-original/input-exe-sha256.txt",
+    "bytes": 66,
+    "sha256": "a93ae3f29d87882dbf056d697b171fc4123377b398633392ee2de03d5279bd34"
+  },
+  {
+    "path": "artifact-original/install-qt-lts-via-aqtinstall.log",
+    "bytes": 858,
+    "sha256": "60eaeb93f27ab647285261a54e72fa6e9cff8c69329fe3bfd0b7ba28374a6554"
+  },
+  {
+    "path": "artifact-original/package-source.json",
+    "bytes": 295,
+    "sha256": "ff017d21bdad03f95473aaf8a53cb5fc58a9b50e40a261d910bd145af5beda6a"
+  },
+  {
+    "path": "artifact-original/portable-dependencies-before-exit-code.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "artifact-original/portable-dependencies-before.log",
+    "bytes": 263,
+    "sha256": "6505362870c8d52d768dd1d88c1209a9ec0a1687415432de22dc056e2d2139b2"
+  },
+  {
+    "path": "artifact-original/portable-dependencies.log",
+    "bytes": 263,
+    "sha256": "80a8730981286251fbc8cf595712927dd5b78d5ddeeeb12e63df66936d66324e"
+  },
+  {
+    "path": "artifact-original/portable-deploy.log",
+    "bytes": 3255,
+    "sha256": "6c10e7092e49d9eabd924e0e8f892eae923ac3546c65487f58031d26c16cada6"
+  },
+  {
+    "path": "artifact-original/portable-imports.log",
+    "bytes": 30641,
+    "sha256": "235b4c92a772b7d3831f415ad7d4f25ea9cd01172c91d61d94b4d5182684a283"
+  },
+  {
+    "path": "artifact-original/portable-openssl-runtime.txt",
+    "bytes": 227,
+    "sha256": "47e82ba196134ff858e136c2b88f5fe31a2933a14c95292a970eed839be1aedf"
+  },
+  {
+    "path": "artifact-original/portable-openssl-version.txt",
+    "bytes": 64,
+    "sha256": "3b275fb83bc2ba88cb09d28dba191c4c7ffd06cb6f7c4b58cec2a8f4bfddc5f9"
+  },
+  {
+    "path": "artifact-original/portable-runtime.log",
+    "bytes": 895,
+    "sha256": "ce8362556c37d0e5b63b6d07f26159613420f8295aed76d03890f72c58d0866c"
+  },
+  {
+    "path": "artifact-original/portable-self-check-exit.json",
+    "bytes": 47,
+    "sha256": "87973cb3c6c57b5d28a59da81f6bf2585e274ff6e38d098d9432f556dbc9b065"
+  },
+  {
+    "path": "artifact-original/portable-self-check.log",
+    "bytes": 59,
+    "sha256": "5c73459b6c92bcd1e7664024a97c34936f787d82c01b40c9c12d2abc697051ec"
+  },
+  {
+    "path": "artifact-original/portable-sha256.csv",
+    "bytes": 6745,
+    "sha256": "0148bf5b597f5dde96dfbdbb7c83cab1d8ba63f82c75bac6d1d2d1eb1a3bfde9"
+  },
+  {
+    "path": "artifact-original/prior-executed-results.json",
+    "bytes": 1226,
+    "sha256": "a87f2fa629ea90bceb89d94cafea2ac0c2f26089d5f01103f96c3766f734f5fc"
+  },
+  {
+    "path": "artifact-original/source.json",
+    "bytes": 303,
+    "sha256": "8f0c7489c88f8ad4a79beece8fbd17cf6bf08890579a397ea54395e54500073e"
+  },
+  {
+    "path": "artifact-original.zip",
+    "bytes": 11406,
+    "sha256": "26d5d27a43a42f603f3fd93e9a2aa5c56af0f1dadaa9705cf78e94220ea26621"
+  },
+  {
+    "path": "artifacts.json",
+    "bytes": 1732,
+    "sha256": "fd343239c18e25ced313deee2f59f17fe1c89085fb2960ae080ab61f4a376ad9"
+  },
+  {
+    "path": "job-metadata.json",
+    "bytes": 5478,
+    "sha256": "6ef840c8dc74dd77612f4c03cbca316815a121a5f6e2962bef06f62c6b58121a"
+  },
+  {
+    "path": "verified-summary.json",
+    "bytes": 682,
+    "sha256": "204f95500796fd233bb7711509cef64adb112d48545d649ce46298e5af367efc"
+  },
+  {
+    "path": "windows-job.log",
+    "bytes": 129197,
+    "sha256": "af0213b6fa9407225eddea8b845d477c4f26402ba20a0c3d271fe9825bc12e13"
+  }
+]

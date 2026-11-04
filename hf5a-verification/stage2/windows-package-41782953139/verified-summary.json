@@ -1,0 +1,18 @@
+{
+  "buildCommit": "b058dcc2b2d6365f2ffed78462745830fc8ff85e",
+  "buildRun": 41780111902,
+  "workflowCommit": "88370a51314c7ab2fd8b306f9775d29173ec1792",
+  "packageRun": 41782953139,
+  "package": "PASS",
+  "exeSha256": "5F8F4EB6E3605DDA351687F3B5CC109CFA8EC8B0F485F86B0C6997E936D982E3",
+  "exeChanged": false,
+  "peImagesAudited": 46,
+  "manifestFiles": 50,
+  "runtimeVersion": "OpenSSL 3.6.5 29 Sep 2026 (Library: OpenSSL 3.6.5 29 Sep 2026)",
+  "selfCheckExit": 0,
+  "selfCheckNoSockets": true,
+  "ctestExecutedHere": false,
+  "hardwareTested": false,
+  "portableArtifactId": 13299434867,
+  "portableZipSha256": "70ec3da6f5ae4d9bbdcd1a3d336885546c4a06286db9e026c954a936e26cd365"
+}

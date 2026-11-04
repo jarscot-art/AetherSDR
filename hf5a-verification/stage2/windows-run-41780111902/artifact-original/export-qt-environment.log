@@ -1,0 +1,25 @@
+**********************
+PowerShell transcript start
+Start time: 20261104053605
+Username: runnervmhao91\runneradmin
+RunAs User: runnervmhao91\runneradmin
+Configuration Name: 
+Machine: runnervmhao91 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -command . 'D:\a\_temp\d9a38a04-75b8-4d12-94a0-74abb60ce79e.ps1'
+Process ID: 3952
+PSVersion: 7.6.9
+PSEdition: Core
+GitCommitId: 7.6.9
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is hf5a-stage2-results/export-qt-environment.log
+
+**********************
+PowerShell transcript end
+End time: 20261104053605
+**********************

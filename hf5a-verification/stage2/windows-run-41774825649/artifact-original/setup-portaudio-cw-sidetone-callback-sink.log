@@ -1,0 +1,35 @@
+**********************
+PowerShell transcript start
+Start time: 20261104044419
+Username: runnervmhao91\runneradmin
+RunAs User: runnervmhao91\runneradmin
+Configuration Name: 
+Machine: runnervmhao91 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -command . 'D:\a\_temp\126f97fb-df10-40d0-bc36-975a1176e539.ps1'
+Process ID: 3748
+PSVersion: 7.6.9
+PSEdition: Core
+GitCommitId: 7.6.9
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is hf5a-stage2-results/setup-portaudio-cw-sidetone-callback-sink.log
+Downloading PortAudio 19.7.0 source...
+Verified SHA256 of portaudio-19.7.0.tar.gz
+Extracting...
+Applied #5713 fix to src\os\win\pa_win_wdmks_utils.c - 1 site(s): WdmGetPinPropertyMulti (DirectSound/MME device-info query)
+Applied #5713 fix to src\hostapi\wdmks\pa_win_wdmks.c - 2 site(s): WdmGetPinPropertyMulti + WdmGetPropertyMulti (WDM-KS pin enumeration)
+Building PortAudio from source with MSVC...
+
+
+PortAudio ready in third_party\portaudio
+  Header: third_party\portaudio\include\portaudio.h
+  Lib:    third_party\portaudio\lib\portaudio_static_x64.lib
+**********************
+PowerShell transcript end
+End time: 20261104044425
+**********************

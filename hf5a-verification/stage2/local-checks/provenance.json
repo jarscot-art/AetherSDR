@@ -1,0 +1,7 @@
+{
+  "base": "58f663f7bcda25c54e8f4c158929a6e18ce10011",
+  "testedCommit": "31b6b418779ec9c492a17bfe2e0cbdbf3d8110e0",
+  "branch": "hf5a/stage2-rx-only-audit",
+  "localQtBuild": false,
+  "hardwareUsed": false
+}

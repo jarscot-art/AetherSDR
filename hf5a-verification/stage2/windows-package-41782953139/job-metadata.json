@@ -1,0 +1,161 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 126418491591,
+      "run_id": 41782953139,
+      "workflow_name": "HF5A stage 2 package preserved Windows audit executable",
+      "head_branch": "hf5a/stage2-rx-only-audit",
+      "run_url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/runs/41782953139",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVhfZUs8AAAAdbyEYxw",
+      "head_sha": "88370a51314c7ab2fd8b306f9775d29173ec1792",
+      "url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/jobs/126418491591",
+      "html_url": "https://github.com/jarscot-art/AetherSDR/actions/runs/41782953139/job/126418491591",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-04T06:02:50Z",
+      "started_at": "2026-11-04T06:02:52Z",
+      "completed_at": "2026-11-04T06:04:16Z",
+      "name": "package-only",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-04T06:02:52Z",
+          "completed_at": "2026-11-04T06:02:54Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-04T06:02:54Z",
+          "completed_at": "2026-11-04T06:03:08Z"
+        },
+        {
+          "name": "Initialize packaging-only evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-04T06:03:08Z",
+          "completed_at": "2026-11-04T06:03:08Z"
+        },
+        {
+          "name": "Download preserved compiled inputs, without rebuilding",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-04T06:03:08Z",
+          "completed_at": "2026-11-04T06:03:11Z"
+        },
+        {
+          "name": "Download evidence from the same build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-04T06:03:11Z",
+          "completed_at": "2026-11-04T06:03:12Z"
+        },
+        {
+          "name": "Check binary provenance and previously executed tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-04T06:03:12Z",
+          "completed_at": "2026-11-04T06:03:12Z"
+        },
+        {
+          "name": "Restore Qt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-04T06:03:12Z",
+          "completed_at": "2026-11-04T06:03:12Z"
+        },
+        {
+          "name": "Verify the restored Qt tree",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-04T06:03:12Z",
+          "completed_at": "2026-11-04T06:03:12Z"
+        },
+        {
+          "name": "Install Qt LTS via aqtinstall",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-04T06:03:12Z",
+          "completed_at": "2026-11-04T06:03:53Z"
+        },
+        {
+          "name": "Export Qt environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-04T06:03:53Z",
+          "completed_at": "2026-11-04T06:03:53Z"
+        },
+        {
+          "name": "Setup MSVC environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-04T06:03:53Z",
+          "completed_at": "2026-11-04T06:03:58Z"
+        },
+        {
+          "name": "Package exact preserved executable with OpenSSL runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-04T06:03:58Z",
+          "completed_at": "2026-11-04T06:04:06Z"
+        },
+        {
+          "name": "Upload verified portable audit tool",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-04T06:04:06Z",
+          "completed_at": "2026-11-04T06:04:11Z"
+        },
+        {
+          "name": "Preserve packaging diagnostics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-04T06:04:11Z",
+          "completed_at": "2026-11-04T06:04:13Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-04T06:04:13Z",
+          "completed_at": "2026-11-04T06:04:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-04T06:04:14Z",
+          "completed_at": "2026-11-04T06:04:14Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/jarscot-art/AetherSDR/check-runs/126418491591",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000000012,
+      "runner_name": "GitHub Actions 1000000012",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

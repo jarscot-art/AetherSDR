@@ -1,0 +1,1134 @@
+﻿2026-11-04T06:02:52.8163185Z Current runner version: '2.338.2'
+2026-11-04T06:02:52.8180758Z ##[group]Runner Image Provisioner
+2026-11-04T06:02:52.8181287Z Hosted Compute Agent
+2026-11-04T06:02:52.8181638Z Version: 20261021.618
+2026-11-04T06:02:52.8181989Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-04T06:02:52.8182442Z Build Date: 2026-10-21T00:45:21Z
+2026-11-04T06:02:52.8182826Z Worker ID: {15faee64-3e76-4a34-9167-6c7aec75f364}
+2026-11-04T06:02:52.8183267Z Region: westus3
+2026-11-04T06:02:52.8183573Z Cloud: Azure
+2026-11-04T06:02:52.8183861Z ##[endgroup]
+2026-11-04T06:02:52.8184581Z ##[group]Operating System
+2026-11-04T06:02:52.8184931Z Microsoft Windows Server 2025
+2026-11-04T06:02:52.8185267Z 10.0.26100
+2026-11-04T06:02:52.8185582Z Datacenter
+2026-11-04T06:02:52.8185864Z ##[endgroup]
+2026-11-04T06:02:52.8186181Z ##[group]Runner Image
+2026-11-04T06:02:52.8186514Z Image: windows-2025-vs2026
+2026-11-04T06:02:52.8186880Z Version: 20261030.294.1
+2026-11-04T06:02:52.8187869Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261030.294/images/windows/Windows2025-VS2026-Readme.md
+2026-11-04T06:02:52.8188785Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261030.294
+2026-11-04T06:02:52.8189341Z ##[endgroup]
+2026-11-04T06:02:52.8190051Z ##[group]GITHUB_TOKEN Permissions
+2026-11-04T06:02:52.8191174Z Actions: read
+2026-11-04T06:02:52.8191495Z Contents: read
+2026-11-04T06:02:52.8192048Z Metadata: read
+2026-11-04T06:02:52.8192361Z ##[endgroup]
+2026-11-04T06:02:52.8193633Z Secret source: Actions
+2026-11-04T06:02:52.8194141Z Cache mode: write
+2026-11-04T06:02:52.8194556Z Prepare workflow directory
+2026-11-04T06:02:52.8465161Z Prepare all required actions
+2026-11-04T06:02:52.8512821Z Getting action download info
+2026-11-04T06:02:53.1754505Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-04T06:02:53.2753614Z Download action repository 'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333' (SHA:9000827ccba6bdab643e8b6fd33ac0654aef8333)
+2026-11-04T06:02:53.8696936Z Download action repository 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9' (SHA:55cc8345863c7cc4c66a329aec7e433d2d1c52a9)
+2026-11-04T06:02:53.9797775Z Download action repository 'ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756' (SHA:0b201ec74fa43914dc39ae48a89fd1d8cb592756)
+2026-11-04T06:02:54.3826924Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-04T06:02:54.5402446Z Complete job name: package-only
+2026-11-04T06:02:54.6806152Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-04T06:02:54.6806895Z with:
+2026-11-04T06:02:54.6807110Z   ref: b058dcc2b2d6365f2ffed78462745830fc8ff85e
+2026-11-04T06:02:54.6807359Z   persist-credentials: false
+2026-11-04T06:02:54.6807582Z   repository: jarscot-art/AetherSDR
+2026-11-04T06:02:54.6809352Z   token: ***
+2026-11-04T06:02:54.6809531Z   ssh-strict: true
+2026-11-04T06:02:54.6809706Z   ssh-user: git
+2026-11-04T06:02:54.6809883Z   clean: true
+2026-11-04T06:02:54.6810084Z   sparse-checkout-cone-mode: true
+2026-11-04T06:02:54.6810294Z   fetch-depth: 1
+2026-11-04T06:02:54.6810468Z   fetch-tags: false
+2026-11-04T06:02:54.6810647Z   show-progress: true
+2026-11-04T06:02:54.6810830Z   lfs: false
+2026-11-04T06:02:54.6810995Z   submodules: false
+2026-11-04T06:02:54.6811216Z   set-safe-directory: true
+2026-11-04T06:02:54.6811538Z   allow-unsafe-pr-checkout: false
+2026-11-04T06:02:54.6811908Z env:
+2026-11-04T06:02:54.6812104Z   QT_VERSION: 6.12.0
+2026-11-04T06:02:54.6812297Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:02:54.6812680Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:02:54.6812920Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:02:54.6813174Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:02:54.6813368Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:02:54.6813573Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:02:54.6814837Z ##[endgroup]
+2026-11-04T06:02:54.7845245Z Syncing repository: jarscot-art/AetherSDR
+2026-11-04T06:02:54.7846263Z ##[group]Getting Git version info
+2026-11-04T06:02:54.7846520Z Working directory is 'D:\a\AetherSDR\AetherSDR'
+2026-11-04T06:02:54.8486101Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-04T06:02:55.2535871Z git version 2.56.0.windows.4
+2026-11-04T06:02:55.2571748Z ##[endgroup]
+2026-11-04T06:02:55.2583444Z Temporarily overriding HOME='D:\a\_temp\1287a360-a6fb-416c-bf0c-9467898cd1cc' before making global git config changes
+2026-11-04T06:02:55.2583962Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T06:02:55.2589945Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\AetherSDR\AetherSDR
+2026-11-04T06:02:55.3088989Z Deleting the contents of 'D:\a\AetherSDR\AetherSDR'
+2026-11-04T06:02:55.3092662Z ##[group]Determining repository object format
+2026-11-04T06:02:55.3094061Z ##[endgroup]
+2026-11-04T06:02:55.3094370Z ##[group]Initializing the repository
+2026-11-04T06:02:55.3099970Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\AetherSDR\AetherSDR
+2026-11-04T06:02:55.3936232Z Initialized empty Git repository in D:/a/AetherSDR/AetherSDR/.git/
+2026-11-04T06:02:55.3967904Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/jarscot-art/AetherSDR
+2026-11-04T06:02:55.4697246Z ##[endgroup]
+2026-11-04T06:02:55.4697837Z ##[group]Disabling automatic garbage collection
+2026-11-04T06:02:55.4705398Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-11-04T06:02:55.4981472Z ##[endgroup]
+2026-11-04T06:02:55.4981870Z ##[group]Setting up auth
+2026-11-04T06:02:55.4982185Z Removing SSH command configuration
+2026-11-04T06:02:55.4990563Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T06:02:55.5253631Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-04T06:02:56.9239323Z Removing HTTP extra header
+2026-11-04T06:02:56.9246148Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T06:02:56.9493689Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-04T06:02:57.3311739Z Removing includeIf entries pointing to credentials config files
+2026-11-04T06:02:57.3319371Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T06:02:57.3565332Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-04T06:02:57.7584738Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-11-04T06:02:57.7834520Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/AetherSDR/AetherSDR/.git.path D:\a\_temp\git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config
+2026-11-04T06:02:57.8073771Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/AetherSDR/AetherSDR/.git/worktrees/*.path D:\a\_temp\git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config
+2026-11-04T06:02:57.8369139Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config
+2026-11-04T06:02:57.8611171Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config
+2026-11-04T06:02:57.8845335Z ##[endgroup]
+2026-11-04T06:02:57.8845669Z ##[group]Fetching the repository
+2026-11-04T06:02:57.8852632Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin b058dcc2b2d6365f2ffed78462745830fc8ff85e
+2026-11-04T06:03:04.2390830Z From https://github.com/jarscot-art/AetherSDR
+2026-11-04T06:03:04.2394392Z  * branch            b058dcc2b2d6365f2ffed78462745830fc8ff85e -> FETCH_HEAD
+2026-11-04T06:03:04.2435477Z [command]"C:\Program Files\Git\bin\git.exe" rev-parse --verify --quiet b058dcc2b2d6365f2ffed78462745830fc8ff85e^{object}
+2026-11-04T06:03:04.2827137Z b058dcc2b2d6365f2ffed78462745830fc8ff85e
+2026-11-04T06:03:04.2851766Z ##[endgroup]
+2026-11-04T06:03:04.2852099Z ##[group]Determining the checkout info
+2026-11-04T06:03:04.2852584Z ##[endgroup]
+2026-11-04T06:03:04.2859709Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-11-04T06:03:04.3452031Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-11-04T06:03:04.3692544Z ##[group]Checking out the ref
+2026-11-04T06:03:04.3698111Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force b058dcc2b2d6365f2ffed78462745830fc8ff85e
+2026-11-04T06:03:05.6155093Z Updating files:  46% (3593/7763)
+2026-11-04T06:03:05.6516030Z Updating files:  47% (3649/7763)
+2026-11-04T06:03:05.6627888Z Updating files:  48% (3727/7763)
+2026-11-04T06:03:05.6724512Z Updating files:  49% (3804/7763)
+2026-11-04T06:03:05.8402941Z Updating files:  50% (3882/7763)
+2026-11-04T06:03:06.3019296Z Updating files:  51% (3960/7763)
+2026-11-04T06:03:06.3128125Z Updating files:  52% (4037/7763)
+2026-11-04T06:03:06.3766045Z Updating files:  53% (4115/7763)
+2026-11-04T06:03:06.4844018Z Updating files:  54% (4193/7763)
+2026-11-04T06:03:06.4857365Z Updating files:  54% (4263/7763)
+2026-11-04T06:03:06.4965095Z Updating files:  55% (4270/7763)
+2026-11-04T06:03:06.5195249Z Updating files:  56% (4348/7763)
+2026-11-04T06:03:06.5355099Z Updating files:  57% (4425/7763)
+2026-11-04T06:03:06.5439743Z Updating files:  58% (4503/7763)
+2026-11-04T06:03:06.5592143Z Updating files:  59% (4581/7763)
+2026-11-04T06:03:06.5733953Z Updating files:  60% (4658/7763)
+2026-11-04T06:03:06.5896694Z Updating files:  61% (4736/7763)
+2026-11-04T06:03:06.5997293Z Updating files:  62% (4814/7763)
+2026-11-04T06:03:06.6101014Z Updating files:  63% (4891/7763)
+2026-11-04T06:03:06.6240539Z Updating files:  64% (4969/7763)
+2026-11-04T06:03:06.6347524Z Updating files:  65% (5046/7763)
+2026-11-04T06:03:06.6447379Z Updating files:  66% (5124/7763)
+2026-11-04T06:03:06.6548907Z Updating files:  67% (5202/7763)
+2026-11-04T06:03:06.6640532Z Updating files:  68% (5279/7763)
+2026-11-04T06:03:06.6735228Z Updating files:  69% (5357/7763)
+2026-11-04T06:03:06.6860824Z Updating files:  70% (5435/7763)
+2026-11-04T06:03:06.6980326Z Updating files:  71% (5512/7763)
+2026-11-04T06:03:06.7073897Z Updating files:  72% (5590/7763)
+2026-11-04T06:03:06.7150968Z Updating files:  73% (5667/7763)
+2026-11-04T06:03:06.7217099Z Updating files:  74% (5745/7763)
+2026-11-04T06:03:06.7294495Z Updating files:  75% (5823/7763)
+2026-11-04T06:03:06.7368414Z Updating files:  76% (5900/7763)
+2026-11-04T06:03:06.7442786Z Updating files:  77% (5978/7763)
+2026-11-04T06:03:06.7572581Z Updating files:  78% (6056/7763)
+2026-11-04T06:03:06.7753288Z Updating files:  79% (6133/7763)
+2026-11-04T06:03:06.7891784Z Updating files:  80% (6211/7763)
+2026-11-04T06:03:06.8035791Z Updating files:  81% (6289/7763)
+2026-11-04T06:03:06.8159085Z Updating files:  82% (6366/7763)
+2026-11-04T06:03:06.8249706Z Updating files:  83% (6444/7763)
+2026-11-04T06:03:06.8374488Z Updating files:  84% (6521/7763)
+2026-11-04T06:03:06.8485525Z Updating files:  85% (6599/7763)
+2026-11-04T06:03:06.8587115Z Updating files:  86% (6677/7763)
+2026-11-04T06:03:06.8697389Z Updating files:  87% (6754/7763)
+2026-11-04T06:03:06.8781814Z Updating files:  88% (6832/7763)
+2026-11-04T06:03:06.8849389Z Updating files:  89% (6910/7763)
+2026-11-04T06:03:06.8931041Z Updating files:  90% (6987/7763)
+2026-11-04T06:03:06.9048532Z Updating files:  91% (7065/7763)
+2026-11-04T06:03:06.9158730Z Updating files:  92% (7142/7763)
+2026-11-04T06:03:06.9258223Z Updating files:  93% (7220/7763)
+2026-11-04T06:03:06.9362416Z Updating files:  94% (7298/7763)
+2026-11-04T06:03:06.9476668Z Updating files:  95% (7375/7763)
+2026-11-04T06:03:06.9585033Z Updating files:  96% (7453/7763)
+2026-11-04T06:03:06.9688679Z Updating files:  97% (7531/7763)
+2026-11-04T06:03:06.9794012Z Updating files:  98% (7608/7763)
+2026-11-04T06:03:06.9907925Z Updating files:  99% (7686/7763)
+2026-11-04T06:03:06.9908175Z Updating files: 100% (7763/7763)
+2026-11-04T06:03:06.9908620Z Updating files: 100% (7763/7763), done.
+2026-11-04T06:03:07.0031123Z Note: switching to 'b058dcc2b2d6365f2ffed78462745830fc8ff85e'.
+2026-11-04T06:03:07.0031540Z 
+2026-11-04T06:03:07.0031779Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-04T06:03:07.0032250Z changes and commit them, and you can discard any commits you make in this
+2026-11-04T06:03:07.0032725Z state without impacting any branches by switching back to a branch.
+2026-11-04T06:03:07.0033023Z 
+2026-11-04T06:03:07.0033226Z If you want to create a new branch to retain commits you create, you may
+2026-11-04T06:03:07.0033772Z do so (now or later) by using -c with the switch command. Example:
+2026-11-04T06:03:07.0034365Z 
+2026-11-04T06:03:07.0034460Z   git switch -c <new-branch-name>
+2026-11-04T06:03:07.0034627Z 
+2026-11-04T06:03:07.0034714Z Or undo this operation with:
+2026-11-04T06:03:07.0034850Z 
+2026-11-04T06:03:07.0034922Z   git switch -
+2026-11-04T06:03:07.0035027Z 
+2026-11-04T06:03:07.0035215Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-04T06:03:07.0035503Z 
+2026-11-04T06:03:07.0035758Z HEAD is now at b058dcc Diagnose audit bundle imports and stage complete MSVC runtime. Principle IX.
+2026-11-04T06:03:07.0290216Z ##[endgroup]
+2026-11-04T06:03:07.0567013Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-11-04T06:03:07.0790148Z b058dcc2b2d6365f2ffed78462745830fc8ff85e
+2026-11-04T06:03:07.0818808Z ##[group]Removing auth
+2026-11-04T06:03:07.0818971Z Removing SSH command configuration
+2026-11-04T06:03:07.0825914Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T06:03:07.1071759Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-04T06:03:07.4966239Z Removing HTTP extra header
+2026-11-04T06:03:07.4973878Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T06:03:07.5238994Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-04T06:03:07.9184175Z Removing includeIf entries pointing to credentials config files
+2026-11-04T06:03:07.9193672Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T06:03:07.9416738Z includeif.gitdir:D:/a/AetherSDR/AetherSDR/.git.path
+2026-11-04T06:03:07.9417025Z includeif.gitdir:D:/a/AetherSDR/AetherSDR/.git/worktrees/*.path
+2026-11-04T06:03:07.9417237Z includeif.gitdir:/github/workspace/.git.path
+2026-11-04T06:03:07.9417563Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-04T06:03:07.9443959Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/AetherSDR/AetherSDR/.git.path
+2026-11-04T06:03:07.9659907Z D:\a\_temp\git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config
+2026-11-04T06:03:07.9685614Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/AetherSDR/AetherSDR/.git.path D\:\\a\\_temp\\git\-credentials\-726db5b6\-f48f\-4931\-b861\-aa92668e1f31\.config
+2026-11-04T06:03:07.9934278Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/AetherSDR/AetherSDR/.git/worktrees/*.path
+2026-11-04T06:03:08.0149456Z D:\a\_temp\git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config
+2026-11-04T06:03:08.0174730Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/AetherSDR/AetherSDR/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-726db5b6\-f48f\-4931\-b861\-aa92668e1f31\.config
+2026-11-04T06:03:08.0416808Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-04T06:03:08.0631388Z /github/runner_temp/git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config
+2026-11-04T06:03:08.0655281Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-726db5b6\-f48f\-4931\-b861\-aa92668e1f31\.config
+2026-11-04T06:03:08.0907868Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-04T06:03:08.1144253Z /github/runner_temp/git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config
+2026-11-04T06:03:08.1170716Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-726db5b6\-f48f\-4931\-b861\-aa92668e1f31\.config
+2026-11-04T06:03:08.1413280Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-04T06:03:08.5252477Z Removing credentials config 'D:\a\_temp\git-credentials-726db5b6-f48f-4931-b861-aa92668e1f31.config'
+2026-11-04T06:03:08.5261273Z ##[endgroup]
+2026-11-04T06:03:08.5530847Z ##[group]Run New-Item -ItemType Directory -Force hf5a-stage2-results | Out-Null
+2026-11-04T06:03:08.5531256Z [36;1mNew-Item -ItemType Directory -Force hf5a-stage2-results | Out-Null[0m
+2026-11-04T06:03:08.5531612Z [36;1m@{sourceCommit='b058dcc2b2d6365f2ffed78462745830fc8ff85e'; buildRun=41780111902; hardwareTest=$false;[0m
+2026-11-04T06:03:08.5531974Z [36;1m  packageWorkflowCommit='88370a51314c7ab2fd8b306f9775d29173ec1792'; qt='6.12.0';[0m
+2026-11-04T06:03:08.5532324Z [36;1m  runUrl="https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID"} |[0m
+2026-11-04T06:03:08.5532637Z [36;1m  ConvertTo-Json | Set-Content hf5a-stage2-results/package-source.json[0m
+2026-11-04T06:03:08.6290676Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-04T06:03:08.6290867Z env:
+2026-11-04T06:03:08.6290973Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:08.6291109Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:08.6291270Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:08.6291436Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:08.6291613Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:08.6291723Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:08.6291841Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:08.6291963Z ##[endgroup]
+2026-11-04T06:03:09.0013947Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+2026-11-04T06:03:09.0014232Z with:
+2026-11-04T06:03:09.0014435Z   name: hf5a-stage2-built-audit-inputs-b058dcc2b2d6365f2ffed78462745830fc8ff85e
+2026-11-04T06:03:09.0014663Z   path: build
+2026-11-04T06:03:09.0014767Z   run-id: 41780111902
+2026-11-04T06:03:09.0016398Z   github-token: ***
+2026-11-04T06:03:09.0016513Z   merge-multiple: false
+2026-11-04T06:03:09.0016642Z   repository: jarscot-art/AetherSDR
+2026-11-04T06:03:09.0016786Z   skip-decompress: false
+2026-11-04T06:03:09.0016907Z   digest-mismatch: error
+2026-11-04T06:03:09.0017481Z env:
+2026-11-04T06:03:09.0017578Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:09.0017697Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:09.0017835Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:09.0018001Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:09.0018182Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:09.0018318Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:09.0018433Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:09.0018553Z ##[endgroup]
+2026-11-04T06:03:09.1109052Z Downloading single artifact
+2026-11-04T06:03:09.4969252Z Preparing to download the following artifacts:
+2026-11-04T06:03:09.4970241Z - hf5a-stage2-built-audit-inputs-b058dcc2b2d6365f2ffed78462745830fc8ff85e (ID: 13299995805, Size: 44823323, Expected Digest: sha256:0d66b324f17d62f1a5408a09f0afb5f6e9a7041bb7b8dac81038547090010581)
+2026-11-04T06:03:09.4980786Z Downloading artifact '13299995805' from 'jarscot-art/AetherSDR'
+2026-11-04T06:03:09.6911481Z Redirecting to blob download url: https://productionresultssa19.blob.core.windows.net/actions-results/10cfb989-1fe6-8835-b986-050ee718f079/workflow-job-run-3f7698ec-9cb0-5396-8a5a-fa67f715537d/artifacts/dae4a16e801373cc8f65476bf3417335d8b011f8432e3e19e9ccf541cee230ad.zip
+2026-11-04T06:03:09.6912199Z Starting download of artifact to: D:\a\AetherSDR\AetherSDR\build
+2026-11-04T06:03:09.9657731Z (node:1776) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-11-04T06:03:09.9658250Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-04T06:03:11.0887360Z SHA256 digest of downloaded artifact is 0d66b324f17d62f1a5408a09f0afb5f6e9a7041bb7b8dac81038547090010581
+2026-11-04T06:03:11.0887707Z Artifact download completed successfully.
+2026-11-04T06:03:11.0887875Z Total of 1 artifact(s) downloaded
+2026-11-04T06:03:11.0893275Z Download artifact has finished successfully
+2026-11-04T06:03:11.1164280Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+2026-11-04T06:03:11.1164600Z with:
+2026-11-04T06:03:11.1164797Z   name: hf5a-stage2-offline-41780111902
+2026-11-04T06:03:11.1164978Z   path: built-evidence
+2026-11-04T06:03:11.1165095Z   run-id: 41780111902
+2026-11-04T06:03:11.1166852Z   github-token: ***
+2026-11-04T06:03:11.1166972Z   merge-multiple: false
+2026-11-04T06:03:11.1167102Z   repository: jarscot-art/AetherSDR
+2026-11-04T06:03:11.1167247Z   skip-decompress: false
+2026-11-04T06:03:11.1167374Z   digest-mismatch: error
+2026-11-04T06:03:11.1167490Z env:
+2026-11-04T06:03:11.1167591Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:11.1167713Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:11.1167857Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:11.1168021Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:11.1168199Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:11.1168309Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:11.1168452Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:11.1168571Z ##[endgroup]
+2026-11-04T06:03:11.2258028Z Downloading single artifact
+2026-11-04T06:03:11.5242301Z Preparing to download the following artifacts:
+2026-11-04T06:03:11.5242969Z - hf5a-stage2-offline-41780111902 (ID: 13299527759, Size: 34272, Expected Digest: sha256:e8670b663413c81ce90d99341c4744a0272eb3039e62b34ab4da7ee482cf5907)
+2026-11-04T06:03:11.5256119Z Downloading artifact '13299527759' from 'jarscot-art/AetherSDR'
+2026-11-04T06:03:11.7595903Z Redirecting to blob download url: https://productionresultssa19.blob.core.windows.net/actions-results/10cfb989-1fe6-8835-b986-050ee718f079/workflow-job-run-3f7698ec-9cb0-5396-8a5a-fa67f715537d/artifacts/4ef66b52c3a65bc1ccce69e1a0ee7e3e52d6a22ddf9d80ade4f8fe3473fe0136.zip
+2026-11-04T06:03:11.7596667Z Starting download of artifact to: D:\a\AetherSDR\AetherSDR\built-evidence
+2026-11-04T06:03:11.9614719Z (node:8780) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-11-04T06:03:11.9615495Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-04T06:03:12.0114138Z SHA256 digest of downloaded artifact is e8670b663413c81ce90d99341c4744a0272eb3039e62b34ab4da7ee482cf5907
+2026-11-04T06:03:12.0114479Z Artifact download completed successfully.
+2026-11-04T06:03:12.0114648Z Total of 1 artifact(s) downloaded
+2026-11-04T06:03:12.0118688Z Download artifact has finished successfully
+2026-11-04T06:03:12.0349087Z ##[group]Run $source=Get-Content -Raw built-evidence/source.json | ConvertFrom-Json
+2026-11-04T06:03:12.0349484Z [36;1m$source=Get-Content -Raw built-evidence/source.json | ConvertFrom-Json[0m
+2026-11-04T06:03:12.0349994Z [36;1mif ($source.sourceCommit -ne 'b058dcc2b2d6365f2ffed78462745830fc8ff85e' -or (git rev-parse HEAD).Trim() -ne 'b058dcc2b2d6365f2ffed78462745830fc8ff85e') { throw 'Wrong compiled source' }[0m
+2026-11-04T06:03:12.0350492Z [36;1m[xml]$junit=Get-Content -Raw built-evidence/results.junit.xml[0m
+2026-11-04T06:03:12.0350900Z [36;1mif ($junit.testsuite.tests -ne 12 -or $junit.testsuite.failures -ne 0 -or $junit.testsuite.skipped -ne 0) { throw 'Build did not pass all twelve tests' }[0m
+2026-11-04T06:03:12.0351332Z [36;1mCopy-Item built-evidence/source.json hf5a-stage2-results/source.json[0m
+2026-11-04T06:03:12.0351655Z [36;1mCopy-Item built-evidence/results.json hf5a-stage2-results/prior-executed-results.json[0m
+2026-11-04T06:03:12.0352057Z [36;1m(Get-FileHash build/aether-icom-rx-audit.exe).Hash | Set-Content hf5a-stage2-results/input-exe-sha256.txt[0m
+2026-11-04T06:03:12.0399199Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-04T06:03:12.0399395Z env:
+2026-11-04T06:03:12.0399507Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:12.0399635Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:12.0399777Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:12.0399943Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:12.0400135Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:12.0400254Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:12.0400373Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:12.0400501Z ##[endgroup]
+2026-11-04T06:03:12.4096734Z ##[group]Run actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+2026-11-04T06:03:12.4097007Z with:
+2026-11-04T06:03:12.4097119Z   path: D:\a\AetherSDR\Qt
+2026-11-04T06:03:12.4097385Z   key: qt-6.12.0-202609280346-windows-win64_msvc2022_64-aqt076e1659807d0b362a3ed684d54c2e9c775eb9c7-mm.ws.sp.st
+2026-11-04T06:03:12.4097667Z   enableCrossOsArchive: false
+2026-11-04T06:03:12.4097807Z   fail-on-cache-miss: false
+2026-11-04T06:03:12.4097941Z   lookup-only: false
+2026-11-04T06:03:12.4098049Z env:
+2026-11-04T06:03:12.4098148Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:12.4098264Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:12.4098409Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:12.4098570Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:12.4098765Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:12.4098876Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:12.4098992Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:12.4099112Z ##[endgroup]
+2026-11-04T06:03:12.8215691Z Cache not found for input keys: qt-6.12.0-202609280346-windows-win64_msvc2022_64-aqt076e1659807d0b362a3ed684d54c2e9c775eb9c7-mm.ws.sp.st
+2026-11-04T06:03:12.8437072Z ##[group]Run Start-Transcript -Path "hf5a-stage2-results/install-qt-lts-via-aqtinstall.log"
+2026-11-04T06:03:12.8437528Z [36;1mStart-Transcript -Path "hf5a-stage2-results/install-qt-lts-via-aqtinstall.log"[0m
+2026-11-04T06:03:12.8437763Z [36;1mtry {[0m
+2026-11-04T06:03:12.8437932Z [36;1m  # aqt goes in a venv and is pinned, for the reason check-macos and[0m
+2026-11-04T06:03:12.8438189Z [36;1m  # .github/docker/Dockerfile give: it is the tool that decides what[0m
+2026-11-04T06:03:12.8438435Z [36;1m  # Qt lands here, so an unreviewed aqt upgrade is an unreviewed[0m
+2026-11-04T06:03:12.8438803Z [36;1m  # change to the Qt this job builds against.[0m
+2026-11-04T06:03:12.8438990Z [36;1m  python -m venv "$env:RUNNER_TEMP\aqtvenv"[0m
+2026-11-04T06:03:12.8439177Z [36;1m  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-11-04T06:03:12.8439411Z [36;1m  # PyPI 3.3.0 cannot locate Windows 6.11+ Updates.xml (aqtinstall#959).[0m
+2026-11-04T06:03:12.8439693Z [36;1m  # Install the unreleased #1000 fix from a pinned master commit.[0m
+2026-11-04T06:03:12.8440274Z [36;1m  & "$env:RUNNER_TEMP\aqtvenv\Scripts\pip.exe" install -q "git+https://github.com/miurahr/aqtinstall.git@$env:AQTINSTALL_GIT_REF" "py7zr==$env:PY7ZR_VERSION"[0m
+2026-11-04T06:03:12.8440666Z [36;1m  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-11-04T06:03:12.8440883Z [36;1m  $sevenZip = (Get-Command 7z.exe -ErrorAction Stop).Source[0m
+2026-11-04T06:03:12.8441131Z [36;1m  # Parallel 7-Zip workers race while creating the common output root[0m
+2026-11-04T06:03:12.8441388Z [36;1m  # on a fresh SDK install. Create it once before extraction starts.[0m
+2026-11-04T06:03:12.8441680Z [36;1m  $qtRoot = "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION\" + ($env:QT_ARCH -replace '^win64_', '')[0m
+2026-11-04T06:03:12.8441976Z [36;1m  New-Item -ItemType Directory -Force -Path $qtRoot | Out-Null[0m
+2026-11-04T06:03:12.8442287Z [36;1m  & "$env:RUNNER_TEMP\aqtvenv\Scripts\aqt.exe" install-qt windows desktop $env:QT_VERSION $env:QT_ARCH `[0m
+2026-11-04T06:03:12.8442594Z [36;1m    -m qtmultimedia qtwebsockets qtserialport qtshadertools `[0m
+2026-11-04T06:03:12.8442793Z [36;1m    --external $sevenZip `[0m
+2026-11-04T06:03:12.8442952Z [36;1m    --outputdir "$env:RUNNER_WORKSPACE\Qt"[0m
+2026-11-04T06:03:12.8443144Z [36;1m  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-11-04T06:03:12.8443342Z [36;1m} finally { Stop-Transcript }[0m
+2026-11-04T06:03:12.8490123Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-04T06:03:12.8490319Z env:
+2026-11-04T06:03:12.8490438Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:12.8490561Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:12.8490704Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:12.8490870Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:12.8491054Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:12.8491167Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:12.8491388Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:12.8491539Z ##[endgroup]
+2026-11-04T06:03:13.0543137Z Transcript started, output file is hf5a-stage2-results/install-qt-lts-via-aqtinstall.log
+2026-11-04T06:03:30.7896406Z 
+2026-11-04T06:03:30.7897819Z [notice] A new release of pip is available: 25.0.1 -> 26.3
+2026-11-04T06:03:30.7898176Z [notice] To update, run: D:\a\_temp\aqtvenv\Scripts\python.exe -m pip install --upgrade pip
+2026-11-04T06:03:31.8509446Z INFO    : aqtinstall(aqt) v3.3.1.dev166 on Python 3.12.10 [CPython MSC v.1943 64 bit (AMD64)]
+2026-11-04T06:03:34.8194517Z INFO    : Found extension qtwebengine
+2026-11-04T06:03:36.1969952Z INFO    : Found extension qtpdf
+2026-11-04T06:03:37.3668793Z INFO    : Downloading qtshadertools...
+2026-11-04T06:03:37.3788255Z INFO    : Downloading qtserialport...
+2026-11-04T06:03:37.3904353Z INFO    : Downloading qtmultimedia...
+2026-11-04T06:03:37.3942085Z INFO    : Downloading qtwebsockets...
+2026-11-04T06:03:38.1386072Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:38.1569651Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:38.1652857Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:38.1710952Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:38.9630254Z INFO    : Finished installation of qtserialport-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 2.36962490
+2026-11-04T06:03:38.9738608Z INFO    : Finished installation of qtwebsockets-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 2.36895680
+2026-11-04T06:03:39.2067595Z INFO    : Finished installation of qtshadertools-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 2.60524120
+2026-11-04T06:03:39.7362166Z INFO    : Downloading qtbase...
+2026-11-04T06:03:39.7578414Z INFO    : Downloading qtsvg...
+2026-11-04T06:03:39.9076916Z INFO    : Downloading qtdeclarative...
+2026-11-04T06:03:40.4798253Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:40.4815376Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:40.6079483Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:41.2231527Z INFO    : Finished installation of qtsvg-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 2.23782260
+2026-11-04T06:03:41.6097423Z INFO    : Finished installation of qtmultimedia-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 5.01649070
+2026-11-04T06:03:42.0480784Z INFO    : Downloading qtdoc...
+2026-11-04T06:03:42.3398028Z INFO    : Downloading qttools...
+2026-11-04T06:03:42.7545187Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:43.0560560Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:43.6451327Z INFO    : Finished installation of qtdoc-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 2.40487120
+2026-11-04T06:03:44.3620547Z INFO    : Downloading qttranslations...
+2026-11-04T06:03:44.5456152Z INFO    : Finished installation of qtbase-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 5.56273830
+2026-11-04T06:03:45.0912123Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:45.2549583Z INFO    : Downloading d3dcompiler_47...
+2026-11-04T06:03:45.6469190Z INFO    : Finished installation of qttools-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 4.02671260
+2026-11-04T06:03:45.9560932Z INFO    : Finished installation of qttranslations-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 2.29922530
+2026-11-04T06:03:45.9785281Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:46.3807169Z INFO    : Downloading opengl32sw...
+2026-11-04T06:03:46.7642156Z INFO    : Finished installation of d3dcompiler_47-x64.7z in 2.21676770
+2026-11-04T06:03:47.0952666Z INFO    : Redirected: qt.mirror.constant.com
+2026-11-04T06:03:48.1062305Z INFO    : Finished installation of opengl32sw-64-mesa_11_2_2-signed_sha256.7z in 2.44707950
+2026-11-04T06:03:52.8771452Z INFO    : Finished installation of qtdeclarative-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-X86_64.7z in 13.66118130
+2026-11-04T06:03:52.9694013Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin\qmake.exe
+2026-11-04T06:03:52.9725412Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Concurrent.prl
+2026-11-04T06:03:52.9729179Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Concurrentd.prl
+2026-11-04T06:03:52.9731915Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Core.prl
+2026-11-04T06:03:52.9734647Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Cored.prl
+2026-11-04T06:03:52.9737335Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6DBus.prl
+2026-11-04T06:03:52.9739954Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6DBusd.prl
+2026-11-04T06:03:52.9742422Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Designer.prl
+2026-11-04T06:03:52.9745217Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6DesignerComponents.prl
+2026-11-04T06:03:52.9748525Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6DesignerComponentsd.prl
+2026-11-04T06:03:52.9750461Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Designerd.prl
+2026-11-04T06:03:52.9752760Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6DeviceDiscoverySupport.prl
+2026-11-04T06:03:52.9755381Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6DeviceDiscoverySupportd.prl
+2026-11-04T06:03:52.9757822Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6EntryPoint.prl
+2026-11-04T06:03:52.9760286Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6EntryPointd.prl
+2026-11-04T06:03:52.9762871Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6FbSupport.prl
+2026-11-04T06:03:52.9765562Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6FbSupportd.prl
+2026-11-04T06:03:52.9768046Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6FFmpegMediaPluginImpl.prl
+2026-11-04T06:03:52.9771133Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6FFmpegMediaPluginImpld.prl
+2026-11-04T06:03:52.9773910Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Gui.prl
+2026-11-04T06:03:52.9776473Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Guid.prl
+2026-11-04T06:03:52.9787346Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Help.prl
+2026-11-04T06:03:52.9787909Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Helpd.prl
+2026-11-04T06:03:52.9788389Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsAnimation.prl
+2026-11-04T06:03:52.9788883Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsAnimationd.prl
+2026-11-04T06:03:52.9789400Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsFolderListModel.prl
+2026-11-04T06:03:52.9792196Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsFolderListModeld.prl
+2026-11-04T06:03:52.9794727Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsPlatform.prl
+2026-11-04T06:03:52.9797142Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsPlatformd.prl
+2026-11-04T06:03:52.9799453Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsQmlModels.prl
+2026-11-04T06:03:52.9801868Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsQmlModelsd.prl
+2026-11-04T06:03:52.9804431Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsSettings.prl
+2026-11-04T06:03:52.9806810Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsSettingsd.prl
+2026-11-04T06:03:52.9809115Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsSharedImage.prl
+2026-11-04T06:03:52.9812695Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsSharedImaged.prl
+2026-11-04T06:03:52.9813834Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsStyleKit.prl
+2026-11-04T06:03:52.9816186Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsStyleKitd.prl
+2026-11-04T06:03:52.9818540Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsStyleKitImpl.prl
+2026-11-04T06:03:52.9820950Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsStyleKitImpld.prl
+2026-11-04T06:03:52.9823302Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsSynchronizer.prl
+2026-11-04T06:03:52.9825861Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsSynchronizerd.prl
+2026-11-04T06:03:52.9828217Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsWavefrontMesh.prl
+2026-11-04T06:03:52.9830829Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6LabsWavefrontMeshd.prl
+2026-11-04T06:03:52.9833666Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Multimedia.prl
+2026-11-04T06:03:52.9836049Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Multimediad.prl
+2026-11-04T06:03:52.9838848Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6MultimediaQuick.prl
+2026-11-04T06:03:52.9841594Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6MultimediaQuickd.prl
+2026-11-04T06:03:52.9844076Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6MultimediaTestLib.prl
+2026-11-04T06:03:52.9846758Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6MultimediaTestLibd.prl
+2026-11-04T06:03:52.9849289Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6MultimediaWidgets.prl
+2026-11-04T06:03:52.9851723Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6MultimediaWidgetsd.prl
+2026-11-04T06:03:52.9854282Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Network.prl
+2026-11-04T06:03:52.9856831Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Networkd.prl
+2026-11-04T06:03:52.9859276Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6OpenGL.prl
+2026-11-04T06:03:52.9861976Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6OpenGLd.prl
+2026-11-04T06:03:52.9864302Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6OpenGLWidgets.prl
+2026-11-04T06:03:52.9866879Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6OpenGLWidgetsd.prl
+2026-11-04T06:03:52.9869382Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6PacketProtocol.prl
+2026-11-04T06:03:52.9871869Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6PacketProtocold.prl
+2026-11-04T06:03:52.9874238Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6PrintSupport.prl
+2026-11-04T06:03:52.9876595Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6PrintSupportd.prl
+2026-11-04T06:03:52.9878916Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Qml.prl
+2026-11-04T06:03:52.9881330Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlAssetDownloader.prl
+2026-11-04T06:03:52.9884353Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlAssetDownloaderd.prl
+2026-11-04T06:03:52.9887009Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlCompiler.prl
+2026-11-04T06:03:52.9889416Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlCompilerd.prl
+2026-11-04T06:03:52.9892005Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlCore.prl
+2026-11-04T06:03:52.9894398Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlCored.prl
+2026-11-04T06:03:52.9896753Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Qmld.prl
+2026-11-04T06:03:52.9899159Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlDebug.prl
+2026-11-04T06:03:52.9901527Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlDebugd.prl
+2026-11-04T06:03:52.9904061Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlDesignSupport.prl
+2026-11-04T06:03:52.9906551Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlDesignSupportd.prl
+2026-11-04T06:03:52.9909227Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlDom.prl
+2026-11-04T06:03:52.9911720Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlDomd.prl
+2026-11-04T06:03:52.9914104Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlFormat.prl
+2026-11-04T06:03:52.9916820Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlFormatd.prl
+2026-11-04T06:03:52.9919397Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlLint.prl
+2026-11-04T06:03:52.9922443Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlLintd.prl
+2026-11-04T06:03:52.9928554Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlLocalStorage.prl
+2026-11-04T06:03:52.9935495Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlLocalStoraged.prl
+2026-11-04T06:03:52.9935968Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlLS.prl
+2026-11-04T06:03:52.9938783Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlLSd.prl
+2026-11-04T06:03:52.9941502Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlMeta.prl
+2026-11-04T06:03:52.9943962Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlMetad.prl
+2026-11-04T06:03:52.9946509Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlModels.prl
+2026-11-04T06:03:52.9948849Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlModelsd.prl
+2026-11-04T06:03:52.9951257Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlNetwork.prl
+2026-11-04T06:03:52.9953564Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlNetworkd.prl
+2026-11-04T06:03:52.9955856Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlPreview.prl
+2026-11-04T06:03:52.9958165Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlPreviewd.prl
+2026-11-04T06:03:52.9960524Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Qmltc.prl
+2026-11-04T06:03:52.9963357Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Qmltcd.prl
+2026-11-04T06:03:52.9965924Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlToolingSettings.prl
+2026-11-04T06:03:52.9968308Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlToolingSettingsd.prl
+2026-11-04T06:03:52.9970810Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlTypeRegistrar.prl
+2026-11-04T06:03:52.9973417Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlTypeRegistrard.prl
+2026-11-04T06:03:52.9975811Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlWorkerScript.prl
+2026-11-04T06:03:52.9978141Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlWorkerScriptd.prl
+2026-11-04T06:03:52.9980805Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlXmlListModel.prl
+2026-11-04T06:03:52.9983416Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QmlXmlListModeld.prl
+2026-11-04T06:03:52.9985727Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Quick.prl
+2026-11-04T06:03:52.9989437Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Quick3DSpatialAudio.prl
+2026-11-04T06:03:52.9991523Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Quick3DSpatialAudiod.prl
+2026-11-04T06:03:52.9993891Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2.prl
+2026-11-04T06:03:52.9996365Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Basic.prl
+2026-11-04T06:03:52.9998869Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Basicd.prl
+2026-11-04T06:03:53.0003206Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2BasicStyleImpl.prl
+2026-11-04T06:03:53.0006165Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2BasicStyleImpld.prl
+2026-11-04T06:03:53.0008630Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2d.prl
+2026-11-04T06:03:53.0011083Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2FluentWinUI3.prl
+2026-11-04T06:03:53.0013510Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2FluentWinUI3d.prl
+2026-11-04T06:03:53.0015968Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2FluentWinUI3StyleImpl.prl
+2026-11-04T06:03:53.0021764Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2FluentWinUI3StyleImpld.prl
+2026-11-04T06:03:53.0023996Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Fusion.prl
+2026-11-04T06:03:53.0029232Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Fusiond.prl
+2026-11-04T06:03:53.0034298Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2FusionStyleImpl.prl
+2026-11-04T06:03:53.0036628Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2FusionStyleImpld.prl
+2026-11-04T06:03:53.0041809Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Imagine.prl
+2026-11-04T06:03:53.0045950Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Imagined.prl
+2026-11-04T06:03:53.0051991Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2ImagineStyleImpl.prl
+2026-11-04T06:03:53.0054610Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2ImagineStyleImpld.prl
+2026-11-04T06:03:53.0059957Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Impl.prl
+2026-11-04T06:03:53.0063130Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Impld.prl
+2026-11-04T06:03:53.0066090Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Material.prl
+2026-11-04T06:03:53.0068388Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Materiald.prl
+2026-11-04T06:03:53.0070777Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2MaterialStyleImpl.prl
+2026-11-04T06:03:53.0072874Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2MaterialStyleImpld.prl
+2026-11-04T06:03:53.0075206Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Native.prl
+2026-11-04T06:03:53.0077538Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Natived.prl
+2026-11-04T06:03:53.0079762Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Universal.prl
+2026-11-04T06:03:53.0083684Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Universald.prl
+2026-11-04T06:03:53.0085359Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2UniversalStyleImpl.prl
+2026-11-04T06:03:53.0087879Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2UniversalStyleImpld.prl
+2026-11-04T06:03:53.0090087Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Windows.prl
+2026-11-04T06:03:53.0092447Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2Windowsd.prl
+2026-11-04T06:03:53.0094748Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2WindowsStyleImpl.prl
+2026-11-04T06:03:53.0097365Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControls2WindowsStyleImpld.prl
+2026-11-04T06:03:53.0099646Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControlsTestUtils.prl
+2026-11-04T06:03:53.0102119Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickControlsTestUtilsd.prl
+2026-11-04T06:03:53.0105698Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Quickd.prl
+2026-11-04T06:03:53.0112997Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickDialogs2.prl
+2026-11-04T06:03:53.0116120Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickDialogs2d.prl
+2026-11-04T06:03:53.0118415Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickDialogs2QuickImpl.prl
+2026-11-04T06:03:53.0120712Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickDialogs2QuickImpld.prl
+2026-11-04T06:03:53.0123015Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickDialogs2Utils.prl
+2026-11-04T06:03:53.0125397Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickDialogs2Utilsd.prl
+2026-11-04T06:03:53.0127818Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickEffects.prl
+2026-11-04T06:03:53.0130088Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickEffectsd.prl
+2026-11-04T06:03:53.0132238Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickLayouts.prl
+2026-11-04T06:03:53.0134543Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickLayoutsd.prl
+2026-11-04T06:03:53.0136703Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickNativeStyle.prl
+2026-11-04T06:03:53.0139105Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickNativeStyled.prl
+2026-11-04T06:03:53.0142703Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickParticles.prl
+2026-11-04T06:03:53.0147194Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickParticlesd.prl
+2026-11-04T06:03:53.0151260Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickShapes.prl
+2026-11-04T06:03:53.0154552Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickShapesd.prl
+2026-11-04T06:03:53.0161798Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickShapesDesignHelpers.prl
+2026-11-04T06:03:53.0171094Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickShapesDesignHelpersd.prl
+2026-11-04T06:03:53.0176167Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickTemplates2.prl
+2026-11-04T06:03:53.0177935Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickTemplates2d.prl
+2026-11-04T06:03:53.0180524Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickTest.prl
+2026-11-04T06:03:53.0182954Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickTestd.prl
+2026-11-04T06:03:53.0187321Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickTestUtils.prl
+2026-11-04T06:03:53.0189724Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickTestUtilsd.prl
+2026-11-04T06:03:53.0192305Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickVectorImage.prl
+2026-11-04T06:03:53.0194685Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickVectorImaged.prl
+2026-11-04T06:03:53.0197042Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickVectorImageGenerator.prl
+2026-11-04T06:03:53.0199352Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickVectorImageGeneratord.prl
+2026-11-04T06:03:53.0201963Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickVectorImageHelpers.prl
+2026-11-04T06:03:53.0204306Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickVectorImageHelpersd.prl
+2026-11-04T06:03:53.0206776Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickWidgets.prl
+2026-11-04T06:03:53.0209264Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6QuickWidgetsd.prl
+2026-11-04T06:03:53.0213878Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6SerialPort.prl
+2026-11-04T06:03:53.0216392Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6SerialPortd.prl
+2026-11-04T06:03:53.0218794Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6ShaderTools.prl
+2026-11-04T06:03:53.0221400Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6ShaderToolsd.prl
+2026-11-04T06:03:53.0223836Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6SpatialAudio.prl
+2026-11-04T06:03:53.0226297Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6SpatialAudiod.prl
+2026-11-04T06:03:53.0228751Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Sql.prl
+2026-11-04T06:03:53.0231293Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Sqld.prl
+2026-11-04T06:03:53.0233638Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Svg.prl
+2026-11-04T06:03:53.0236079Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Svgd.prl
+2026-11-04T06:03:53.0245806Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6SvgWidgets.prl
+2026-11-04T06:03:53.0247683Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6SvgWidgetsd.prl
+2026-11-04T06:03:53.0250021Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Test.prl
+2026-11-04T06:03:53.0252412Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Testd.prl
+2026-11-04T06:03:53.0255103Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6UiTools.prl
+2026-11-04T06:03:53.0257489Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6UiToolsd.prl
+2026-11-04T06:03:53.0259793Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6WebSockets.prl
+2026-11-04T06:03:53.0262550Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6WebSocketsd.prl
+2026-11-04T06:03:53.0264870Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Widgets.prl
+2026-11-04T06:03:53.0267440Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Widgetsd.prl
+2026-11-04T06:03:53.0269853Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Xml.prl
+2026-11-04T06:03:53.0272216Z INFO    : Patching D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\Qt6Xmld.prl
+2026-11-04T06:03:53.0276690Z INFO    : Finished installation
+2026-11-04T06:03:53.0277348Z INFO    : Time elapsed: 21.17685840 second
+2026-11-04T06:03:53.1690960Z Transcript stopped, output file is D:\a\AetherSDR\AetherSDR\hf5a-stage2-results\install-qt-lts-via-aqtinstall.log
+2026-11-04T06:03:53.2254594Z ##[group]Run Start-Transcript -Path "hf5a-stage2-results/export-qt-environment.log"
+2026-11-04T06:03:53.2255266Z [36;1mStart-Transcript -Path "hf5a-stage2-results/export-qt-environment.log"[0m
+2026-11-04T06:03:53.2255622Z [36;1mtry {[0m
+2026-11-04T06:03:53.2255829Z [36;1m  # aqt lays the tree down under <version>/<arch minus the win64_ host[0m
+2026-11-04T06:03:53.2256066Z [36;1m  # prefix>: win64_msvc2022_64 -> msvc2022_64.[0m
+2026-11-04T06:03:53.2256347Z [36;1m  $qtRoot = "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION\" + ($env:QT_ARCH -replace '^win64_', '')[0m
+2026-11-04T06:03:53.2256636Z [36;1m  if (-not (Test-Path "$qtRoot\bin\qmake.exe")) {[0m
+2026-11-04T06:03:53.2256864Z [36;1m    # A bad entry on main is only clearable by hand: the key is a[0m
+2026-11-04T06:03:53.2257125Z [36;1m    # content hash nothing re-saves, and no sweeper matches qt-* there.[0m
+2026-11-04T06:03:53.2257490Z [36;1m    Write-Host "ERROR: no qmake at $qtRoot — aqt layout changed, or a stale cache entry"[0m
+2026-11-04T06:03:53.2257858Z [36;1m    Write-Host "       (clear a stale entry: gh cache delete <the Restore Qt key> --ref refs/heads/main)"[0m
+2026-11-04T06:03:53.2258222Z [36;1m    Get-ChildItem "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION" -ErrorAction SilentlyContinue[0m
+2026-11-04T06:03:53.2258465Z [36;1m    exit 1[0m
+2026-11-04T06:03:53.2258581Z [36;1m  }[0m
+2026-11-04T06:03:53.2258692Z [36;1m  @([0m
+2026-11-04T06:03:53.2258815Z [36;1m    "QT_ROOT_DIR=$qtRoot",[0m
+2026-11-04T06:03:53.2258986Z [36;1m    "Qt6_DIR=$qtRoot\lib\cmake\Qt6",[0m
+2026-11-04T06:03:53.2259156Z [36;1m    "CMAKE_PREFIX_PATH=$qtRoot",[0m
+2026-11-04T06:03:53.2259329Z [36;1m    "QT_PLUGIN_PATH=$qtRoot\plugins",[0m
+2026-11-04T06:03:53.2259500Z [36;1m    "QML2_IMPORT_PATH=$qtRoot\qml"[0m
+2026-11-04T06:03:53.2259696Z [36;1m  ) | Out-File -FilePath $env:GITHUB_ENV -Append[0m
+2026-11-04T06:03:53.2259924Z [36;1m  "$qtRoot\bin" | Out-File -FilePath $env:GITHUB_PATH -Append[0m
+2026-11-04T06:03:53.2260149Z [36;1m  & "$qtRoot\bin\qmake.exe" -query QT_VERSION[0m
+2026-11-04T06:03:53.2260313Z [36;1m[0m
+2026-11-04T06:03:53.2260538Z [36;1m  if ((& "$qtRoot\bin\qmake.exe" -query QT_VERSION).Trim() -ne "6.12.0") { throw "Wrong Qt version" }[0m
+2026-11-04T06:03:53.2260805Z [36;1m} finally { Stop-Transcript }[0m
+2026-11-04T06:03:53.2311373Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-04T06:03:53.2311578Z env:
+2026-11-04T06:03:53.2311694Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:53.2311831Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:53.2311983Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:53.2312197Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:53.2313314Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:53.2314091Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:53.2314347Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:53.2314576Z ##[endgroup]
+2026-11-04T06:03:53.6995033Z Transcript started, output file is hf5a-stage2-results/export-qt-environment.log
+2026-11-04T06:03:53.7444787Z 6.12.0
+2026-11-04T06:03:53.8665866Z Transcript stopped, output file is D:\a\AetherSDR\AetherSDR\hf5a-stage2-results\export-qt-environment.log
+2026-11-04T06:03:53.9204835Z ##[group]Run ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
+2026-11-04T06:03:53.9205110Z with:
+2026-11-04T06:03:53.9205219Z   arch: x64
+2026-11-04T06:03:53.9205320Z env:
+2026-11-04T06:03:53.9205422Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:53.9205542Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:53.9205686Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:53.9205855Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:53.9206046Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:53.9206160Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:53.9206277Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:53.9206613Z   QT_ROOT_DIR: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64
+2026-11-04T06:03:53.9206810Z   Qt6_DIR: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\cmake\Qt6
+2026-11-04T06:03:53.9207013Z   CMAKE_PREFIX_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64
+2026-11-04T06:03:53.9207212Z   QT_PLUGIN_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\plugins
+2026-11-04T06:03:53.9207838Z   QML2_IMPORT_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\qml
+2026-11-04T06:03:53.9208008Z ##[endgroup]
+2026-11-04T06:03:54.3541762Z Found with vswhere: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvarsall.bat
+2026-11-04T06:03:58.2518316Z ##[group]Environment variables
+2026-11-04T06:03:58.2518597Z Setting CommandPromptType
+2026-11-04T06:03:58.2525120Z Setting DevEnvDir
+2026-11-04T06:03:58.2527694Z Setting ExtensionSdkDir
+2026-11-04T06:03:58.2529385Z Setting EXTERNAL_INCLUDE
+2026-11-04T06:03:58.8351162Z Setting Framework40Version
+2026-11-04T06:03:58.8353593Z Setting FrameworkDir
+2026-11-04T06:03:58.8355272Z Setting FrameworkDir64
+2026-11-04T06:03:58.8356549Z Setting FrameworkVersion
+2026-11-04T06:03:58.8357818Z Setting FrameworkVersion64
+2026-11-04T06:03:58.8359455Z Setting FSHARPINSTALLDIR
+2026-11-04T06:03:58.8361658Z Setting HTMLHelpDir
+2026-11-04T06:03:58.8363112Z Setting INCLUDE
+2026-11-04T06:03:58.8365580Z Setting LIB
+2026-11-04T06:03:58.8367078Z Setting LIBPATH
+2026-11-04T06:03:58.8368538Z Setting llvmArm64
+2026-11-04T06:03:58.8369795Z Setting llvmX64
+2026-11-04T06:03:58.8370974Z Setting NETFXSDKDir
+2026-11-04T06:03:58.8372534Z Setting Path
+2026-11-04T06:03:58.8374317Z Setting Platform
+2026-11-04T06:03:58.8375954Z Setting UCRTVersion
+2026-11-04T06:03:58.8377277Z Setting UniversalCRTSdkDir
+2026-11-04T06:03:58.8378872Z Setting use_x64_llvm
+2026-11-04T06:03:58.8380025Z Setting VCIDEInstallDir
+2026-11-04T06:03:58.8381077Z Setting VCINSTALLDIR
+2026-11-04T06:03:58.8382268Z Setting VCPKG_ROOT
+2026-11-04T06:03:58.8383157Z Setting VCToolsInstallDir
+2026-11-04T06:03:58.8384363Z Setting VCToolsRedistDir
+2026-11-04T06:03:58.8385380Z Setting VCToolsVersion
+2026-11-04T06:03:58.8386373Z Setting VisualStudioVersion
+2026-11-04T06:03:58.8387301Z Setting VS180COMNTOOLS
+2026-11-04T06:03:58.8388329Z Setting VSCMD_ARG_app_plat
+2026-11-04T06:03:58.8389294Z Setting VSCMD_ARG_HOST_ARCH
+2026-11-04T06:03:58.8390268Z Setting VSCMD_ARG_TGT_ARCH
+2026-11-04T06:03:58.8391467Z Setting VSCMD_VER
+2026-11-04T06:03:58.8392530Z Setting VSINSTALLDIR
+2026-11-04T06:03:58.8393528Z Setting VSSDK150INSTALL
+2026-11-04T06:03:58.8394516Z Setting VSSDKINSTALL
+2026-11-04T06:03:58.8395687Z Setting WindowsLibPath
+2026-11-04T06:03:58.8396841Z Setting WindowsSdkBinPath
+2026-11-04T06:03:58.8397887Z Setting WindowsSdkDir
+2026-11-04T06:03:58.8398909Z Setting WindowsSDKLibVersion
+2026-11-04T06:03:58.8399914Z Setting WindowsSdkVerBinPath
+2026-11-04T06:03:58.8400967Z Setting WindowsSDKVersion
+2026-11-04T06:03:58.8401998Z Setting WindowsSDK_ExecutablePath_x64
+2026-11-04T06:03:58.8402951Z Setting WindowsSDK_ExecutablePath_x86
+2026-11-04T06:03:58.8404569Z Setting __DOTNET_ADD_64BIT
+2026-11-04T06:03:58.8405692Z Setting __DOTNET_PREFERRED_BITNESS
+2026-11-04T06:03:58.8406691Z Setting __VSCMD_PREINIT_PATH
+2026-11-04T06:03:58.8408690Z ##[endgroup]
+2026-11-04T06:03:58.8409502Z Configured Developer Command Prompt
+2026-11-04T06:03:59.0054937Z ##[group]Run New-Item -ItemType Directory -Force hf5a-stage2-portable | Out-Null
+2026-11-04T06:03:59.0055366Z [36;1mNew-Item -ItemType Directory -Force hf5a-stage2-portable | Out-Null[0m
+2026-11-04T06:03:59.0055649Z [36;1mCopy-Item build/aether-icom-rx-audit.exe hf5a-stage2-portable/[0m
+2026-11-04T06:03:59.0055884Z [36;1mCopy-Item LICENSE hf5a-stage2-portable/[0m
+2026-11-04T06:03:59.0056132Z [36;1mCopy-Item docs/hf5a-stage2-rx-only-audit.md hf5a-stage2-portable/README.md[0m
+2026-11-04T06:03:59.0056386Z [36;1mCopy-Item build/*.dll hf5a-stage2-portable/[0m
+2026-11-04T06:03:59.0056815Z [36;1m& "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations --no-compiler-runtime --dir hf5a-stage2-portable hf5a-stage2-portable/aether-icom-rx-audit.exe |[0m
+2026-11-04T06:03:59.0057408Z [36;1m  Tee-Object hf5a-stage2-results/portable-deploy.log[0m
+2026-11-04T06:03:59.0057820Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Qt portable deployment failed' }[0m
+2026-11-04T06:03:59.0058151Z [36;1m# MQTT TLS is linked by the shared core, although the audit tool starts no MQTT client.[0m
+2026-11-04T06:03:59.0058434Z [36;1m$opensslBin=Join-Path $env:ProgramFiles 'OpenSSL/bin'[0m
+2026-11-04T06:03:59.0058662Z [36;1m$opensslVersion=(& "$opensslBin/openssl.exe" version)[0m
+2026-11-04T06:03:59.0058915Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Cannot identify the OpenSSL SDK runtime' }[0m
+2026-11-04T06:03:59.0059278Z [36;1mif ($opensslVersion -notmatch '^OpenSSL 3\.6\.5(?: |$)') { throw 'OpenSSL runtime does not match the compiled SDK 3.6.5' }[0m
+2026-11-04T06:03:59.0059649Z [36;1m$opensslVersion | Set-Content hf5a-stage2-results/portable-openssl-version.txt[0m
+2026-11-04T06:03:59.0059948Z [36;1mforeach ($name in @('libssl-3-x64.dll','libcrypto-3-x64.dll')) {[0m
+2026-11-04T06:03:59.0060167Z [36;1m  $source=Join-Path $opensslBin $name[0m
+2026-11-04T06:03:59.0060356Z [36;1m  Copy-Item $source hf5a-stage2-portable/ -Force[0m
+2026-11-04T06:03:59.0060659Z [36;1m  "$source $((Get-FileHash $source).Hash)" | Add-Content hf5a-stage2-results/portable-openssl-runtime.txt[0m
+2026-11-04T06:03:59.0060928Z [36;1m}[0m
+2026-11-04T06:03:59.0061137Z [36;1m$crt=Get-ChildItem "$env:VCToolsRedistDir/x64" -Directory -Filter 'Microsoft.VC*.CRT' |[0m
+2026-11-04T06:03:59.0061416Z [36;1m  Sort-Object Name -Descending | Select-Object -First 1[0m
+2026-11-04T06:03:59.0061667Z [36;1mif (-not $crt) { throw 'App-local MSVC runtime DLL directory not found' }[0m
+2026-11-04T06:03:59.0061923Z [36;1mCopy-Item "$($crt.FullName)/*.dll" hf5a-stage2-portable/[0m
+2026-11-04T06:03:59.0062179Z [36;1m# Preserve every direct/delay import and the initial dependency diagnosis.[0m
+2026-11-04T06:03:59.0062520Z [36;1m$images=Get-ChildItem hf5a-stage2-portable -Recurse -File | Where-Object Extension -in '.exe','.dll'[0m
+2026-11-04T06:03:59.0062793Z [36;1mforeach ($image in $images) {[0m
+2026-11-04T06:03:59.0063026Z [36;1m  "IMAGE: $($image.FullName)" | Add-Content hf5a-stage2-results/portable-imports.log[0m
+2026-11-04T06:03:59.0063380Z [36;1m  & dumpbin /nologo /DEPENDENTS $image.FullName | Add-Content hf5a-stage2-results/portable-imports.log[0m
+2026-11-04T06:03:59.0063685Z [36;1m  if ($LASTEXITCODE -ne 0) { throw 'dumpbin failed' }[0m
+2026-11-04T06:03:59.0063854Z [36;1m}[0m
+2026-11-04T06:03:59.0064162Z [36;1m& powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage2-portable |[0m
+2026-11-04T06:03:59.0064574Z [36;1m  Tee-Object hf5a-stage2-results/portable-dependencies-before.log[0m
+2026-11-04T06:03:59.0064897Z [36;1m$LASTEXITCODE | Set-Content hf5a-stage2-results/portable-dependencies-before-exit-code.txt[0m
+2026-11-04T06:03:59.0065232Z [36;1m# Use the existing version-matched CRT + OpenMP staging recipe; no installer.[0m
+2026-11-04T06:03:59.0065635Z [36;1m& powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/stage-msvc-runtime.ps1 -OutputDir hf5a-stage2-portable |[0m
+2026-11-04T06:03:59.0067024Z [36;1m  Tee-Object hf5a-stage2-results/portable-runtime.log[0m
+2026-11-04T06:03:59.0067274Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'MSVC runtime staging failed' }[0m
+2026-11-04T06:03:59.0067670Z [36;1m& powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage2-portable |[0m
+2026-11-04T06:03:59.0068064Z [36;1m  Tee-Object hf5a-stage2-results/portable-dependencies.log[0m
+2026-11-04T06:03:59.0068322Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Portable import validation failed' }[0m
+2026-11-04T06:03:59.0068790Z [36;1mif (@(Get-ChildItem hf5a-stage2-portable -Recurse -Filter '*.exe' | Where-Object Name -ne 'aether-icom-rx-audit.exe').Count) { throw 'Unexpected executable in portable bundle' }[0m
+2026-11-04T06:03:59.0069621Z [36;1mCopy-Item hf5a-stage2-results/source.json hf5a-stage2-portable/[0m
+2026-11-04T06:03:59.0069838Z [36;1m$savedPath=$env:PATH[0m
+2026-11-04T06:03:59.0069975Z [36;1mtry {[0m
+2026-11-04T06:03:59.0070167Z [36;1m  # Prove the bundle does not borrow Qt or the compiler runtime from setup PATH.[0m
+2026-11-04T06:03:59.0070427Z [36;1m  $env:PATH="$env:SystemRoot/System32;$env:SystemRoot"[0m
+2026-11-04T06:03:59.0070655Z [36;1m  '' | Set-Content hf5a-stage2-results/portable-self-check.log[0m
+2026-11-04T06:03:59.0070913Z [36;1m  & ./hf5a-stage2-portable/aether-icom-rx-audit.exe --self-check |[0m
+2026-11-04T06:03:59.0071175Z [36;1m    Tee-Object hf5a-stage2-results/portable-self-check.log[0m
+2026-11-04T06:03:59.0071377Z [36;1m  $portableCode=$LASTEXITCODE[0m
+2026-11-04T06:03:59.0071575Z [36;1m  @{exitCode=$portableCode; hex=('0x{0:X8}' -f $portableCode)} |[0m
+2026-11-04T06:03:59.0071869Z [36;1m    ConvertTo-Json | Set-Content hf5a-stage2-results/portable-self-check-exit.json[0m
+2026-11-04T06:03:59.0072186Z [36;1m  if ($portableCode -ne 0) { throw "Portable tool self-check failed: $portableCode" }[0m
+2026-11-04T06:03:59.0072506Z [36;1m} finally { $env:PATH=$savedPath }[0m
+2026-11-04T06:03:59.0072814Z [36;1mCopy-Item hf5a-stage2-results/package-source.json hf5a-stage2-portable/[0m
+2026-11-04T06:03:59.0073261Z [36;1mGet-ChildItem hf5a-stage2-portable -File -Recurse | Get-FileHash -Algorithm SHA256 |[0m
+2026-11-04T06:03:59.0073739Z [36;1m  Select-Object Path,Hash | Export-Csv hf5a-stage2-results/portable-sha256.csv -NoTypeInformation[0m
+2026-11-04T06:03:59.0074122Z [36;1mCopy-Item hf5a-stage2-results/portable-sha256.csv hf5a-stage2-portable/[0m
+2026-11-04T06:03:59.0074670Z [36;1mif ((Get-FileHash hf5a-stage2-portable/aether-icom-rx-audit.exe).Hash -ne (Get-Content hf5a-stage2-results/input-exe-sha256.txt).Trim()) { throw 'Executable bytes changed during packaging' }[0m
+2026-11-04T06:03:59.0134538Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-04T06:03:59.0134738Z env:
+2026-11-04T06:03:59.0134847Z   QT_VERSION: 6.12.0
+2026-11-04T06:03:59.0134974Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:03:59.0135119Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:03:59.0135292Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:03:59.0135474Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:03:59.0135590Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:03:59.0135712Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:03:59.0135867Z   QT_ROOT_DIR: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64
+2026-11-04T06:03:59.0136063Z   Qt6_DIR: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\cmake\Qt6
+2026-11-04T06:03:59.0136261Z   CMAKE_PREFIX_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64
+2026-11-04T06:03:59.0136462Z   QT_PLUGIN_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\plugins
+2026-11-04T06:03:59.0136665Z   QML2_IMPORT_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\qml
+2026-11-04T06:03:59.0136848Z   CommandPromptType: Native
+2026-11-04T06:03:59.0137048Z   DevEnvDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\
+2026-11-04T06:03:59.0137337Z   ExtensionSdkDir: C:\Program Files (x86)\Microsoft SDKs\Windows Kits\10\ExtensionSDKs
+2026-11-04T06:03:59.0139459Z   EXTERNAL_INCLUDE: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\VS\include;C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\winrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\cppwinrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\include\um
+2026-11-04T06:03:59.0141503Z   Framework40Version: v4.0
+2026-11-04T06:03:59.0141893Z   FrameworkDir: C:\Windows\Microsoft.NET\Framework64\
+2026-11-04T06:03:59.0142249Z   FrameworkDir64: C:\Windows\Microsoft.NET\Framework64\
+2026-11-04T06:03:59.0142464Z   FrameworkVersion: v4.0.30319
+2026-11-04T06:03:59.0142764Z   FrameworkVersion64: v4.0.30319
+2026-11-04T06:03:59.0143212Z   FSHARPINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools
+2026-11-04T06:03:59.0143693Z   HTMLHelpDir: C:\Program Files (x86)\HTML Help Workshop
+2026-11-04T06:03:59.0145028Z   INCLUDE: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\VS\include;C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\winrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\cppwinrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\include\um
+2026-11-04T06:03:59.0146737Z   LIB: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.26100.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\\lib\10.0.26100.0\\um\x64
+2026-11-04T06:03:59.0148134Z   LIBPATH: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x86\store\references;C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.26100.0;C:\Windows\Microsoft.NET\Framework64\v4.0.30319
+2026-11-04T06:03:59.0149590Z   llvmArm64: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\ARM64\bin
+2026-11-04T06:03:59.0149904Z   llvmX64: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin
+2026-11-04T06:03:59.0150170Z   NETFXSDKDir: C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\
+2026-11-04T06:03:59.0158021Z   Path: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\18\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\x64\;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\\x64;C:\Program Files (x86)\Windows Kits\10\bin\\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\;D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin;C:\Program Files\MongoDB\Server\7.0\bin;C:\vcpkg;C:\tools\zstd;C:\hostedtoolcache\windows\stack\3.11.1\x64;C:\cabal\bin;C:\\ghcup\bin;C:\mingw64\bin;C:\Program Files\dotnet;C:\Program Files\MySQL\MySQL Server 8.4\bin;C:\Program Files\R\R-4.6.1\bin\x64;C:\SeleniumWebDrivers\GeckoDriver;C:\SeleniumWebDrivers\EdgeDriver\;C:\SeleniumWebDrivers\ChromeDriver;C:\Program Files (x86)\sbt\bin;C:\Program Files (x86)\GitHub CLI;C:\Program Files\Git\bin;C:\Program Files (x86)\pipx_bin;C:\npm\prefix;C:\hostedtoolcache\windows\go\1.24.13\x64\bin;C:\hostedtoolcache\windows\Python\3.12.10\x64\Scripts;C:\hostedtoolcache\windows\Python\3.12.10\x64;C:\hostedtoolcache\windows\Ruby\3.3.13\x64\bin;C:\Program Files\OpenSSL\bin;C:\tools\kotlinc\bin;C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.20-101\x64\bin;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\ProgramData\kind;C:\ProgramData\Chocolatey\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\WSL\;C:\Program Files\PowerShell\7\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files (x86)\WiX Toolset v3.14\bin;C:\Program Files\Microsoft SQL Server\130\DTS\Binn\;C:\Program Files\Microsoft SQL Server\140\DTS\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files\Microsoft SQL Server\170\DTS\Binn\;C:\ProgramData\chocolatey\lib\pulumi\tools\Pulumi\bin;C:\Program Files\CMake\bin;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code;C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager;C:\Program Files\LLVM\bin;C:\Program Files (x86)\LLVM\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files\Git\ucrt64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\GitHub CLI\;c:\tools\php;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Amazon\SessionManagerPlugin\bin\;C:\Program Files\Amazon\AWSSAMCLI\bin\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\mongosh\;C:\Users\runneradmin\.dotnet\tools;C:\Users\runneradmin\.cargo\bin;C:\Users\runneradmin\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Microsoft Visual Studio\Installer;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\vcpkg
+2026-11-04T06:03:59.0166102Z   Platform: x64
+2026-11-04T06:03:59.0166216Z   UCRTVersion: 10.0.26100.0
+2026-11-04T06:03:59.0166387Z   UniversalCRTSdkDir: C:\Program Files (x86)\Windows Kits\10\
+2026-11-04T06:03:59.0166569Z   use_x64_llvm: true
+2026-11-04T06:03:59.0166769Z   VCIDEInstallDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\
+2026-11-04T06:03:59.0167114Z   VCINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\
+2026-11-04T06:03:59.0167378Z   VCPKG_ROOT: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\vcpkg
+2026-11-04T06:03:59.0167689Z   VCToolsInstallDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\
+2026-11-04T06:03:59.0168037Z   VCToolsRedistDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Redist\MSVC\14.51.36231\
+2026-11-04T06:03:59.0168292Z   VCToolsVersion: 14.51.36231
+2026-11-04T06:03:59.0168425Z   VisualStudioVersion: 18.0
+2026-11-04T06:03:59.0168628Z   VS180COMNTOOLS: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\
+2026-11-04T06:03:59.0168853Z   VSCMD_ARG_app_plat: Desktop
+2026-11-04T06:03:59.0168983Z   VSCMD_ARG_HOST_ARCH: x64
+2026-11-04T06:03:59.0169156Z   VSCMD_ARG_TGT_ARCH: x64
+2026-11-04T06:03:59.0169271Z   VSCMD_VER: 18.11.3
+2026-11-04T06:03:59.0169438Z   VSINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\
+2026-11-04T06:03:59.0169703Z   VSSDK150INSTALL: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VSSDK
+2026-11-04T06:03:59.0169975Z   VSSDKINSTALL: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VSSDK
+2026-11-04T06:03:59.0170350Z   WindowsLibPath: C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.26100.0
+2026-11-04T06:03:59.0170710Z   WindowsSdkBinPath: C:\Program Files (x86)\Windows Kits\10\bin\
+2026-11-04T06:03:59.0170924Z   WindowsSdkDir: C:\Program Files (x86)\Windows Kits\10\
+2026-11-04T06:03:59.0171099Z   WindowsSDKLibVersion: 10.0.26100.0\
+2026-11-04T06:03:59.0171307Z   WindowsSdkVerBinPath: C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\
+2026-11-04T06:03:59.0171523Z   WindowsSDKVersion: 10.0.26100.0\
+2026-11-04T06:03:59.0171782Z   WindowsSDK_ExecutablePath_x64: C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\x64\
+2026-11-04T06:03:59.0172152Z   WindowsSDK_ExecutablePath_x86: C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\
+2026-11-04T06:03:59.0172402Z   __DOTNET_ADD_64BIT: 1
+2026-11-04T06:03:59.0172526Z   __DOTNET_PREFERRED_BITNESS: 64
+2026-11-04T06:03:59.0177497Z   __VSCMD_PREINIT_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin;C:\Program Files\MongoDB\Server\7.0\bin;C:\vcpkg;C:\tools\zstd;C:\hostedtoolcache\windows\stack\3.11.1\x64;C:\cabal\bin;C:\\ghcup\bin;C:\mingw64\bin;C:\Program Files\dotnet;C:\Program Files\MySQL\MySQL Server 8.4\bin;C:\Program Files\R\R-4.6.1\bin\x64;C:\SeleniumWebDrivers\GeckoDriver;C:\SeleniumWebDrivers\EdgeDriver\;C:\SeleniumWebDrivers\ChromeDriver;C:\Program Files (x86)\sbt\bin;C:\Program Files (x86)\GitHub CLI;C:\Program Files\Git\bin;C:\Program Files (x86)\pipx_bin;C:\npm\prefix;C:\hostedtoolcache\windows\go\1.24.13\x64\bin;C:\hostedtoolcache\windows\Python\3.12.10\x64\Scripts;C:\hostedtoolcache\windows\Python\3.12.10\x64;C:\hostedtoolcache\windows\Ruby\3.3.13\x64\bin;C:\Program Files\OpenSSL\bin;C:\tools\kotlinc\bin;C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.20-101\x64\bin;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\ProgramData\kind;C:\ProgramData\Chocolatey\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\WSL\;C:\Program Files\PowerShell\7\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files (x86)\WiX Toolset v3.14\bin;C:\Program Files\Microsoft SQL Server\130\DTS\Binn\;C:\Program Files\Microsoft SQL Server\140\DTS\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files\Microsoft SQL Server\170\DTS\Binn\;C:\ProgramData\chocolatey\lib\pulumi\tools\Pulumi\bin;C:\Program Files\CMake\bin;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code;C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager;C:\Program Files\LLVM\bin;C:\Program Files (x86)\LLVM\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files\Git\ucrt64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\GitHub CLI\;c:\tools\php;C:\Program Files (x86)\sbt\bin;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Amazon\SessionManagerPlugin\bin\;C:\Program Files\Amazon\AWSSAMCLI\bin\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\mongosh\;C:\Users\runneradmin\.dotnet\tools;C:\Users\runneradmin\.cargo\bin;C:\Users\runneradmin\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Microsoft Visual Studio\Installer
+2026-11-04T06:03:59.0182591Z ##[endgroup]
+2026-11-04T06:04:00.3184168Z Adding local dependencyD:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/hidapi.dll
+2026-11-04T06:04:00.3185631Z Adding local dependencyD:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/libfftw3-3.dll
+2026-11-04T06:04:00.3186595Z Adding local dependencyD:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/libfftw3f-3.dll
+2026-11-04T06:04:00.3187564Z Adding local dependencyD:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/deepfilter.dll
+2026-11-04T06:04:00.3188535Z D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable\aether-icom-rx-audit.exe 64 bit, release executable
+2026-11-04T06:04:00.3189346Z Adding in plugin type generic for module: Qt6Gui
+2026-11-04T06:04:00.3190198Z Adding in plugin type iconengines for module: Qt6Gui
+2026-11-04T06:04:00.3191050Z Adding Qt6Svg for qsvgicon.dll from plugin type: iconengines
+2026-11-04T06:04:00.3192164Z Adding in plugin type imageformats for module: Qt6Gui
+2026-11-04T06:04:00.8482605Z Adding in plugin type multimedia for module: Qt6Multimedia
+2026-11-04T06:04:00.8484005Z Adding in plugin type networkinformation for module: Qt6Network
+2026-11-04T06:04:00.8484504Z Adding in plugin type platforms for module: Qt6Gui
+2026-11-04T06:04:00.8485430Z Adding in plugin type tls for module: Qt6Network
+2026-11-04T06:04:00.8486622Z Skipping plugin qopensslbackend.dll. Use -force-openssl or specify -openssl-root if you want to use it.
+2026-11-04T06:04:00.8488113Z Performing additional pass of finding Qt plugins due to updated Qt module list: Qt6Core Qt6Gui Qt6Multimedia Qt6Network Qt6SerialPort Qt6Svg Qt6WebSockets
+2026-11-04T06:04:00.8488664Z Adding in plugin type generic for module: Qt6Gui
+2026-11-04T06:04:00.8489594Z Adding in plugin type iconengines for module: Qt6Gui
+2026-11-04T06:04:00.8490426Z Adding in plugin type imageformats for module: Qt6Gui
+2026-11-04T06:04:00.8491255Z Adding in plugin type multimedia for module: Qt6Multimedia
+2026-11-04T06:04:00.8492077Z Adding in plugin type networkinformation for module: Qt6Network
+2026-11-04T06:04:00.8492799Z Adding in plugin type platforms for module: Qt6Gui
+2026-11-04T06:04:00.8493497Z Adding in plugin type tls for module: Qt6Network
+2026-11-04T06:04:00.8494409Z Skipping plugin qopensslbackend.dll. Use -force-openssl or specify -openssl-root if you want to use it.
+2026-11-04T06:04:00.8495382Z Direct dependencies: Qt6Core Qt6Gui Qt6Multimedia Qt6Network Qt6SerialPort Qt6WebSockets
+2026-11-04T06:04:00.8496326Z All dependencies   : Qt6Core Qt6Gui Qt6Multimedia Qt6Network Qt6SerialPort Qt6WebSockets
+2026-11-04T06:04:00.8497199Z To be deployed     : Qt6Core Qt6Gui Qt6Multimedia Qt6Network Qt6SerialPort Qt6Svg Qt6WebSockets
+2026-11-04T06:04:00.8497662Z Skipping system library C:/Windows/system32/icuuc.dll
+2026-11-04T06:04:00.8498677Z Updating Qt6Core.dll.
+2026-11-04T06:04:00.8499638Z Updating Qt6Gui.dll.
+2026-11-04T06:04:00.8500512Z Updating Qt6Multimedia.dll.
+2026-11-04T06:04:00.8501326Z Updating Qt6Network.dll.
+2026-11-04T06:04:00.8502170Z Updating Qt6SerialPort.dll.
+2026-11-04T06:04:00.8503006Z Updating Qt6Svg.dll.
+2026-11-04T06:04:00.8503887Z Updating Qt6WebSockets.dll.
+2026-11-04T06:04:00.8504698Z Updating opengl32sw.dll.
+2026-11-04T06:04:00.8505694Z Updating d3dcompiler_47.dll.
+2026-11-04T06:04:00.8506299Z Updating dxcompiler.dll.
+2026-11-04T06:04:00.8507283Z Updating dxil.dll.
+2026-11-04T06:04:00.8508299Z Updating avcodec-63.dll.
+2026-11-04T06:04:00.8509122Z Updating avformat-63.dll.
+2026-11-04T06:04:00.8509955Z Updating avutil-61.dll.
+2026-11-04T06:04:00.8510729Z Updating swresample-7.dll.
+2026-11-04T06:04:00.8511592Z Updating swscale-10.dll.
+2026-11-04T06:04:00.8512556Z Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/generic.
+2026-11-04T06:04:00.8513261Z Updating qtuiotouchplugin.dll.
+2026-11-04T06:04:00.8514112Z Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/iconengines.
+2026-11-04T06:04:00.8514928Z Updating qsvgicon.dll.
+2026-11-04T06:04:00.8515882Z Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/imageformats.
+2026-11-04T06:04:00.8516639Z Updating qgif.dll.
+2026-11-04T06:04:00.8517353Z Updating qico.dll.
+2026-11-04T06:04:00.8518088Z Updating qjpeg.dll.
+2026-11-04T06:04:00.8518838Z Updating qsvg.dll.
+2026-11-04T06:04:00.8519734Z Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/multimedia.
+2026-11-04T06:04:00.8520467Z Updating ffmpegmediaplugin.dll.
+2026-11-04T06:04:00.8521307Z Updating windowsmediaplugin.dll.
+2026-11-04T06:04:00.8522234Z Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/networkinformation.
+2026-11-04T06:04:00.8522969Z Updating qnetworklistmanager.dll.
+2026-11-04T06:04:00.8523788Z Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/platforms.
+2026-11-04T06:04:00.8524599Z Updating qwindows.dll.
+2026-11-04T06:04:00.8525535Z Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-portable/tls.
+2026-11-04T06:04:00.8526299Z Updating qcertonlybackend.dll.
+2026-11-04T06:04:00.8527252Z Updating qschannelbackend.dll.
+2026-11-04T06:04:03.8501311Z Auditing D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable with C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\dumpbin.exe
+2026-11-04T06:04:04.6075466Z Payload is self-contained: 45 images audited, every import resolves app-local or to the OS.
+2026-11-04T06:04:04.9760228Z Staged MSVC runtime from C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Redist\MSVC\14.51.36231\x64\Microsoft.VC145.CRT
+2026-11-04T06:04:04.9855240Z Staged MSVC runtime from C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Redist\MSVC\14.51.36231\x64\Microsoft.VC145.OpenMP
+2026-11-04T06:04:04.9895978Z   avcodec-63.dll
+2026-11-04T06:04:04.9901948Z   avformat-63.dll
+2026-11-04T06:04:04.9908830Z   avutil-61.dll
+2026-11-04T06:04:04.9915118Z   concrt140.dll
+2026-11-04T06:04:04.9921652Z   d3dcompiler_47.dll
+2026-11-04T06:04:04.9927671Z   deepfilter.dll
+2026-11-04T06:04:04.9934847Z   dxcompiler.dll
+2026-11-04T06:04:04.9941614Z   dxil.dll
+2026-11-04T06:04:04.9947871Z   hidapi.dll
+2026-11-04T06:04:04.9954330Z   libcrypto-3-x64.dll
+2026-11-04T06:04:04.9960214Z   libfftw3-3.dll
+2026-11-04T06:04:04.9965767Z   libfftw3f-3.dll
+2026-11-04T06:04:04.9971861Z   libssl-3-x64.dll
+2026-11-04T06:04:04.9977990Z   msvcp140.dll
+2026-11-04T06:04:04.9984166Z   msvcp140_1.dll
+2026-11-04T06:04:05.0123175Z   msvcp140_2.dll
+2026-11-04T06:04:05.0123449Z   msvcp140_atomic_wait.dll
+2026-11-04T06:04:05.0123670Z   msvcp140_codecvt_ids.dll
+2026-11-04T06:04:05.0123866Z   opengl32sw.dll
+2026-11-04T06:04:05.0124019Z   Qt6Core.dll
+2026-11-04T06:04:05.0124166Z   Qt6Gui.dll
+2026-11-04T06:04:05.0124316Z   Qt6Multimedia.dll
+2026-11-04T06:04:05.0124478Z   Qt6Network.dll
+2026-11-04T06:04:05.0124632Z   Qt6SerialPort.dll
+2026-11-04T06:04:05.0124782Z   Qt6Svg.dll
+2026-11-04T06:04:05.0124927Z   Qt6WebSockets.dll
+2026-11-04T06:04:05.0125089Z   swresample-7.dll
+2026-11-04T06:04:05.0125283Z   swscale-10.dll
+2026-11-04T06:04:05.0125435Z   vccorlib140.dll
+2026-11-04T06:04:05.0125600Z   vcomp140.dll
+2026-11-04T06:04:05.0125740Z   vcruntime140.dll
+2026-11-04T06:04:05.0125905Z   vcruntime140_1.dll
+2026-11-04T06:04:05.0126062Z   vcruntime140_threads.dll
+2026-11-04T06:04:05.2672456Z Auditing D:\a\AetherSDR\AetherSDR\hf5a-stage2-portable with C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\dumpbin.exe
+2026-11-04T06:04:05.9703169Z Payload is self-contained: 46 images audited, every import resolves app-local or to the OS.
+2026-11-04T06:04:06.3832080Z RX policy self-check: PASS; no session or sockets created
+2026-11-04T06:04:06.6719996Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-04T06:04:06.6720287Z with:
+2026-11-04T06:04:06.6720516Z   name: aether-icom-rx-audit-verified-b058dcc2b2d6365f2ffed78462745830fc8ff85e
+2026-11-04T06:04:06.6720782Z   path: hf5a-stage2-portable/
+2026-11-04T06:04:06.6721123Z   retention-days: 90
+2026-11-04T06:04:06.6721250Z   if-no-files-found: error
+2026-11-04T06:04:06.6721383Z   compression-level: 6
+2026-11-04T06:04:06.6721501Z   overwrite: false
+2026-11-04T06:04:06.6721622Z   include-hidden-files: false
+2026-11-04T06:04:06.6721750Z   archive: true
+2026-11-04T06:04:06.6721858Z env:
+2026-11-04T06:04:06.6721960Z   QT_VERSION: 6.12.0
+2026-11-04T06:04:06.6722089Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:04:06.6722234Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:04:06.6722414Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:04:06.6722602Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:04:06.6722739Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:04:06.6722858Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:04:06.6723011Z   QT_ROOT_DIR: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64
+2026-11-04T06:04:06.6723213Z   Qt6_DIR: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\cmake\Qt6
+2026-11-04T06:04:06.6723422Z   CMAKE_PREFIX_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64
+2026-11-04T06:04:06.6723631Z   QT_PLUGIN_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\plugins
+2026-11-04T06:04:06.6723845Z   QML2_IMPORT_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\qml
+2026-11-04T06:04:06.6724031Z   CommandPromptType: Native
+2026-11-04T06:04:06.6724235Z   DevEnvDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\
+2026-11-04T06:04:06.6724537Z   ExtensionSdkDir: C:\Program Files (x86)\Microsoft SDKs\Windows Kits\10\ExtensionSDKs
+2026-11-04T06:04:06.6726191Z   EXTERNAL_INCLUDE: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\VS\include;C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\winrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\cppwinrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\include\um
+2026-11-04T06:04:06.6727463Z   Framework40Version: v4.0
+2026-11-04T06:04:06.6727618Z   FrameworkDir: C:\Windows\Microsoft.NET\Framework64\
+2026-11-04T06:04:06.6727818Z   FrameworkDir64: C:\Windows\Microsoft.NET\Framework64\
+2026-11-04T06:04:06.6727996Z   FrameworkVersion: v4.0.30319
+2026-11-04T06:04:06.6728135Z   FrameworkVersion64: v4.0.30319
+2026-11-04T06:04:06.6728436Z   FSHARPINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools
+2026-11-04T06:04:06.6728780Z   HTMLHelpDir: C:\Program Files (x86)\HTML Help Workshop
+2026-11-04T06:04:06.6730035Z   INCLUDE: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\VS\include;C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\winrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\cppwinrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\include\um
+2026-11-04T06:04:06.6732815Z   LIB: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.26100.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\\lib\10.0.26100.0\\um\x64
+2026-11-04T06:04:06.6734328Z   LIBPATH: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x86\store\references;C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.26100.0;C:\Windows\Microsoft.NET\Framework64\v4.0.30319
+2026-11-04T06:04:06.6735397Z   llvmArm64: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\ARM64\bin
+2026-11-04T06:04:06.6735717Z   llvmX64: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin
+2026-11-04T06:04:06.6736001Z   NETFXSDKDir: C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\
+2026-11-04T06:04:06.6744612Z   Path: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\18\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\x64\;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\\x64;C:\Program Files (x86)\Windows Kits\10\bin\\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\;D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin;C:\Program Files\MongoDB\Server\7.0\bin;C:\vcpkg;C:\tools\zstd;C:\hostedtoolcache\windows\stack\3.11.1\x64;C:\cabal\bin;C:\\ghcup\bin;C:\mingw64\bin;C:\Program Files\dotnet;C:\Program Files\MySQL\MySQL Server 8.4\bin;C:\Program Files\R\R-4.6.1\bin\x64;C:\SeleniumWebDrivers\GeckoDriver;C:\SeleniumWebDrivers\EdgeDriver\;C:\SeleniumWebDrivers\ChromeDriver;C:\Program Files (x86)\sbt\bin;C:\Program Files (x86)\GitHub CLI;C:\Program Files\Git\bin;C:\Program Files (x86)\pipx_bin;C:\npm\prefix;C:\hostedtoolcache\windows\go\1.24.13\x64\bin;C:\hostedtoolcache\windows\Python\3.12.10\x64\Scripts;C:\hostedtoolcache\windows\Python\3.12.10\x64;C:\hostedtoolcache\windows\Ruby\3.3.13\x64\bin;C:\Program Files\OpenSSL\bin;C:\tools\kotlinc\bin;C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.20-101\x64\bin;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\ProgramData\kind;C:\ProgramData\Chocolatey\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\WSL\;C:\Program Files\PowerShell\7\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files (x86)\WiX Toolset v3.14\bin;C:\Program Files\Microsoft SQL Server\130\DTS\Binn\;C:\Program Files\Microsoft SQL Server\140\DTS\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files\Microsoft SQL Server\170\DTS\Binn\;C:\ProgramData\chocolatey\lib\pulumi\tools\Pulumi\bin;C:\Program Files\CMake\bin;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code;C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager;C:\Program Files\LLVM\bin;C:\Program Files (x86)\LLVM\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files\Git\ucrt64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\GitHub CLI\;c:\tools\php;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Amazon\SessionManagerPlugin\bin\;C:\Program Files\Amazon\AWSSAMCLI\bin\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\mongosh\;C:\Users\runneradmin\.dotnet\tools;C:\Users\runneradmin\.cargo\bin;C:\Users\runneradmin\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Microsoft Visual Studio\Installer;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\vcpkg
+2026-11-04T06:04:06.6753231Z   Platform: x64
+2026-11-04T06:04:06.6753349Z   UCRTVersion: 10.0.26100.0
+2026-11-04T06:04:06.6753524Z   UniversalCRTSdkDir: C:\Program Files (x86)\Windows Kits\10\
+2026-11-04T06:04:06.6753713Z   use_x64_llvm: true
+2026-11-04T06:04:06.6753922Z   VCIDEInstallDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\
+2026-11-04T06:04:06.6754225Z   VCINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\
+2026-11-04T06:04:06.6754501Z   VCPKG_ROOT: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\vcpkg
+2026-11-04T06:04:06.6754829Z   VCToolsInstallDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\
+2026-11-04T06:04:06.6755206Z   VCToolsRedistDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Redist\MSVC\14.51.36231\
+2026-11-04T06:04:06.6755471Z   VCToolsVersion: 14.51.36231
+2026-11-04T06:04:06.6755608Z   VisualStudioVersion: 18.0
+2026-11-04T06:04:06.6755822Z   VS180COMNTOOLS: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\
+2026-11-04T06:04:06.6756059Z   VSCMD_ARG_app_plat: Desktop
+2026-11-04T06:04:06.6756191Z   VSCMD_ARG_HOST_ARCH: x64
+2026-11-04T06:04:06.6756316Z   VSCMD_ARG_TGT_ARCH: x64
+2026-11-04T06:04:06.6756436Z   VSCMD_VER: 18.11.3
+2026-11-04T06:04:06.6756612Z   VSINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\
+2026-11-04T06:04:06.6756887Z   VSSDK150INSTALL: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VSSDK
+2026-11-04T06:04:06.6757170Z   VSSDKINSTALL: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VSSDK
+2026-11-04T06:04:06.6757564Z   WindowsLibPath: C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.26100.0
+2026-11-04T06:04:06.6757944Z   WindowsSdkBinPath: C:\Program Files (x86)\Windows Kits\10\bin\
+2026-11-04T06:04:06.6758169Z   WindowsSdkDir: C:\Program Files (x86)\Windows Kits\10\
+2026-11-04T06:04:06.6758356Z   WindowsSDKLibVersion: 10.0.26100.0\
+2026-11-04T06:04:06.6758577Z   WindowsSdkVerBinPath: C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\
+2026-11-04T06:04:06.6758809Z   WindowsSDKVersion: 10.0.26100.0\
+2026-11-04T06:04:06.6759074Z   WindowsSDK_ExecutablePath_x64: C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\x64\
+2026-11-04T06:04:06.6759466Z   WindowsSDK_ExecutablePath_x86: C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\
+2026-11-04T06:04:06.6759733Z   __DOTNET_ADD_64BIT: 1
+2026-11-04T06:04:06.6759863Z   __DOTNET_PREFERRED_BITNESS: 64
+2026-11-04T06:04:06.6765088Z   __VSCMD_PREINIT_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin;C:\Program Files\MongoDB\Server\7.0\bin;C:\vcpkg;C:\tools\zstd;C:\hostedtoolcache\windows\stack\3.11.1\x64;C:\cabal\bin;C:\\ghcup\bin;C:\mingw64\bin;C:\Program Files\dotnet;C:\Program Files\MySQL\MySQL Server 8.4\bin;C:\Program Files\R\R-4.6.1\bin\x64;C:\SeleniumWebDrivers\GeckoDriver;C:\SeleniumWebDrivers\EdgeDriver\;C:\SeleniumWebDrivers\ChromeDriver;C:\Program Files (x86)\sbt\bin;C:\Program Files (x86)\GitHub CLI;C:\Program Files\Git\bin;C:\Program Files (x86)\pipx_bin;C:\npm\prefix;C:\hostedtoolcache\windows\go\1.24.13\x64\bin;C:\hostedtoolcache\windows\Python\3.12.10\x64\Scripts;C:\hostedtoolcache\windows\Python\3.12.10\x64;C:\hostedtoolcache\windows\Ruby\3.3.13\x64\bin;C:\Program Files\OpenSSL\bin;C:\tools\kotlinc\bin;C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.20-101\x64\bin;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\ProgramData\kind;C:\ProgramData\Chocolatey\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\WSL\;C:\Program Files\PowerShell\7\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files (x86)\WiX Toolset v3.14\bin;C:\Program Files\Microsoft SQL Server\130\DTS\Binn\;C:\Program Files\Microsoft SQL Server\140\DTS\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files\Microsoft SQL Server\170\DTS\Binn\;C:\ProgramData\chocolatey\lib\pulumi\tools\Pulumi\bin;C:\Program Files\CMake\bin;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code;C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager;C:\Program Files\LLVM\bin;C:\Program Files (x86)\LLVM\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files\Git\ucrt64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\GitHub CLI\;c:\tools\php;C:\Program Files (x86)\sbt\bin;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Amazon\SessionManagerPlugin\bin\;C:\Program Files\Amazon\AWSSAMCLI\bin\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\mongosh\;C:\Users\runneradmin\.dotnet\tools;C:\Users\runneradmin\.cargo\bin;C:\Users\runneradmin\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Microsoft Visual Studio\Installer
+2026-11-04T06:04:06.6770381Z ##[endgroup]
+2026-11-04T06:04:06.8037581Z With the provided path, there will be 51 files uploaded
+2026-11-04T06:04:06.8040658Z Artifact name is valid!
+2026-11-04T06:04:06.8041435Z Root directory input is valid!
+2026-11-04T06:04:07.1591612Z Uploading artifact: aether-icom-rx-audit-verified-b058dcc2b2d6365f2ffed78462745830fc8ff85e.zip
+2026-11-04T06:04:07.1615168Z Beginning upload of artifact content to blob storage
+2026-11-04T06:04:08.7528314Z Uploaded bytes 8388608
+2026-11-04T06:04:08.9491608Z Uploaded bytes 16777216
+2026-11-04T06:04:09.0860896Z Uploaded bytes 25165824
+2026-11-04T06:04:09.1912777Z Uploaded bytes 33554432
+2026-11-04T06:04:09.4138658Z Uploaded bytes 41943040
+2026-11-04T06:04:09.4197553Z Uploaded bytes 50331648
+2026-11-04T06:04:09.7744512Z Uploaded bytes 58720256
+2026-11-04T06:04:10.3100456Z Uploaded bytes 67108864
+2026-11-04T06:04:10.7996783Z Uploaded bytes 75497472
+2026-11-04T06:04:11.2026491Z Uploaded bytes 83886080
+2026-11-04T06:04:11.3132659Z Uploaded bytes 86560069
+2026-11-04T06:04:11.3729353Z Finished uploading artifact content to blob storage!
+2026-11-04T06:04:11.3731673Z SHA256 digest of uploaded artifact is 70ec3da6f5ae4d9bbdcd1a3d336885546c4a06286db9e026c954a936e26cd365
+2026-11-04T06:04:11.3733093Z Finalizing artifact upload
+2026-11-04T06:04:11.9494713Z Artifact aether-icom-rx-audit-verified-b058dcc2b2d6365f2ffed78462745830fc8ff85e successfully finalized. Artifact ID 13299434867
+2026-11-04T06:04:11.9495481Z Artifact aether-icom-rx-audit-verified-b058dcc2b2d6365f2ffed78462745830fc8ff85e has been successfully uploaded! Final size is 86560069 bytes. Artifact ID is 13299434867
+2026-11-04T06:04:11.9501893Z Artifact download URL: https://github.com/jarscot-art/AetherSDR/actions/runs/41782953139/artifacts/13299434867
+2026-11-04T06:04:11.9753482Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-04T06:04:11.9753744Z with:
+2026-11-04T06:04:11.9753872Z   name: hf5a-stage2-repackage-41782953139
+2026-11-04T06:04:11.9754037Z   path: hf5a-stage2-results/
+2026-11-04T06:04:11.9754166Z   retention-days: 90
+2026-11-04T06:04:11.9754288Z   if-no-files-found: error
+2026-11-04T06:04:11.9754413Z   compression-level: 6
+2026-11-04T06:04:11.9754532Z   overwrite: false
+2026-11-04T06:04:11.9754651Z   include-hidden-files: false
+2026-11-04T06:04:11.9754782Z   archive: true
+2026-11-04T06:04:11.9754885Z env:
+2026-11-04T06:04:11.9754983Z   QT_VERSION: 6.12.0
+2026-11-04T06:04:11.9755104Z   QT_PACKAGE_REVISION: 202609280346
+2026-11-04T06:04:11.9755249Z   AQTINSTALL_VERSION: 3.3.0
+2026-11-04T06:04:11.9755415Z   AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+2026-11-04T06:04:11.9755612Z   PY7ZR_VERSION: 1.1.3
+2026-11-04T06:04:11.9755730Z   QT_MODULE_FLOOR: 10
+2026-11-04T06:04:11.9755866Z   QT_ARCH: win64_msvc2022_64
+2026-11-04T06:04:11.9756011Z   QT_ROOT_DIR: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64
+2026-11-04T06:04:11.9756205Z   Qt6_DIR: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\lib\cmake\Qt6
+2026-11-04T06:04:11.9756405Z   CMAKE_PREFIX_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64
+2026-11-04T06:04:11.9756612Z   QT_PLUGIN_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\plugins
+2026-11-04T06:04:11.9756815Z   QML2_IMPORT_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\qml
+2026-11-04T06:04:11.9756991Z   CommandPromptType: Native
+2026-11-04T06:04:11.9757192Z   DevEnvDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\
+2026-11-04T06:04:11.9757482Z   ExtensionSdkDir: C:\Program Files (x86)\Microsoft SDKs\Windows Kits\10\ExtensionSDKs
+2026-11-04T06:04:11.9758789Z   EXTERNAL_INCLUDE: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\VS\include;C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\winrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\cppwinrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\include\um
+2026-11-04T06:04:11.9760062Z   Framework40Version: v4.0
+2026-11-04T06:04:11.9760300Z   FrameworkDir: C:\Windows\Microsoft.NET\Framework64\
+2026-11-04T06:04:11.9760532Z   FrameworkDir64: C:\Windows\Microsoft.NET\Framework64\
+2026-11-04T06:04:11.9760702Z   FrameworkVersion: v4.0.30319
+2026-11-04T06:04:11.9760837Z   FrameworkVersion64: v4.0.30319
+2026-11-04T06:04:11.9761297Z   FSHARPINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools
+2026-11-04T06:04:11.9761630Z   HTMLHelpDir: C:\Program Files (x86)\HTML Help Workshop
+2026-11-04T06:04:11.9762795Z   INCLUDE: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\include;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\VS\include;C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\ucrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\shared;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\winrt;C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\cppwinrt;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\include\um
+2026-11-04T06:04:11.9765440Z   LIB: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x64;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\lib\um\x64;C:\Program Files (x86)\Windows Kits\10\lib\10.0.26100.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\\lib\10.0.26100.0\\um\x64
+2026-11-04T06:04:11.9766969Z   LIBPATH: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\ATLMFC\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\lib\x86\store\references;C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.26100.0;C:\Windows\Microsoft.NET\Framework64\v4.0.30319
+2026-11-04T06:04:11.9767901Z   llvmArm64: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\ARM64\bin
+2026-11-04T06:04:11.9768213Z   llvmX64: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin
+2026-11-04T06:04:11.9768484Z   NETFXSDKDir: C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8.1\
+2026-11-04T06:04:11.9776521Z   Path: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\18\Enterprise\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\x64\;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\FSharp\Tools;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Team Tools\DiagnosticsHub\Collector;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\Extensions\Microsoft\CodeCoverage.Console;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\\x64;C:\Program Files (x86)\Windows Kits\10\bin\\x64;C:\Program Files\Microsoft Visual Studio\18\Enterprise\\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\;D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin;C:\Program Files\MongoDB\Server\7.0\bin;C:\vcpkg;C:\tools\zstd;C:\hostedtoolcache\windows\stack\3.11.1\x64;C:\cabal\bin;C:\\ghcup\bin;C:\mingw64\bin;C:\Program Files\dotnet;C:\Program Files\MySQL\MySQL Server 8.4\bin;C:\Program Files\R\R-4.6.1\bin\x64;C:\SeleniumWebDrivers\GeckoDriver;C:\SeleniumWebDrivers\EdgeDriver\;C:\SeleniumWebDrivers\ChromeDriver;C:\Program Files (x86)\sbt\bin;C:\Program Files (x86)\GitHub CLI;C:\Program Files\Git\bin;C:\Program Files (x86)\pipx_bin;C:\npm\prefix;C:\hostedtoolcache\windows\go\1.24.13\x64\bin;C:\hostedtoolcache\windows\Python\3.12.10\x64\Scripts;C:\hostedtoolcache\windows\Python\3.12.10\x64;C:\hostedtoolcache\windows\Ruby\3.3.13\x64\bin;C:\Program Files\OpenSSL\bin;C:\tools\kotlinc\bin;C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.20-101\x64\bin;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\ProgramData\kind;C:\ProgramData\Chocolatey\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\WSL\;C:\Program Files\PowerShell\7\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files (x86)\WiX Toolset v3.14\bin;C:\Program Files\Microsoft SQL Server\130\DTS\Binn\;C:\Program Files\Microsoft SQL Server\140\DTS\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files\Microsoft SQL Server\170\DTS\Binn\;C:\ProgramData\chocolatey\lib\pulumi\tools\Pulumi\bin;C:\Program Files\CMake\bin;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code;C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager;C:\Program Files\LLVM\bin;C:\Program Files (x86)\LLVM\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files\Git\ucrt64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\GitHub CLI\;c:\tools\php;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Amazon\SessionManagerPlugin\bin\;C:\Program Files\Amazon\AWSSAMCLI\bin\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\mongosh\;C:\Users\runneradmin\.dotnet\tools;C:\Users\runneradmin\.cargo\bin;C:\Users\runneradmin\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Microsoft Visual Studio\Installer;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\Llvm\x64\bin;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\vcpkg
+2026-11-04T06:04:11.9784554Z   Platform: x64
+2026-11-04T06:04:11.9784668Z   UCRTVersion: 10.0.26100.0
+2026-11-04T06:04:11.9784839Z   UniversalCRTSdkDir: C:\Program Files (x86)\Windows Kits\10\
+2026-11-04T06:04:11.9785019Z   use_x64_llvm: true
+2026-11-04T06:04:11.9785221Z   VCIDEInstallDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\IDE\VC\
+2026-11-04T06:04:11.9785582Z   VCINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\
+2026-11-04T06:04:11.9785901Z   VCPKG_ROOT: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\vcpkg
+2026-11-04T06:04:11.9786332Z   VCToolsInstallDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\14.51.36231\
+2026-11-04T06:04:11.9795769Z   VCToolsRedistDir: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Redist\MSVC\14.51.36231\
+2026-11-04T06:04:11.9796087Z   VCToolsVersion: 14.51.36231
+2026-11-04T06:04:11.9796245Z   VisualStudioVersion: 18.0
+2026-11-04T06:04:11.9796518Z   VS180COMNTOOLS: C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\
+2026-11-04T06:04:11.9796822Z   VSCMD_ARG_app_plat: Desktop
+2026-11-04T06:04:11.9797010Z   VSCMD_ARG_HOST_ARCH: x64
+2026-11-04T06:04:11.9797157Z   VSCMD_ARG_TGT_ARCH: x64
+2026-11-04T06:04:11.9797281Z   VSCMD_VER: 18.11.3
+2026-11-04T06:04:11.9797457Z   VSINSTALLDIR: C:\Program Files\Microsoft Visual Studio\18\Enterprise\
+2026-11-04T06:04:11.9797730Z   VSSDK150INSTALL: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VSSDK
+2026-11-04T06:04:11.9798007Z   VSSDKINSTALL: C:\Program Files\Microsoft Visual Studio\18\Enterprise\VSSDK
+2026-11-04T06:04:11.9798400Z   WindowsLibPath: C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.26100.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.26100.0
+2026-11-04T06:04:11.9798771Z   WindowsSdkBinPath: C:\Program Files (x86)\Windows Kits\10\bin\
+2026-11-04T06:04:11.9798999Z   WindowsSdkDir: C:\Program Files (x86)\Windows Kits\10\
+2026-11-04T06:04:11.9799185Z   WindowsSDKLibVersion: 10.0.26100.0\
+2026-11-04T06:04:11.9799404Z   WindowsSdkVerBinPath: C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\
+2026-11-04T06:04:11.9799622Z   WindowsSDKVersion: 10.0.26100.0\
+2026-11-04T06:04:11.9799882Z   WindowsSDK_ExecutablePath_x64: C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\x64\
+2026-11-04T06:04:11.9800328Z   WindowsSDK_ExecutablePath_x86: C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools\
+2026-11-04T06:04:11.9800646Z   __DOTNET_ADD_64BIT: 1
+2026-11-04T06:04:11.9800776Z   __DOTNET_PREFERRED_BITNESS: 64
+2026-11-04T06:04:11.9805810Z   __VSCMD_PREINIT_PATH: D:\a\AetherSDR\Qt\6.12.0\msvc2022_64\bin;C:\Program Files\MongoDB\Server\7.0\bin;C:\vcpkg;C:\tools\zstd;C:\hostedtoolcache\windows\stack\3.11.1\x64;C:\cabal\bin;C:\\ghcup\bin;C:\mingw64\bin;C:\Program Files\dotnet;C:\Program Files\MySQL\MySQL Server 8.4\bin;C:\Program Files\R\R-4.6.1\bin\x64;C:\SeleniumWebDrivers\GeckoDriver;C:\SeleniumWebDrivers\EdgeDriver\;C:\SeleniumWebDrivers\ChromeDriver;C:\Program Files (x86)\sbt\bin;C:\Program Files (x86)\GitHub CLI;C:\Program Files\Git\bin;C:\Program Files (x86)\pipx_bin;C:\npm\prefix;C:\hostedtoolcache\windows\go\1.24.13\x64\bin;C:\hostedtoolcache\windows\Python\3.12.10\x64\Scripts;C:\hostedtoolcache\windows\Python\3.12.10\x64;C:\hostedtoolcache\windows\Ruby\3.3.13\x64\bin;C:\Program Files\OpenSSL\bin;C:\tools\kotlinc\bin;C:\hostedtoolcache\windows\Java_Temurin-Hotspot_jdk\17.0.20-101\x64\bin;C:\Program Files\ImageMagick-7.1.2-Q16-HDRI;C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\ProgramData\kind;C:\ProgramData\Chocolatey\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\WSL\;C:\Program Files\PowerShell\7\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files\Microsoft SQL Server\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\dotnet\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files (x86)\WiX Toolset v3.14\bin;C:\Program Files\Microsoft SQL Server\130\DTS\Binn\;C:\Program Files\Microsoft SQL Server\140\DTS\Binn\;C:\Program Files\Microsoft SQL Server\150\DTS\Binn\;C:\Program Files\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files\Microsoft SQL Server\170\DTS\Binn\;C:\ProgramData\chocolatey\lib\pulumi\tools\Pulumi\bin;C:\Program Files\CMake\bin;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Program Files\Microsoft Service Fabric\bin\Fabric\Fabric.Code;C:\Program Files\Microsoft SDKs\Service Fabric\Tools\ServiceFabricLocalClusterManager;C:\Program Files\LLVM\bin;C:\Program Files (x86)\LLVM\bin;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Program Files\Git\ucrt64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\GitHub CLI\;c:\tools\php;C:\Program Files (x86)\sbt\bin;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Amazon\SessionManagerPlugin\bin\;C:\Program Files\Amazon\AWSSAMCLI\bin\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\mongosh\;C:\Users\runneradmin\.dotnet\tools;C:\Users\runneradmin\.cargo\bin;C:\Users\runneradmin\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\Microsoft Visual Studio\Installer
+2026-11-04T06:04:11.9810629Z ##[endgroup]
+2026-11-04T06:04:12.1008004Z With the provided path, there will be 17 files uploaded
+2026-11-04T06:04:12.1011143Z Artifact name is valid!
+2026-11-04T06:04:12.1011909Z Root directory input is valid!
+2026-11-04T06:04:12.4218632Z Uploading artifact: hf5a-stage2-repackage-41782953139.zip
+2026-11-04T06:04:12.4242645Z Beginning upload of artifact content to blob storage
+2026-11-04T06:04:12.6828287Z Uploaded bytes 11406
+2026-11-04T06:04:12.7417613Z Finished uploading artifact content to blob storage!
+2026-11-04T06:04:12.7418433Z SHA256 digest of uploaded artifact is 26d5d27a43a42f603f3fd93e9a2aa5c56af0f1dadaa9705cf78e94220ea26621
+2026-11-04T06:04:12.7418796Z Finalizing artifact upload
+2026-11-04T06:04:13.3333599Z Artifact hf5a-stage2-repackage-41782953139 successfully finalized. Artifact ID 13300445627
+2026-11-04T06:04:13.3334101Z Artifact hf5a-stage2-repackage-41782953139 has been successfully uploaded! Final size is 11406 bytes. Artifact ID is 13300445627
+2026-11-04T06:04:13.3340149Z Artifact download URL: https://github.com/jarscot-art/AetherSDR/actions/runs/41782953139/artifacts/13300445627
+2026-11-04T06:04:13.3615416Z Post job cleanup.
+2026-11-04T06:04:13.4837816Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-04T06:04:13.5085091Z git version 2.56.0.windows.4
+2026-11-04T06:04:13.5127147Z Temporarily overriding HOME='D:\a\_temp\ad213ff2-a0e1-4e0c-a8e3-3b5f9db2f7b2' before making global git config changes
+2026-11-04T06:04:13.5127805Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T06:04:13.5135167Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\AetherSDR\AetherSDR
+2026-11-04T06:04:13.5386330Z Removing SSH command configuration
+2026-11-04T06:04:13.5393730Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T06:04:13.5653655Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-04T06:04:13.9794829Z Removing HTTP extra header
+2026-11-04T06:04:13.9803600Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T06:04:14.0101980Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-04T06:04:14.4187085Z Removing includeIf entries pointing to credentials config files
+2026-11-04T06:04:14.4197256Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T06:04:14.4449369Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-04T06:04:14.8467318Z Cleaning up orphan processes
+2026-11-04T06:04:14.8658074Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

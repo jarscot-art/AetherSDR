@@ -1,0 +1,28 @@
+**********************
+PowerShell transcript start
+Start time: 20261104044404
+Username: runnervmhao91\runneradmin
+RunAs User: runnervmhao91\runneradmin
+Configuration Name: 
+Machine: runnervmhao91 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Program Files\PowerShell\7\pwsh.dll -command . 'D:\a\_temp\669d444f-c014-481f-884b-279717f55916.ps1'
+Process ID: 7716
+PSVersion: 7.6.9
+PSEdition: Core
+GitCommitId: 7.6.9
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is hf5a-stage2-results/setup-deepfilternet3-dfnr.log
+Trying pre-built binary from https://github.com/ten9876/AetherSDR/releases/download/dfnr-libs/libdeepfilter-windows-x86_64.tar.gz ...
+Verified SHA256 of libdeepfilter-windows-x86_64.tar.gz
+
+DeepFilterNet3 ready (pre-built) in third_party\deepfilter\lib\windows-x86_64
+**********************
+PowerShell transcript end
+End time: 20261104044405
+**********************

@@ -1,0 +1,17 @@
+ .github/workflows/hf5a-stage2-rx-only-offline.yml  | 463 +++++++++++++++++++++
+ .../workflows/hf5a-stage2-rx-only-repackage.yml    | 199 +++++++++
+ CMakeLists.txt                                     |   7 +
+ docs/hf5a-stage2-rx-only-audit.md                  |  94 +++++
+ src/core/backends/icom/IcomCivBackend.cpp          |  69 ++-
+ src/core/backends/icom/IcomCivBackend.h            |   8 +-
+ src/core/backends/icom/IcomOutboundPolicy.cpp      | 106 +++++
+ src/core/backends/icom/IcomOutboundPolicy.h        |  38 ++
+ src/core/backends/icom/IcomRxAuditMain.cpp         | 145 +++++++
+ src/core/backends/icom/IcomSession.cpp             |  81 +++-
+ src/core/backends/icom/IcomSession.h               |  10 +-
+ src/core/backends/icom/IcomStream.cpp              |  49 ++-
+ src/core/backends/icom/IcomStream.h                |  15 +-
+ tests/icom_outbound_policy_test.cpp                | 125 ++++++
+ tests/icom_rx_audit_egress_test.cpp                | 275 ++++++++++++
+ tests/tests.cmake                                  |  19 +
+ 16 files changed, 1666 insertions(+), 37 deletions(-)

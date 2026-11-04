@@ -1,0 +1,1 @@
+PASS: git diff --check 58f663f7 88370a51 (exit 0)

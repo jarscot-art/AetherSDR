@@ -1,0 +1,16 @@
+A	.github/workflows/hf5a-stage2-rx-only-offline.yml
+A	.github/workflows/hf5a-stage2-rx-only-repackage.yml
+M	CMakeLists.txt
+A	docs/hf5a-stage2-rx-only-audit.md
+M	src/core/backends/icom/IcomCivBackend.cpp
+M	src/core/backends/icom/IcomCivBackend.h
+A	src/core/backends/icom/IcomOutboundPolicy.cpp
+A	src/core/backends/icom/IcomOutboundPolicy.h
+A	src/core/backends/icom/IcomRxAuditMain.cpp
+M	src/core/backends/icom/IcomSession.cpp
+M	src/core/backends/icom/IcomSession.h
+M	src/core/backends/icom/IcomStream.cpp
+M	src/core/backends/icom/IcomStream.h
+A	tests/icom_outbound_policy_test.cpp
+A	tests/icom_rx_audit_egress_test.cpp
+M	tests/tests.cmake

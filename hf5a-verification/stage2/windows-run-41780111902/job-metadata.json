@@ -1,0 +1,313 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 126409478906,
+      "run_id": 41780111902,
+      "workflow_name": "HF5A stage 2 RX-only offline Windows verification",
+      "head_branch": "hf5a/stage2-rx-only-audit",
+      "run_url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/runs/41780111902",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVhfZUs8AAAAdbpeS-g",
+      "head_sha": "b058dcc2b2d6365f2ffed78462745830fc8ff85e",
+      "url": "https://api.github.com/repos/jarscot-art/AetherSDR/actions/jobs/126409478906",
+      "html_url": "https://github.com/jarscot-art/AetherSDR/actions/runs/41780111902/job/126409478906",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-04T05:34:50Z",
+      "started_at": "2026-11-04T05:34:52Z",
+      "completed_at": "2026-11-04T05:59:31Z",
+      "name": "windows-offline",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-04T05:34:52Z",
+          "completed_at": "2026-11-04T05:34:54Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-04T05:34:54Z",
+          "completed_at": "2026-11-04T05:35:12Z"
+        },
+        {
+          "name": "Initialize exact-source evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-04T05:35:12Z",
+          "completed_at": "2026-11-04T05:35:12Z"
+        },
+        {
+          "name": "Restore Qt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-04T05:35:12Z",
+          "completed_at": "2026-11-04T05:35:13Z"
+        },
+        {
+          "name": "Verify the restored Qt tree",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-04T05:35:13Z",
+          "completed_at": "2026-11-04T05:35:13Z"
+        },
+        {
+          "name": "Install Qt LTS via aqtinstall",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-04T05:35:13Z",
+          "completed_at": "2026-11-04T05:36:04Z"
+        },
+        {
+          "name": "Export Qt environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-04T05:36:04Z",
+          "completed_at": "2026-11-04T05:36:05Z"
+        },
+        {
+          "name": "Restore FFTW3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-04T05:36:05Z",
+          "completed_at": "2026-11-04T05:36:06Z"
+        },
+        {
+          "name": "Install FFTW3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-04T05:36:06Z",
+          "completed_at": "2026-11-04T05:36:13Z"
+        },
+        {
+          "name": "Restore DeepFilterNet3",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-04T05:36:13Z",
+          "completed_at": "2026-11-04T05:36:13Z"
+        },
+        {
+          "name": "Setup DeepFilterNet3 (DFNR)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-04T05:36:13Z",
+          "completed_at": "2026-11-04T05:36:15Z"
+        },
+        {
+          "name": "Restore sccache objects",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-04T05:36:15Z",
+          "completed_at": "2026-11-04T05:36:15Z"
+        },
+        {
+          "name": "Setup sccache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-04T05:36:15Z",
+          "completed_at": "2026-11-04T05:36:17Z"
+        },
+        {
+          "name": "Setup MSVC environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-04T05:36:17Z",
+          "completed_at": "2026-11-04T05:36:19Z"
+        },
+        {
+          "name": "Setup hidapi (HID encoder support)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-04T05:36:19Z",
+          "completed_at": "2026-11-04T05:36:30Z"
+        },
+        {
+          "name": "Setup PortAudio (CW sidetone callback sink)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-04T05:36:30Z",
+          "completed_at": "2026-11-04T05:36:37Z"
+        },
+        {
+          "name": "Test sccache health",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-04T05:36:37Z",
+          "completed_at": "2026-11-04T05:36:40Z"
+        },
+        {
+          "name": "Configure",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-04T05:36:40Z",
+          "completed_at": "2026-11-04T05:37:02Z"
+        },
+        {
+          "name": "Assert GPU spectrum rendering actually enabled",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-04T05:37:02Z",
+          "completed_at": "2026-11-04T05:37:03Z"
+        },
+        {
+          "name": "Assert PortAudio sidetone sink actually enabled",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-04T05:37:03Z",
+          "completed_at": "2026-11-04T05:37:03Z"
+        },
+        {
+          "name": "Build Opus dependency",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-04T05:37:03Z",
+          "completed_at": "2026-11-04T05:37:28Z"
+        },
+        {
+          "name": "Build audit tool and offline test targets only",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-11-04T05:37:28Z",
+          "completed_at": "2026-11-04T05:58:45Z"
+        },
+        {
+          "name": "Stage runtime DLLs without building the desktop app",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-04T05:58:45Z",
+          "completed_at": "2026-11-04T05:58:46Z"
+        },
+        {
+          "name": "Verify exact CTest selection and bounded offline timeouts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-04T05:58:46Z",
+          "completed_at": "2026-11-04T05:58:48Z"
+        },
+        {
+          "name": "Baseline final-writer test before mutation",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-04T05:58:48Z",
+          "completed_at": "2026-11-04T05:58:49Z"
+        },
+        {
+          "name": "Prove the final guard matters, then restore exact source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-04T05:58:49Z",
+          "completed_at": "2026-11-04T05:59:09Z"
+        },
+        {
+          "name": "Run twelve offline checks on restored exact source",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-04T05:59:09Z",
+          "completed_at": "2026-11-04T05:59:14Z"
+        },
+        {
+          "name": "Preserve compiled audit inputs for packaging diagnostics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-04T05:59:14Z",
+          "completed_at": "2026-11-04T05:59:18Z"
+        },
+        {
+          "name": "Prepare portable audit executable without an installer",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 29,
+          "started_at": "2026-11-04T05:59:18Z",
+          "completed_at": "2026-11-04T05:59:24Z"
+        },
+        {
+          "name": "Preserve actual results and source integrity",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-11-04T05:59:24Z",
+          "completed_at": "2026-11-04T05:59:25Z"
+        },
+        {
+          "name": "Upload portable audit tool (no installer, no hardware invocation)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 31,
+          "started_at": "2026-11-04T05:59:25Z",
+          "completed_at": "2026-11-04T05:59:25Z"
+        },
+        {
+          "name": "Upload offline evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32,
+          "started_at": "2026-11-04T05:59:25Z",
+          "completed_at": "2026-11-04T05:59:27Z"
+        },
+        {
+          "name": "Post Setup sccache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 63,
+          "started_at": "2026-11-04T05:59:27Z",
+          "completed_at": "2026-11-04T05:59:27Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 64,
+          "started_at": "2026-11-04T05:59:27Z",
+          "completed_at": "2026-11-04T05:59:29Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 65,
+          "started_at": "2026-11-04T05:59:29Z",
+          "completed_at": "2026-11-04T05:59:29Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/jarscot-art/AetherSDR/check-runs/126409478906",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000000011,
+      "runner_name": "GitHub Actions 1000000011",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}
