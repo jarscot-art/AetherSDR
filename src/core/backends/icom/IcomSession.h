@@ -67,13 +67,15 @@ public:
         std::uint8_t civAddress = 0xA4;
     };
 
-    explicit IcomSession(QObject* parent = nullptr);
+    explicit IcomSession(QObject* parent = nullptr,
+                         IcomOutboundPolicy policy = IcomOutboundPolicy::production());
     ~IcomSession() override;
 
     Q_INVOKABLE bool start(const AetherSDR::icom::IcomSession::Params& params);
     Q_INVOKABLE void stop();
 
     [[nodiscard]] bool isConnected() const noexcept { return m_connected; }
+    [[nodiscard]] quint64 deniedDatagrams() const;
     [[nodiscard]] std::uint8_t advertisedCivAddress() const noexcept { return m_advertisedCivAddress; }
     [[nodiscard]] QString deviceName() const { return m_deviceName; }
     [[nodiscard]] const RadioId& radioId() const noexcept { return m_radioId; }
@@ -139,6 +141,12 @@ private slots:
     void onCivFrameTimeout();
 
 private:
+    IcomStream* makeStream();
+    void sendControl(std::vector<std::uint8_t> packet);
+    const IcomOutboundPolicy m_outboundPolicy;
+    AuthId m_permitAuthOwner{};
+    quint64 m_closedDeniedDatagrams = 0;
+    quint64 m_deniedCivFrames = 0;
     void fail(const QString& reason);
     void sendRenewal(const QString& reason);
     [[nodiscard]] bool isCurrentControlPacket(std::span<const std::uint8_t> packet) const;

@@ -31,7 +31,8 @@ std::span<const std::uint8_t> asSpan(const QByteArray& b)
 
 }  // namespace
 
-IcomStream::IcomStream(QObject* parent) : QObject(parent) {}
+IcomStream::IcomStream(QObject* parent, IcomOutboundPolicy policy)
+    : QObject(parent), m_outboundPolicy(policy) {}
 
 IcomStream::~IcomStream() { stop(); }
 
@@ -64,6 +65,8 @@ bool IcomStream::bindOnly(const Config& config)
 {
     stop();
     m_config = config;
+    m_auditIdentified = false;
+    m_controlPermits.clear();
     m_counters = Counters{};
     m_activityClock.start();
     m_lastRxAtMs = -1;
@@ -183,15 +186,12 @@ void IcomStream::beginHandshake()
 
 void IcomStream::stop()
 {
-    if (m_socket && m_gotRemoteSid) {
+    if ((m_socket || (m_outboundPolicy.isAudit() && m_testWriter)) && m_gotRemoteSid) {
         // Best-effort: a radio that never hears a disconnect holds the session
         // until it times out, and the operator cannot reconnect meanwhile.
         const auto bye = buildDisconnect(m_localSid, m_remoteSid);
-        m_socket->write(reinterpret_cast<const char*>(bye.data()),
-                        static_cast<qint64>(bye.size()));
-        m_socket->write(reinterpret_cast<const char*>(bye.data()),
-                        static_cast<qint64>(bye.size()));
-        m_socket->flush();
+        sendRawTwice(bye);
+        flush();
     }
     for (QTimer** t : {&m_idleTimer, &m_pingTimer, &m_reorderTimer}) {
         if (*t) {
@@ -209,14 +209,33 @@ void IcomStream::stop()
     m_gotRemoteSid = false;
 }
 
-void IcomStream::sendRaw(std::span<const std::uint8_t> packet)
+void IcomStream::permitControl(const std::vector<std::uint8_t>& packet)
 {
+    if (!m_outboundPolicy.isAudit()) { return; }
+    m_controlPermits.push_back(packet);
+    if (m_controlPermits.size() > 8) { m_controlPermits.erase(m_controlPermits.begin()); }
+}
+
+bool IcomStream::validateOutbound(std::span<const std::uint8_t> packet)
+{
+    const IcomOutboundPolicy::Context context{
+        static_cast<IcomOutboundPolicy::Role>(m_config.role), m_localSid, m_remoteSid,
+        m_gotRemoteSid, m_ready, m_auditIdentified, m_controlPermits};
+    if (m_outboundPolicy.allowsDatagram(packet, context)) { return true; }
+    ++m_deniedDatagrams;
+    return false;
+}
+
+bool IcomStream::sendRaw(std::span<const std::uint8_t> packet)
+{
+    // The only socket writer, also used by teardown and retained retransmits.
+    if (!validateOutbound(packet)) { return false; }
     if (m_testWriter) {
         m_testWriter(packet);
-        return;
+        return true;
     }
     if (!m_socket)
-        return;
+        return false;
     const qint64 n = m_socket->write(reinterpret_cast<const char*>(packet.data()),
                                      static_cast<qint64>(packet.size()));
     if (n > 0) {
@@ -224,6 +243,7 @@ void IcomStream::sendRaw(std::span<const std::uint8_t> packet)
         ++m_counters.txPackets;
         m_lastTxAtMs = m_activityClock.elapsed();
     }
+    return n == static_cast<qint64>(packet.size());
 }
 
 void IcomStream::flush()
@@ -301,6 +321,8 @@ void IcomStream::sendTrackedImpl(std::vector<std::uint8_t> packet, bool isPayloa
     }
     if (packet.size() < kHeaderSize)
         return;
+    // Rejected payloads must not consume a sequence or enter the replay ring.
+    if (!validateOutbound(packet)) { return; }
     const std::size_t replayGroup = command ? static_cast<std::size_t>(command->replayGroup) : 0;
     const bool replaceable = replayGroup > 0 && replayGroup < m_replayCommandGeneration.size();
     if (replaceable) {
@@ -330,7 +352,8 @@ void IcomStream::sendTrackedImpl(std::vector<std::uint8_t> packet, bool isPayloa
     // request that can never be satisfied and a stream stalled behind it.
     packet[0x06] = static_cast<std::uint8_t>(seq & 0xff);
     packet[0x07] = static_cast<std::uint8_t>((seq >> 8) & 0xff);
-    sendRaw(packet);
+    const bool written = sendRaw(packet);
+    if (!written && !m_outboundPolicy.isProduction()) { return; }
     retain(seq, packet, context, command);
     if (replaceable) {
         // An injected terminal writer (or nested loop) may have delivered a
@@ -480,8 +503,8 @@ void IcomStream::handleRetransmitRequest(std::span<const std::uint8_t> pkt)
             }
             if (it != m_replay.end() && !it->superseded && (!it->context || dispatch)
                 && (!it->command || commandDispatch)) {
-                sendRaw(it->bytes);
-                ++m_counters.retransmitsServed;
+                const bool written = sendRaw(it->bytes);
+                if (written || m_outboundPolicy.isProduction()) { ++m_counters.retransmitsServed; }
             } else {
                 // We no longer hold it. Sending an IDLE carrying the requested
                 // sequence number is what unblocks the radio's own reorder

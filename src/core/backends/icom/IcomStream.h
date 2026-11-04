@@ -18,6 +18,7 @@
 #include <functional>
 
 #include "core/backends/icom/IcomProtocol.h"
+#include "core/backends/icom/IcomOutboundPolicy.h"
 
 class QTimer;
 class QUdpSocket;
@@ -54,7 +55,8 @@ public:
         Role role = Role::Control;
     };
 
-    explicit IcomStream(QObject* parent = nullptr);
+    explicit IcomStream(QObject* parent = nullptr,
+                        IcomOutboundPolicy policy = IcomOutboundPolicy::production());
     ~IcomStream() override;
 
     // Bind, run the handshake, start the keepalives. Emits ready() on success
@@ -92,7 +94,9 @@ public:
     void sendTrackedTxCommand(std::vector<std::uint8_t> packet, const TxCoordinator::Command& command);
 
     // Send without retention (handshake, pings, retransmit requests).
-    void sendRaw(std::span<const std::uint8_t> packet);
+    bool sendRaw(std::span<const std::uint8_t> packet);
+    [[nodiscard]] quint64 deniedDatagrams() const { return m_deniedDatagrams; }
+    [[nodiscard]] bool isRxAudit() const { return m_outboundPolicy.isAudit(); }
     // Handshake packets go TWICE — the IC-705's WiFi drops the first packet of
     // a burst often enough that both reference implementations do this
     // unconditionally.
@@ -137,6 +141,13 @@ private slots:
 
 private:
     friend struct IcomStreamTestAccess;
+    friend class IcomSession;
+    bool validateOutbound(std::span<const std::uint8_t> packet);
+    void permitControl(const std::vector<std::uint8_t>& packet);
+    const IcomOutboundPolicy m_outboundPolicy;
+    bool m_auditIdentified = false;
+    quint64 m_deniedDatagrams = 0;
+    std::vector<std::vector<std::uint8_t>> m_controlPermits;
     std::function<void(std::span<const std::uint8_t>)> m_testWriter;
     void handleDatagram(const QByteArray& datagram);
     void handleRetransmitRequest(std::span<const std::uint8_t> pkt);

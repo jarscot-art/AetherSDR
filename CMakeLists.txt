@@ -955,6 +955,7 @@ set(CORE_SOURCES
     src/core/backends/icom/IcomProtocol.cpp  # IcomCIV Phase 0 (RS-BA1 UDP transport)
     src/core/backends/icom/CivCodec.cpp      # IcomCIV Phase 1 (CI-V command plane, transport-free)
     src/core/backends/icom/IcomMemoryCodec.cpp # profile-gated Icom radio memories (1A 00)
+    src/core/backends/icom/IcomOutboundPolicy.cpp
     src/core/backends/icom/IcomStream.cpp    # IcomCIV Phase 0 (one UDP stream + ARQ)
     src/core/backends/icom/IcomSession.cpp   # IcomCIV Phase 0 (handshake orchestration)
     src/core/backends/icom/IcomScope.cpp     # IcomCIV Phase 2 (0x27 waveform -> panadapter)
@@ -3717,6 +3718,12 @@ if(ORT_FOUND)
         ${CMAKE_SOURCE_DIR}/third_party/r8brain ${ORT_INCLUDE_DIRS})
     target_link_libraries(deepcw_replay PRIVATE Qt6::Widgets ${ORT_LIBRARIES})
 endif()
+option(AETHER_BUILD_ICOM_RX_AUDIT "Build the opt-in, headless Icom RX-only audit tool" OFF)
+if(AETHER_BUILD_ICOM_RX_AUDIT)
+    add_executable(aether-icom-rx-audit src/core/backends/icom/IcomRxAuditMain.cpp)
+    target_link_libraries(aether-icom-rx-audit PRIVATE aethercore Qt6::Core)
+endif()
+
 include(tests/tests.cmake)
 
 

@@ -20,6 +20,7 @@
 
 #include "core/backends/IRadioBackend.h"
 #include "core/backends/icom/CivCodec.h"
+#include "core/backends/icom/IcomOutboundPolicy.h"
 #include "core/backends/icom/IcomCivScheduler.h"
 #include "core/backends/icom/IcomMeters.h"
 #include "core/backends/icom/IcomMemoryCodec.h"
@@ -54,7 +55,9 @@ public:
     // (the radio owns and persists it). An operator pick here is written to
     // the radio; applyScopeStartup initialises Center to SCROLL-F.
     enum class ScopeView { ScrollF, Center, Fixed };
-    explicit IcomCivBackend(QObject* parent = nullptr);
+    explicit IcomCivBackend(QObject* parent = nullptr,
+                            IcomOutboundPolicy policy = IcomOutboundPolicy::production());
+    [[nodiscard]] QVariantMap rxAuditDiagnostics() const;
     ~IcomCivBackend() override;
 
     // ---- identity & capability ----
@@ -178,6 +181,9 @@ private slots:
     void onTuneAudioTick();
 
 private:
+    const IcomOutboundPolicy m_outboundPolicy;
+    quint64 m_deniedAuditRequests = 0;
+    quint64 m_closedAuditDatagrams = 0;
     // Focused access for the generation-gate regression test.  The test must
     // inject a frame carrying an obsolete session generation after the backend
     // has advanced to a replacement session; exercising only the public UDP

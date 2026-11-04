@@ -316,8 +316,8 @@ SquelchLevelScale measuredSquelchScale(const SquelchScaleProfile& profile)
 
 }  // namespace
 
-IcomCivBackend::IcomCivBackend(QObject* parent)
-    : IRadioBackend(parent), m_model(&unknownModel())
+IcomCivBackend::IcomCivBackend(QObject* parent, IcomOutboundPolicy policy)
+    : IRadioBackend(parent), m_outboundPolicy(policy), m_model(&unknownModel())
 {
     // Monotonic clock: every timestamp here is an interval (dispatch slot,
     // timeout, poll period, stall threshold). A backward wall-clock step would
@@ -398,7 +398,7 @@ RadioCapabilities IcomCivBackend::capabilities() const
             static_cast<double>(band.highHz)});
     }
 
-    c.canTransmit = m.hasTransmit;
+    c.canTransmit = m.hasTransmit && m_outboundPolicy.isProduction();
     c.txPowerMaxWatts = m.txPowerMaxWatts;
     // setKeying() is intent; the decoded CI-V `1C 00` readback is the keyed
     // state. AetherModem waits for that edge before releasing sample zero, and
@@ -973,7 +973,15 @@ void IcomCivBackend::connectRadio(const RadioConnectRequest& request)
     m_audioRateHz = kRadioAudioRateHz;
     p.sampleRateHz = static_cast<quint32>(m_audioRateHz);
 
-    m_session = std::make_unique<IcomSession>();
+    if (m_outboundPolicy.isAudit()) {
+        p.civAddress = 0xB6;
+        p.enableTx = false;
+        m_civAddressPinned = true;
+        m_civSeedAddress = 0xB6;
+        m_wakeOnConnect = false;
+        m_waitingForWake = false;
+    }
+    m_session = std::make_unique<IcomSession>(nullptr, m_outboundPolicy);
     const std::uint64_t sessionGeneration = ++m_sessionGeneration;
     connect(m_session.get(), &IcomSession::connected, this, &IcomCivBackend::onSessionConnected);
     connect(m_session.get(), &IcomSession::disconnected, this,
@@ -1011,7 +1019,7 @@ void IcomCivBackend::disconnectRadio()
     // restore the operator's RF-power setpoint if TUNE had borrowed it.  These
     // are response-free emergency dispatches so every datagram reaches the
     // session before its sockets close; no state is optimistically adopted.
-    if (m_session && m_connected) {
+    if (m_session && m_connected && m_outboundPolicy.isProduction()) {
         terminateScheduler(IcomCivScheduler::TerminalOutcome::Cancelled,
                            SchedulerWaiterOutcome::Cancelled);
         queueEmergencyWriteNoReply(cmdAbortCwMessage(m_session->civAddress()),
@@ -1047,6 +1055,7 @@ void IcomCivBackend::disconnectRadio()
     }
     if (m_session) {
         m_session->stop();
+        m_closedAuditDatagrams += m_session->deniedDatagrams();
         m_session.reset();
     }
     m_rxResampler.reset();
@@ -1124,6 +1133,11 @@ void IcomCivBackend::sendConnectReadBurst()
 {
     if (!m_session)
         return;
+    if (m_outboundPolicy.isAudit()) {
+        resetSplitTxReadback(QStringLiteral("never-confirmed"));
+        queueSplitTxReadback(IcomCivScheduler::Priority::Maintenance);
+        return;
+    }
     const QPointer<IcomCivBackend> alive(this);
     const std::uint64_t session = m_sessionGeneration;
     // A valid identity ends discovery before the model-shaped snapshot starts.
@@ -1802,6 +1816,7 @@ void IcomCivBackend::publishPhoneModulationLevel()
 
 void IcomCivBackend::applyScopeStartup()
 {
+    if (!m_outboundPolicy.isProduction()) { return; }
     if (!m_session || !m_model->hasScope || m_scopeStarted)
         return;
     // ONCE PER SESSION, because it is now called from two places. The connect
@@ -4471,6 +4486,7 @@ void IcomCivBackend::queueRead(const std::vector<std::uint8_t>& frame,
                                qint64 notBeforeMs,
                                std::vector<std::uint8_t> replyDataPrefix, bool coalesce, bool supersedes)
 {
+    if (!m_outboundPolicy.allowsCiv(frame)) { ++m_deniedAuditRequests; return; }
     const std::optional<CivFrame> parsed = parseFrame(frame);
     if (!parsed) {
         return;
@@ -4503,6 +4519,11 @@ void IcomCivBackend::queueWrite(const std::vector<std::uint8_t>& frame,
                                 bool supersedes,
                                 bool coalesce, const std::optional<TxCoordinator::Command>& command)
 {
+    if (!m_outboundPolicy.isProduction()) {
+        if (m_outboundPolicy.allowsCiv(frame)) { queueRead(frame, key, priority); }
+        else { ++m_deniedAuditRequests; }
+        return;
+    }
     IcomCivScheduler::Request request;
     request.frame = frame;
     request.key = key.empty() ? semanticKey(frame) : key;
@@ -4530,6 +4551,7 @@ void IcomCivBackend::queueWrite(const std::vector<std::uint8_t>& frame,
 void IcomCivBackend::queueEmergencyWriteNoReply(const std::vector<std::uint8_t>& frame,
                                                 const std::string& key)
 {
+    if (!m_outboundPolicy.isProduction()) { ++m_deniedAuditRequests; return; }
     IcomCivScheduler::Request request;
     request.frame = frame;
     request.key = key.empty() ? semanticKey(frame) : key;
@@ -4808,6 +4830,15 @@ QVariantMap IcomCivBackend::stateFreshness(bool withValues) const
             "Readiness is diagnostic, not TX authorization.")}};
 }
 
+QVariantMap IcomCivBackend::rxAuditDiagnostics() const
+{
+    return {{QStringLiteral("rxOnlyAudit"), m_outboundPolicy.isAudit()},
+            {QStringLiteral("deniedRequests"), QVariant::fromValue<qulonglong>(m_deniedAuditRequests)},
+            {QStringLiteral("deniedDatagrams"), QVariant::fromValue<qulonglong>(
+                m_closedAuditDatagrams + (m_session ? m_session->deniedDatagrams() : 0))},
+            {QStringLiteral("splitTxReadback"), splitTxReadbackDiagnostics(nowMs(), true)}};
+}
+
 QVariantMap IcomCivBackend::schedulerDiagnostics(std::size_t traceLimit,
                                                 bool withValues) const
 {
@@ -5053,6 +5084,7 @@ void IcomCivBackend::terminateScheduler(
 void IcomCivBackend::sendUserCommand(const std::vector<std::uint8_t>& frame,
                                     const std::optional<TxCoordinator::Command>& command)
 {
+    if (!m_outboundPolicy.allowsCiv(frame)) { ++m_deniedAuditRequests; return; }
     if (command && !command->permitsDispatch(TxCoordinator::monotonicMs())) {
         return;
     }
@@ -7574,6 +7606,14 @@ bool IcomCivBackend::expireNtpAccess(qint64 now)
 void IcomCivBackend::invokeExtension(const QString& ns, const QString& verb, quint64 requestId,
                                      const QVariant& arg)
 {
+    if (!m_outboundPolicy.isProduction()
+        && verb != QLatin1String("civ.scheduler.status") && verb != QLatin1String("civ.trace")
+        && verb != QLatin1String("civ.session") && verb != QLatin1String("civ.incident")
+        && verb != QLatin1String("profile.show")) {
+        ++m_deniedAuditRequests;
+        emit extensionError(requestId, QStringLiteral("RX-only audit policy denied this extension"));
+        return;
+    }
     if (ns != QLatin1String("icom")) {
         emit extensionError(requestId, QStringLiteral("unknown namespace %1").arg(ns));
         return;
@@ -7998,6 +8038,7 @@ void IcomCivBackend::publishMeterDefs()
 
 void IcomCivBackend::onMeterTick()
 {
+    if (m_outboundPolicy.isAudit()) { pumpCiv(nowMs()); return; }
     if (!m_session || !m_connected)
         return;
     const std::int64_t now = nowMs();
@@ -8045,6 +8086,21 @@ void IcomCivBackend::onLinkTick()
 {
     if (!m_session)
         return;
+    if (m_outboundPolicy.isAudit()) {
+        const qint64 now = nowMs();
+        if (m_connected && m_civReported == 0xB6 && !m_civAmbiguous
+            && (m_splitTxPollAtMs < 0 || now - m_splitTxPollAtMs >= 2000)) {
+            queueSplitTxReadback(IcomCivScheduler::Priority::Control);
+            const std::uint8_t addr = 0xB6;
+            for (const auto& frame : {cmdReadFrequency(addr), cmdReadMode(addr), cmdReadVfoMode(addr),
+                                     cmdReadTuneOffset(addr, 0), cmdReadTuneOffset(addr, 1),
+                                     cmdReadTuneOffset(addr, 2)}) {
+                queueRead(frame, semanticKey(frame), IcomCivScheduler::Priority::Control);
+            }
+        }
+        pumpCiv(now);
+        return;
+    }
     const auto s = m_session->stats();
 
     LinkStats out;

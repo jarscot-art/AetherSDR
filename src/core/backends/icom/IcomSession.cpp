@@ -1,4 +1,5 @@
 #include "core/backends/icom/IcomSession.h"
+#include "core/backends/icom/IcomModels.h"
 
 #include <QDateTime>
 
@@ -46,7 +47,35 @@ std::span<const std::uint8_t> asSpan(const QByteArray& b)
 
 }  // namespace
 
-IcomSession::IcomSession(QObject* parent) : QObject(parent) {}
+IcomSession::IcomSession(QObject* parent, IcomOutboundPolicy policy)
+    : QObject(parent), m_outboundPolicy(policy) {}
+
+IcomStream* IcomSession::makeStream()
+{
+    return new IcomStream(this, m_outboundPolicy);
+}
+
+void IcomSession::sendControl(std::vector<std::uint8_t> packet)
+{
+    if (!m_control) { return; }
+    if (m_outboundPolicy.isAudit()) {
+        if (m_permitAuthOwner != m_authId) {
+            m_control->m_controlPermits.clear();
+            m_permitAuthOwner = m_authId;
+        }
+        m_control->permitControl(packet);
+    }
+    m_control->sendTracked(std::move(packet));
+}
+
+quint64 IcomSession::deniedDatagrams() const
+{
+    quint64 total = m_closedDeniedDatagrams + m_deniedCivFrames;
+    for (const IcomStream* stream : {m_control, m_serial, m_audio}) {
+        if (stream) { total += stream->deniedDatagrams(); }
+    }
+    return total;
+}
 
 IcomSession::~IcomSession() { stop(); }
 
@@ -54,6 +83,10 @@ bool IcomSession::start(const Params& params)
 {
     stop();
     m_params = params;
+    if (m_outboundPolicy.isAudit()) {
+        m_params.enableTx = false;
+        m_params.civAddress = 0xB6;
+    }
     m_tokenRequestId = params.tokenRequestId != 0
         ? params.tokenRequestId
         : static_cast<quint16>(QRandomGenerator::global()->bounded(1, 0x10000));
@@ -87,8 +120,8 @@ bool IcomSession::start(const Params& params)
     // Bind the media sockets FIRST, without handshaking. The control stream's
     // request has to announce their local ports, and it is sent before either
     // may start — so we have to know the ports by then.
-    m_serial = new IcomStream(this);
-    m_audio  = new IcomStream(this);
+    m_serial = makeStream();
+    m_audio  = makeStream();
     IcomStream::Config serialCfg{params.host, params.serialPort, 0, IcomStream::Role::Serial};
     IcomStream::Config audioCfg{params.host, params.audioPort, 0, IcomStream::Role::Audio};
     if (!m_serial->bindOnly(serialCfg) || !m_audio->bindOnly(audioCfg)) {
@@ -113,7 +146,7 @@ bool IcomSession::start(const Params& params)
             emit audioReady(fill);
     });
 
-    m_control = new IcomStream(this);
+    m_control = makeStream();
     connect(m_control, &IcomStream::ready, this, &IcomSession::onControlReady);
     connect(m_control, &IcomStream::payloadReady, this, &IcomSession::onControlPayload);
     connect(m_control, &IcomStream::failed, this, &IcomSession::fail);
@@ -136,12 +169,12 @@ void IcomSession::stop()
     // times out (kappanhang also sends auth 0x01 here). Send it TWICE as TRACKED
     // packets so IcomStream stamps the outer sequence; an unstamped deauth is
     // discarded and the next token request is rejected with 0xffffffff.
-    if (m_control && m_control->isReady()) {
+    if (m_control && m_control->isReady() && (m_outboundPolicy.isProduction() || m_authOk)) {
         const auto bye = buildAuth(m_control->localSessionId(),
                                    m_control->remoteSessionId(), m_innerSeq++, m_authId,
                                    AuthKind::Deauth);
-        m_control->sendTracked(bye);
-        m_control->sendTracked(bye);
+        sendControl(bye);
+        sendControl(bye);
         // Flush, don't sleep: sendRaw() only fills the socket buffer, and blocking the
         // event loop would stop Qt draining it (and freeze the GUI on every reconnect).
         m_control->flush();
@@ -153,6 +186,7 @@ void IcomSession::stop()
     for (IcomStream** s : {&m_control, &m_serial, &m_audio}) {
         if (*s) {
             (*s)->stop();
+            m_closedDeniedDatagrams += (*s)->deniedDatagrams();
             (*s)->deleteLater();
             *s = nullptr;
         }
@@ -215,7 +249,7 @@ void IcomSession::sendRenewal(const QString& reason)
     qCInfo(lcIcom).noquote() << "RS-BA1 token renewal sent: seq" << seq
                              << "reason" << reason
                              << "pending" << m_pendingRenewals.size();
-    m_control->sendTracked(buildAuth(m_control->localSessionId(),
+    sendControl(buildAuth(m_control->localSessionId(),
                                      m_control->remoteSessionId(), seq, m_authId,
                                      AuthKind::Renew));
 }
@@ -237,7 +271,7 @@ void IcomSession::onControlReady()
                    << (m_params.password.isEmpty() ? "EMPTY)" : "supplied)")
                    << "token request"
                    << QStringLiteral("0x%1").arg(m_tokenRequestId, 4, 16, QLatin1Char('0'));
-    m_control->sendTracked(buildLogin(m_control->localSessionId(), m_control->remoteSessionId(),
+    sendControl(buildLogin(m_control->localSessionId(), m_control->remoteSessionId(),
                                       m_innerSeq++, m_tokenRequestId,
                                       m_params.username.toStdString(),
                                       m_params.password.toStdString()));
@@ -272,7 +306,7 @@ void IcomSession::onControlPayload(const QByteArray& packet)
         // second requests the token that actually gates the media streams;
         // sending only one leaves a session that looks logged in and never
         // opens audio.
-        m_control->sendTracked(buildAuth(m_control->localSessionId(),
+        sendControl(buildAuth(m_control->localSessionId(),
                                          m_control->remoteSessionId(), m_innerSeq++, m_authId,
                                          AuthKind::First));
         sendRenewal(QStringLiteral("initial token request"));
@@ -393,6 +427,11 @@ void IcomSession::onControlPayload(const QByteArray& packet)
         }
 
     case static_cast<qsizetype>(kLenConnInfo): {
+        if (m_outboundPolicy.isAudit()
+            && parseConnectionUsage(pkt).kind == ConnectionUsageKind::Busy) {
+            fail(QStringLiteral("RX audit refused: radio reports an occupied RS-BA1 session"));
+            return;
+        }
         if (m_connected) {
             const ConnectionUsage usage = parseConnectionUsage(pkt);
             if (usage.kind == ConnectionUsageKind::Available
@@ -464,9 +503,9 @@ void IcomSession::requestStreamsIfReady()
     req.civLocalPort   = m_serial->localPort();
     req.audioLocalPort = m_audio->localPort();
     req.txBufferMs = m_params.txBufferMs;
-    req.enableTx   = m_params.enableTx;
+    req.enableTx   = m_outboundPolicy.isProduction() && m_params.enableTx;
 
-    m_control->sendTracked(buildStreamRequest(req));
+    sendControl(buildStreamRequest(req));
 }
 
 void IcomSession::openMediaStreams()
@@ -628,6 +667,15 @@ void IcomSession::onSerialPayload(const QByteArray& packet)
         // radio's address.
         if (frame->from == kControllerAddress)
             continue;
+        if (m_outboundPolicy.isAudit() && frame->cmd == cmd::kReadId) {
+            const auto model = parseModelIdReply(*frame);
+            if (!model || *model != 0xB6 || frame->from != 0xB6
+                || frame->to != kControllerAddress || !frame->hasNormalTerminator) {
+                fail(QStringLiteral("RX audit requires a directed IC-7300MK2 identity reply"));
+                return;
+            }
+            m_serial->m_auditIdentified = true;
+        }
         emit civFrameReady(*frame);
     }
 }
@@ -641,7 +689,7 @@ void IcomSession::onCivFrameTimeout()
 void IcomSession::onAudioReady()
 {
     qCInfo(lcIcom) << "audio stream ready";
-    if (!m_txTimer && m_params.enableTx) {
+    if (!m_txTimer && m_outboundPolicy.isProduction() && m_params.enableTx) {
         m_txTimer = new QTimer(this);
         m_txTimer->setTimerType(Qt::PreciseTimer);
         connect(m_txTimer, &QTimer::timeout, this, &IcomSession::onTxPump);
@@ -661,6 +709,7 @@ void IcomSession::onAudioPayload(const QByteArray& packet)
 
 void IcomSession::onTxPump()
 {
+    if (!m_outboundPolicy.isProduction()) { flushTxAudio(); return; }
     if (!m_txContext.permitsDispatch(TxCoordinator::monotonicMs())) {
         flushTxAudio();
     }
@@ -725,6 +774,7 @@ int IcomSession::txAudioDrainMs() const
 void IcomSession::sendCiv(std::span<const std::uint8_t> frame,
                           const std::optional<TxCoordinator::Command>& command)
 {
+    if (!m_outboundPolicy.allowsCiv(frame)) { ++m_deniedCivFrames; return; }
     if (!m_serial || !m_serial->isReady())
         return;
     if (command) {
@@ -742,6 +792,7 @@ void IcomSession::sendCiv(std::span<const std::uint8_t> frame,
 
 bool IcomSession::reopenCivPipe()
 {
+    if (!m_outboundPolicy.isProduction()) { return false; }
     if (!m_serial || !m_serial->isReady()) {
         return false;
     }
@@ -753,7 +804,7 @@ bool IcomSession::reopenCivPipe()
 
 void IcomSession::sendAudio(std::span<const float> mono, const TxCoordinator::Context& context)
 {
-    if (!m_params.enableTx || !context.permitsDispatch(TxCoordinator::monotonicMs())) {
+    if (!m_outboundPolicy.isProduction() || !m_params.enableTx || !context.permitsDispatch(TxCoordinator::monotonicMs())) {
         return;
     }
     if (!m_txContext.sameContext(context)) {
@@ -765,7 +816,7 @@ void IcomSession::sendAudio(std::span<const float> mono, const TxCoordinator::Co
 
 std::size_t IcomSession::padTxAudioToFrame(const TxCoordinator::Context& context)
 {
-    return m_params.enableTx && context.sameContext(m_txContext)
+    return m_outboundPolicy.isProduction() && m_params.enableTx && context.sameContext(m_txContext)
         && context.permitsDispatch(TxCoordinator::monotonicMs()) ? m_tx.padToFrame() : 0;
 }
 

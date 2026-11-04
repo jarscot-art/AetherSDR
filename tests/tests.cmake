@@ -1366,6 +1366,24 @@ target_link_libraries(automation_nb2_capability_test PRIVATE aethercore Qt6::Cor
 add_test(NAME automation_nb2_capability_test COMMAND automation_nb2_capability_test)
 set_tests_properties(automation_nb2_capability_test PROPERTIES TIMEOUT 120)
 
+# RX audit policy and terminal writer: injected transport, no socket or peer.
+add_executable(icom_outbound_policy_test tests/icom_outbound_policy_test.cpp
+    src/core/backends/icom/IcomOutboundPolicy.cpp src/core/backends/icom/IcomProtocol.cpp)
+target_include_directories(icom_outbound_policy_test PRIVATE src)
+add_test(NAME icom_outbound_policy_test COMMAND icom_outbound_policy_test)
+
+add_executable(icom_rx_audit_egress_test tests/icom_rx_audit_egress_test.cpp)
+target_include_directories(icom_rx_audit_egress_test PRIVATE src tests)
+target_link_libraries(icom_rx_audit_egress_test PRIVATE aethercore Qt6::Core Qt6::Test)
+add_test(NAME icom_rx_audit_egress_test COMMAND icom_rx_audit_egress_test)
+
+# Explicit opt-in only: full-suite's default-OFF graph does not require this tool.
+if(TARGET aether-icom-rx-audit)
+    add_test(NAME icom_rx_audit_self_check COMMAND aether-icom-rx-audit --self-check)
+    add_test(NAME icom_rx_audit_refuses_implicit_connection COMMAND aether-icom-rx-audit)
+    set_tests_properties(icom_rx_audit_refuses_implicit_connection PROPERTIES WILL_FAIL TRUE)
+endif()
+
 # IcomCIV wire layers — pure encode/decode, standalone (no Qt / aethercore).
 # An Icom networked radio is two protocols stacked: CI-V is the command plane
 # and RS-BA1 is the UDP transport it travels inside. Both halves unit-test
@@ -10366,6 +10384,7 @@ if(TARGET Qt6::WebSockets)
 endif()
 
 set(AETHER_SETTINGS_CONSUMERS
+    icom_rx_audit_egress_test
     update_controller_test
     update_installer_test
     update_stager_test
