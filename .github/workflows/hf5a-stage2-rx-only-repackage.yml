@@ -1,0 +1,199 @@
+name: HF5A stage 2 package preserved Windows audit executable
+'on':
+  workflow_dispatch: null
+  push:
+    branches:
+    - hf5a/stage2-rx-only-audit
+    paths:
+    - .github/workflows/hf5a-stage2-rx-only-repackage.yml
+permissions:
+  contents: read
+  actions: read
+env:
+  QT_VERSION: 6.12.0
+  QT_PACKAGE_REVISION: '202609280346'
+  AQTINSTALL_VERSION: 3.3.0
+  AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+  PY7ZR_VERSION: 1.1.3
+  QT_MODULE_FLOOR: '10'
+jobs:
+  package-only:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      QT_ARCH: win64_msvc2022_64
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: b058dcc2b2d6365f2ffed78462745830fc8ff85e
+        persist-credentials: false
+    - name: Initialize packaging-only evidence
+      run: "New-Item -ItemType Directory -Force hf5a-stage2-results | Out-Null\n@{sourceCommit='b058dcc2b2d6365f2ffed78462745830fc8ff85e';\
+        \ buildRun=41780111902; hardwareTest=$false;\n  packageWorkflowCommit='${{ github.sha }}'; qt='6.12.0';\n\
+        \  runUrl=\"https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID\"} |\n  ConvertTo-Json\
+        \ | Set-Content hf5a-stage2-results/package-source.json\n"
+    - name: Download preserved compiled inputs, without rebuilding
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        name: hf5a-stage2-built-audit-inputs-b058dcc2b2d6365f2ffed78462745830fc8ff85e
+        path: build
+        run-id: 41780111902
+        github-token: ${{ github.token }}
+    - name: Download evidence from the same build
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        name: hf5a-stage2-offline-41780111902
+        path: built-evidence
+        run-id: 41780111902
+        github-token: ${{ github.token }}
+    - name: Check binary provenance and previously executed tests
+      run: '$source=Get-Content -Raw built-evidence/source.json | ConvertFrom-Json
+
+        if ($source.sourceCommit -ne ''b058dcc2b2d6365f2ffed78462745830fc8ff85e'' -or (git rev-parse HEAD).Trim()
+        -ne ''b058dcc2b2d6365f2ffed78462745830fc8ff85e'') { throw ''Wrong compiled source'' }
+
+        [xml]$junit=Get-Content -Raw built-evidence/results.junit.xml
+
+        if ($junit.testsuite.tests -ne 12 -or $junit.testsuite.failures -ne 0 -or $junit.testsuite.skipped -ne 0)
+        { throw ''Build did not pass all twelve tests'' }
+
+        Copy-Item built-evidence/source.json hf5a-stage2-results/source.json
+
+        Copy-Item built-evidence/results.json hf5a-stage2-results/prior-executed-results.json
+
+        (Get-FileHash build/aether-icom-rx-audit.exe).Hash | Set-Content hf5a-stage2-results/input-exe-sha256.txt
+
+        '
+    - name: Restore Qt
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-qt-win
+      with:
+        path: ${{ runner.workspace }}\Qt
+        key: qt-${{ env.QT_VERSION }}-${{ env.QT_PACKAGE_REVISION }}-windows-${{ env.QT_ARCH }}-aqt${{ env.AQTINSTALL_GIT_REF
+          }}-mm.ws.sp.st
+    - name: Verify the restored Qt tree
+      id: qt-verify-win
+      if: steps.cache-qt-win.outputs.cache-hit == 'true'
+      shell: pwsh
+      run: "Start-Transcript -Path \"hf5a-stage2-results/verify-the-restored-qt-tree.log\"\ntry {\n  $qtRoot = \"\
+        $env:RUNNER_WORKSPACE\\Qt\\$env:QT_VERSION\\\" + ($env:QT_ARCH -replace '^win64_', '')\n  $complete = $true\n\
+        \  # -PathType Leaf so a directory of that name cannot pass. There is no\n  # Windows analogue of the macOS\
+        \ side's executable-bit test.\n  if (-not (Test-Path \"$qtRoot\\bin\\qmake.exe\" -PathType Leaf)) {\n  \
+        \  Write-Host \"missing: bin\\qmake.exe\"\n    $complete = $false\n  }\n  # The path Export Qt environment\
+        \ hands find_package(Qt6) as Qt6_DIR.\n  if (-not (Test-Path \"$qtRoot\\lib\\cmake\\Qt6\\Qt6Config.cmake\"\
+        \ -PathType Leaf)) {\n    Write-Host \"missing: lib\\cmake\\Qt6\\Qt6Config.cmake\"\n    $complete = $false\n\
+        \  }\n  $targets = @(Get-ChildItem \"$qtRoot\\lib\\cmake\" -Filter 'Qt6*Targets*.cmake' -Recurse -File -ErrorAction\
+        \ SilentlyContinue)\n  $modules = @($targets |\n    Select-String -Pattern '\\$\\{_IMPORT_PREFIX\\}/include/(Qt[A-Za-z0-9_]+)'\
+        \ -AllMatches |\n    ForEach-Object { $_.Matches } |\n    ForEach-Object { $_.Groups[1].Value } |\n    Sort-Object\
+        \ -Unique)\n  foreach ($m in $modules) {\n    $dir = \"$qtRoot\\include\\$m\"\n    if (-not (Test-Path $dir\
+        \ -PathType Container)) {\n      Write-Host \"missing: include\\$m\"\n      $complete = $false\n    } elseif\
+        \ (-not (Get-ChildItem $dir -File -ErrorAction SilentlyContinue | Select-Object -First 1)) {\n      Write-Host\
+        \ \"empty include directory: include\\$m\"\n      $complete = $false\n    }\n  }\n  # Anti-vacuity, as on\
+        \ macOS, and on the same quantity: declared\n  # modules, not directories found.\n  if ($modules.Count -lt\
+        \ [int]$env:QT_MODULE_FLOOR) {\n    Write-Host \"only $($modules.Count) Qt module(s) declared under lib\\\
+        cmake (floor $env:QT_MODULE_FLOOR)\"\n    $complete = $false\n  }\n  if ($complete) {\n    Write-Host \"\
+        Qt tree complete: $($modules.Count) module(s) declared, every include directory present and populated\"\n\
+        \    \"complete=true\" | Out-File -FilePath $env:GITHUB_OUTPUT -Append\n  } else {\n    $key = \"qt-${env:QT_VERSION}-${env:QT_PACKAGE_REVISION}-windows-${env:QT_ARCH}-aqt${env:AQTINSTALL_GIT_REF}-mm.ws.sp.st\"\
+        \n    Write-Host \"::warning title=Qt cache restore incomplete::Restored Qt tree is short; discarding it\
+        \ and reinstalling via aqt. If this repeats on the same key the stored entry is bad, and it can only be\
+        \ cleared by hand: gh cache delete $key --ref refs/heads/main\"\n    Remove-Item -Recurse -Force \"$env:RUNNER_WORKSPACE\\\
+        Qt\" -ErrorAction SilentlyContinue\n    # A partial delete would leave aqt extracting over the corrupt tree\n\
+        \    # this step just rejected, which is the state it exists to avoid.\n    if (Test-Path \"$env:RUNNER_WORKSPACE\\\
+        Qt\") {\n      Write-Host \"ERROR: could not remove the incomplete Qt tree at $env:RUNNER_WORKSPACE\\Qt\"\
+        \n      exit 1\n    }\n    \"complete=false\" | Out-File -FilePath $env:GITHUB_OUTPUT -Append\n  }\n} finally\
+        \ { Stop-Transcript }\n"
+    - name: Install Qt LTS via aqtinstall
+      if: steps.cache-qt-win.outputs.cache-hit != 'true' || steps.qt-verify-win.outputs.complete != 'true'
+      shell: pwsh
+      run: "Start-Transcript -Path \"hf5a-stage2-results/install-qt-lts-via-aqtinstall.log\"\ntry {\n  # aqt goes\
+        \ in a venv and is pinned, for the reason check-macos and\n  # .github/docker/Dockerfile give: it is the\
+        \ tool that decides what\n  # Qt lands here, so an unreviewed aqt upgrade is an unreviewed\n  # change to\
+        \ the Qt this job builds against.\n  python -m venv \"$env:RUNNER_TEMP\\aqtvenv\"\n  if ($LASTEXITCODE -ne\
+        \ 0) { exit $LASTEXITCODE }\n  # PyPI 3.3.0 cannot locate Windows 6.11+ Updates.xml (aqtinstall#959).\n\
+        \  # Install the unreleased #1000 fix from a pinned master commit.\n  & \"$env:RUNNER_TEMP\\aqtvenv\\Scripts\\\
+        pip.exe\" install -q \"git+https://github.com/miurahr/aqtinstall.git@$env:AQTINSTALL_GIT_REF\" \"py7zr==$env:PY7ZR_VERSION\"\
+        \n  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\n  $sevenZip = (Get-Command 7z.exe -ErrorAction Stop).Source\n\
+        \  # Parallel 7-Zip workers race while creating the common output root\n  # on a fresh SDK install. Create\
+        \ it once before extraction starts.\n  $qtRoot = \"$env:RUNNER_WORKSPACE\\Qt\\$env:QT_VERSION\\\" + ($env:QT_ARCH\
+        \ -replace '^win64_', '')\n  New-Item -ItemType Directory -Force -Path $qtRoot | Out-Null\n  & \"$env:RUNNER_TEMP\\\
+        aqtvenv\\Scripts\\aqt.exe\" install-qt windows desktop $env:QT_VERSION $env:QT_ARCH `\n    -m qtmultimedia\
+        \ qtwebsockets qtserialport qtshadertools `\n    --external $sevenZip `\n    --outputdir \"$env:RUNNER_WORKSPACE\\\
+        Qt\"\n  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\n} finally { Stop-Transcript }\n"
+    - name: Export Qt environment
+      shell: pwsh
+      run: "Start-Transcript -Path \"hf5a-stage2-results/export-qt-environment.log\"\ntry {\n  # aqt lays the tree\
+        \ down under <version>/<arch minus the win64_ host\n  # prefix>: win64_msvc2022_64 -> msvc2022_64.\n  $qtRoot\
+        \ = \"$env:RUNNER_WORKSPACE\\Qt\\$env:QT_VERSION\\\" + ($env:QT_ARCH -replace '^win64_', '')\n  if (-not\
+        \ (Test-Path \"$qtRoot\\bin\\qmake.exe\")) {\n    # A bad entry on main is only clearable by hand: the key\
+        \ is a\n    # content hash nothing re-saves, and no sweeper matches qt-* there.\n    Write-Host \"ERROR:\
+        \ no qmake at $qtRoot \u2014 aqt layout changed, or a stale cache entry\"\n    Write-Host \"       (clear\
+        \ a stale entry: gh cache delete <the Restore Qt key> --ref refs/heads/main)\"\n    Get-ChildItem \"$env:RUNNER_WORKSPACE\\\
+        Qt\\$env:QT_VERSION\" -ErrorAction SilentlyContinue\n    exit 1\n  }\n  @(\n    \"QT_ROOT_DIR=$qtRoot\"\
+        ,\n    \"Qt6_DIR=$qtRoot\\lib\\cmake\\Qt6\",\n    \"CMAKE_PREFIX_PATH=$qtRoot\",\n    \"QT_PLUGIN_PATH=$qtRoot\\\
+        plugins\",\n    \"QML2_IMPORT_PATH=$qtRoot\\qml\"\n  ) | Out-File -FilePath $env:GITHUB_ENV -Append\n  \"\
+        $qtRoot\\bin\" | Out-File -FilePath $env:GITHUB_PATH -Append\n  & \"$qtRoot\\bin\\qmake.exe\" -query QT_VERSION\n\
+        \n  if ((& \"$qtRoot\\bin\\qmake.exe\" -query QT_VERSION).Trim() -ne \"6.12.0\") { throw \"Wrong Qt version\"\
+        \ }\n} finally { Stop-Transcript }\n"
+    - name: Setup MSVC environment
+      uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
+      with:
+        arch: x64
+    - name: Package exact preserved executable with OpenSSL runtime
+      run: "New-Item -ItemType Directory -Force hf5a-stage2-portable | Out-Null\nCopy-Item build/aether-icom-rx-audit.exe\
+        \ hf5a-stage2-portable/\nCopy-Item LICENSE hf5a-stage2-portable/\nCopy-Item docs/hf5a-stage2-rx-only-audit.md\
+        \ hf5a-stage2-portable/README.md\nCopy-Item build/*.dll hf5a-stage2-portable/\n& \"$env:QT_ROOT_DIR/bin/windeployqt.exe\"\
+        \ --release --no-translations --no-compiler-runtime --dir hf5a-stage2-portable hf5a-stage2-portable/aether-icom-rx-audit.exe\
+        \ |\n  Tee-Object hf5a-stage2-results/portable-deploy.log\nif ($LASTEXITCODE -ne 0) { throw 'Qt portable\
+        \ deployment failed' }\n# MQTT TLS is linked by the shared core, although the audit tool starts no MQTT\
+        \ client.\n$opensslBin=Join-Path $env:ProgramFiles 'OpenSSL/bin'\n$opensslVersion=(& \"$opensslBin/openssl.exe\"\
+        \ version)\nif ($LASTEXITCODE -ne 0) { throw 'Cannot identify the OpenSSL SDK runtime' }\nif ($opensslVersion\
+        \ -notmatch '^OpenSSL 3\\.6\\.5(?: |$)') { throw 'OpenSSL runtime does not match the compiled SDK 3.6.5'\
+        \ }\n$opensslVersion | Set-Content hf5a-stage2-results/portable-openssl-version.txt\nforeach ($name in @('libssl-3-x64.dll','libcrypto-3-x64.dll'))\
+        \ {\n  $source=Join-Path $opensslBin $name\n  Copy-Item $source hf5a-stage2-portable/ -Force\n  \"$source\
+        \ $((Get-FileHash $source).Hash)\" | Add-Content hf5a-stage2-results/portable-openssl-runtime.txt\n}\n$crt=Get-ChildItem\
+        \ \"$env:VCToolsRedistDir/x64\" -Directory -Filter 'Microsoft.VC*.CRT' |\n  Sort-Object Name -Descending\
+        \ | Select-Object -First 1\nif (-not $crt) { throw 'App-local MSVC runtime DLL directory not found' }\n\
+        Copy-Item \"$($crt.FullName)/*.dll\" hf5a-stage2-portable/\n# Preserve every direct/delay import and the\
+        \ initial dependency diagnosis.\n$images=Get-ChildItem hf5a-stage2-portable -Recurse -File | Where-Object\
+        \ Extension -in '.exe','.dll'\nforeach ($image in $images) {\n  \"IMAGE: $($image.FullName)\" | Add-Content\
+        \ hf5a-stage2-results/portable-imports.log\n  & dumpbin /nologo /DEPENDENTS $image.FullName | Add-Content\
+        \ hf5a-stage2-results/portable-imports.log\n  if ($LASTEXITCODE -ne 0) { throw 'dumpbin failed' }\n}\n&\
+        \ powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir\
+        \ hf5a-stage2-portable |\n  Tee-Object hf5a-stage2-results/portable-dependencies-before.log\n$LASTEXITCODE\
+        \ | Set-Content hf5a-stage2-results/portable-dependencies-before-exit-code.txt\n# Use the existing version-matched\
+        \ CRT + OpenMP staging recipe; no installer.\n& powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/stage-msvc-runtime.ps1\
+        \ -OutputDir hf5a-stage2-portable |\n  Tee-Object hf5a-stage2-results/portable-runtime.log\nif ($LASTEXITCODE\
+        \ -ne 0) { throw 'MSVC runtime staging failed' }\n& powershell -NoProfile -ExecutionPolicy Bypass -File\
+        \ packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage2-portable |\n  Tee-Object hf5a-stage2-results/portable-dependencies.log\n\
+        if ($LASTEXITCODE -ne 0) { throw 'Portable import validation failed' }\nif (@(Get-ChildItem hf5a-stage2-portable\
+        \ -Recurse -Filter '*.exe' | Where-Object Name -ne 'aether-icom-rx-audit.exe').Count) { throw 'Unexpected\
+        \ executable in portable bundle' }\nCopy-Item hf5a-stage2-results/source.json hf5a-stage2-portable/\n$savedPath=$env:PATH\n\
+        try {\n  # Prove the bundle does not borrow Qt or the compiler runtime from setup PATH.\n  $env:PATH=\"\
+        $env:SystemRoot/System32;$env:SystemRoot\"\n  '' | Set-Content hf5a-stage2-results/portable-self-check.log\n\
+        \  & ./hf5a-stage2-portable/aether-icom-rx-audit.exe --self-check |\n    Tee-Object hf5a-stage2-results/portable-self-check.log\n\
+        \  $portableCode=$LASTEXITCODE\n  @{exitCode=$portableCode; hex=('0x{0:X8}' -f $portableCode)} |\n    ConvertTo-Json\
+        \ | Set-Content hf5a-stage2-results/portable-self-check-exit.json\n  if ($portableCode -ne 0) { throw \"\
+        Portable tool self-check failed: $portableCode\" }\n} finally { $env:PATH=$savedPath }\nCopy-Item hf5a-stage2-results/package-source.json\
+        \ hf5a-stage2-portable/\nGet-ChildItem hf5a-stage2-portable -File -Recurse | Get-FileHash -Algorithm SHA256\
+        \ |\n  Select-Object Path,Hash | Export-Csv hf5a-stage2-results/portable-sha256.csv -NoTypeInformation\n\
+        Copy-Item hf5a-stage2-results/portable-sha256.csv hf5a-stage2-portable/\nif ((Get-FileHash hf5a-stage2-portable/aether-icom-rx-audit.exe).Hash\
+        \ -ne (Get-Content hf5a-stage2-results/input-exe-sha256.txt).Trim()) { throw 'Executable bytes changed during\
+        \ packaging' }\n"
+    - name: Upload verified portable audit tool
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: aether-icom-rx-audit-verified-b058dcc2b2d6365f2ffed78462745830fc8ff85e
+        path: hf5a-stage2-portable/
+        retention-days: 90
+        if-no-files-found: error
+    - name: Preserve packaging diagnostics
+      if: ${{ always() }}
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: hf5a-stage2-repackage-${{ github.run_id }}
+        path: hf5a-stage2-results/
+        retention-days: 90
+        if-no-files-found: error

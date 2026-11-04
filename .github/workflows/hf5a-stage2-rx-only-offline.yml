@@ -5,7 +5,6 @@ name: HF5A stage 2 RX-only offline Windows verification
     branches:
     - hf5a/stage2-rx-only-audit
     paths:
-    - .github/workflows/hf5a-stage2-rx-only-offline.yml
     - src/core/backends/icom/**
     - tests/icom_*
     - tests/tests.cmake
@@ -380,6 +379,16 @@ jobs:
         & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations --no-compiler-runtime --dir hf5a-stage2-portable hf5a-stage2-portable/aether-icom-rx-audit.exe |
           Tee-Object hf5a-stage2-results/portable-deploy.log
         if ($LASTEXITCODE -ne 0) { throw 'Qt portable deployment failed' }
+        # MQTT TLS is linked by the shared core; the audit tool starts no MQTT client.
+        $opensslBin=Join-Path $env:ProgramFiles 'OpenSSL/bin'
+        $opensslVersion=(& "$opensslBin/openssl.exe" version)
+        if ($LASTEXITCODE -ne 0) { throw 'Cannot identify the OpenSSL SDK runtime' }
+        $opensslVersion | Set-Content hf5a-stage2-results/portable-openssl-version.txt
+        foreach ($name in @('libssl-3-x64.dll','libcrypto-3-x64.dll')) {
+          $source=Join-Path $opensslBin $name
+          Copy-Item $source hf5a-stage2-portable/ -Force
+          "$source $((Get-FileHash $source).Hash)" | Add-Content hf5a-stage2-results/portable-openssl-runtime.txt
+        }
         $crt=Get-ChildItem "$env:VCToolsRedistDir/x64" -Directory -Filter 'Microsoft.VC*.CRT' |
           Sort-Object Name -Descending | Select-Object -First 1
         if (-not $crt) { throw 'App-local MSVC runtime DLL directory not found' }
