@@ -151,7 +151,12 @@ private:
     void sendRenewal(const QString& reason);
     [[nodiscard]] bool isCurrentControlPacket(std::span<const std::uint8_t> packet) const;
     void requestStreamsIfReady();
+    void onAuditConnectionUsage(std::span<const std::uint8_t> packet);
     void openMediaStreams();
+
+    std::string m_auditOwnerName;
+    std::uint32_t m_auditOwnerIpv4 = 0;
+    bool m_auditAvailable = false;
 
     Params m_params;
 

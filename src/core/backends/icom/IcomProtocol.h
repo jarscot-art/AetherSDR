@@ -246,7 +246,8 @@ using RadioId = std::array<std::uint8_t, 16>;
                                                     std::uint16_t innerSeq,
                                                     std::uint16_t tokenRequestId,
                                                     std::string_view username,
-                                                    std::string_view password);
+                                                    std::string_view password,
+                                                    std::string_view clientName = "icom-pc");
 
 // Outcome of the 0x60 login reply.
 enum class LoginResult { Ok, BadCredentials, NotALoginReply };
@@ -330,7 +331,9 @@ struct StreamRequest {
 
 [[nodiscard]] std::vector<std::uint8_t> buildStreamRequest(const StreamRequest& req);
 
-// The 0x90 reply. Its header IDs identify the control session the grant belongs
+// Legacy production grant candidate, NOT an exclusive-ownership decision: a
+// busy notification has this shape too. Audit uses classifyAuditConnectionUsage.
+// The 0x90 reply's header IDs identify the control session the grant belongs
 // to; callers must reject a delayed grant from a previous session. The auth ID
 // in a valid current-session grant replaces the login value for renewals.
 struct StreamGrant {
@@ -342,8 +345,8 @@ struct StreamGrant {
 };
 [[nodiscard]] StreamGrant parseStreamGrant(std::span<const std::uint8_t> pkt);
 
-// The asynchronous 0x90 radio-usage notification is distinct from a stream
-// request reply. Available means the radio reports no owner; the session must
+// The asynchronous 0x90 radio-usage notification can also acknowledge our own
+// stream allocation. Available means the radio reports no owner; the session must
 // correlate its header, auth ID and radio ID before treating it as a release.
 enum class ConnectionUsageKind { Invalid, Busy, Available };
 struct ConnectionUsage {
@@ -352,8 +355,30 @@ struct ConnectionUsage {
     std::uint32_t localSid = 0;
     AuthId authId{};
     RadioId radioId{};
+    std::string ownerName;
+    std::uint32_t ownerIpv4 = 0; // network-order numeric value, like QHostAddress
 };
 [[nodiscard]] ConnectionUsage parseConnectionUsage(std::span<const std::uint8_t> pkt);
+
+// A conninfo busy word also describes OUR newly allocated streams. It is not
+// a grant by itself. Audit requires a fresh login name, the routed local IPv4,
+// an authenticated association and an owner-free notification before requesting.
+struct AuditConnectionContext {
+    std::uint32_t remoteSid = 0;
+    std::uint32_t localSid = 0;
+    AuthId authId{};
+    RadioId radioId{};
+    bool authenticated = false;
+    bool haveRadioId = false;
+    bool availableBeforeRequest = false;
+    bool streamsRequested = false;
+    bool streamGranted = false;
+    std::string ownerName;
+    std::uint32_t ownerIpv4 = 0;
+};
+enum class AuditConnectionDecision { Ignore, Available, Grant, OwnSession, Busy, Ambiguous };
+[[nodiscard]] AuditConnectionDecision classifyAuditConnectionUsage(
+    std::span<const std::uint8_t> packet, const AuditConnectionContext& context);
 
 // ---------------------------------------------------------------------------
 // Serial stream (CI-V transport)

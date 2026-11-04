@@ -364,7 +364,8 @@ std::array<std::uint8_t, 16> encodePasscode(std::string_view s)
 
 std::vector<std::uint8_t> buildLogin(std::uint32_t localSid, std::uint32_t remoteSid,
                                      std::uint16_t innerSeq, std::uint16_t tokenRequestId,
-                                     std::string_view username, std::string_view password)
+                                     std::string_view username, std::string_view password,
+                                     std::string_view clientName)
 {
     auto p = framed(kLenLogin, PacketType::Idle, 0, localSid, remoteSid);
     writeInner(p, kLenLogin - kHeaderSize, 0x01, 0x00, innerSeq);
@@ -381,11 +382,9 @@ std::vector<std::uint8_t> buildLogin(std::uint32_t localSid, std::uint32_t remot
     std::copy(user.begin(), user.end(), p.begin() + 0x40);
     std::copy(pass.begin(), pass.end(), p.begin() + 0x50);
 
-    // The client name, in PLAIN TEXT, unlike the credentials above it. Both
-    // reference implementations send exactly "icom-pc"; it is not known whether
-    // the radio validates it, so we do not get creative.
-    static constexpr char kClientName[] = "icom-pc";
-    std::memcpy(p.data() + 0x60, kClientName, sizeof(kClientName) - 1);
+    // Plain-text owner label, echoed in conninfo.computer. Keep production's
+    // default; audit supplies a fresh per-login label (not a credential).
+    std::memcpy(p.data() + 0x60, clientName.data(), std::min<std::size_t>(15, clientName.size()));
     return p;
 }
 
@@ -570,7 +569,39 @@ ConnectionUsage parseConnectionUsage(std::span<const std::uint8_t> pkt)
     usage.localSid = getBe32(pkt, 0x0c);
     std::copy_n(pkt.begin() + 0x1a, usage.authId.size(), usage.authId.begin());
     std::copy_n(pkt.begin() + 0x20, usage.radioId.size(), usage.radioId.begin());
+    usage.ownerName = fixedString(pkt, 0x64, 16);
+    usage.ownerIpv4 = getBe32(pkt, 0x84);
     return usage;
+}
+
+AuditConnectionDecision classifyAuditConnectionUsage(
+    std::span<const std::uint8_t> packet, const AuditConnectionContext& context)
+{
+    using Decision = AuditConnectionDecision;
+    if (packet.size() < kHeaderSize) { return Decision::Ambiguous; }
+    const auto header = parseHeader(packet);
+    if (context.localSid == 0 || context.remoteSid == 0
+        || header.sentId != context.remoteSid || header.rcvdId != context.localSid) {
+        return Decision::Ignore;
+    }
+    const auto usage = parseConnectionUsage(packet);
+    if (usage.kind == ConnectionUsageKind::Invalid) { return Decision::Ambiguous; }
+    if (!context.authenticated || !context.haveRadioId
+        || usage.authId != context.authId || usage.radioId != context.radioId) {
+        return Decision::Ignore;
+    }
+    if (usage.kind == ConnectionUsageKind::Available) { return Decision::Available; }
+    if (usage.ownerName.empty() || usage.ownerIpv4 == 0
+        || context.ownerName.empty() || context.ownerIpv4 == 0) {
+        return Decision::Ambiguous;
+    }
+    if (usage.ownerName != context.ownerName || usage.ownerIpv4 != context.ownerIpv4) {
+        return Decision::Busy;
+    }
+    if (!context.availableBeforeRequest || !context.streamsRequested) {
+        return Decision::Ambiguous;
+    }
+    return context.streamGranted ? Decision::OwnSession : Decision::Grant;
 }
 
 // ---------------------------------------------------------------------------

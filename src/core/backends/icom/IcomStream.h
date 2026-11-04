@@ -80,6 +80,7 @@ public:
     [[nodiscard]] quint32 localSessionId() const noexcept { return m_localSid; }
     [[nodiscard]] quint32 remoteSessionId() const noexcept { return m_remoteSid; }
     [[nodiscard]] quint16 localPort() const noexcept { return m_boundPort; }
+    [[nodiscard]] QHostAddress localAddress() const;
 
     // Send a packet the radio may later ask us to replay.
     //

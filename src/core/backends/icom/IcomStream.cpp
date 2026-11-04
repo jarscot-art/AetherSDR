@@ -284,6 +284,11 @@ void IcomStream::sendTracked(std::vector<std::uint8_t> packet)
     sendTrackedImpl(std::move(packet), true);
 }
 
+QHostAddress IcomStream::localAddress() const
+{
+    return m_socket ? m_socket->localAddress() : QHostAddress{};
+}
+
 void IcomStream::sendTrackedTxAudio(std::vector<std::uint8_t> packet, const TxCoordinator::Context& context)
 {
     sendTrackedImpl(std::move(packet), true, context);

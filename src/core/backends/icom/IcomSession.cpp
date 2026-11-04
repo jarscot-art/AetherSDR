@@ -197,6 +197,9 @@ void IcomSession::stop()
     m_renewRetries = 0;
     m_pendingRenewals.clear();
     m_haveRadioId = false;
+    m_auditOwnerName.clear();
+    m_auditOwnerIpv4 = 0;
+    m_auditAvailable = false;
     m_advertisedCivAddress = 0;
     m_streamsRequested = false;
     m_streamGranted = false;
@@ -266,6 +269,15 @@ bool IcomSession::isCurrentControlPacket(std::span<const std::uint8_t> packet) c
 
 void IcomSession::onControlReady()
 {
+    if (m_outboundPolicy.isAudit()) {
+        // Fit the 16-byte wire field with a terminator. A new random label on
+        // every login distinguishes clients sharing a computer/IP, and reconnects.
+        m_auditOwnerName = QStringLiteral("HF5A-%1")
+            .arg(QRandomGenerator::global()->generate64() & 0xffffffffffULL,
+                 10, 16, QLatin1Char('0')).toStdString();
+        m_auditOwnerIpv4 = m_control->localAddress().toIPv4Address();
+        m_auditAvailable = false;
+    }
     qCInfo(lcIcom) << "control stream ready — sending login for user"
                    << m_params.username << "(password"
                    << (m_params.password.isEmpty() ? "EMPTY)" : "supplied)")
@@ -274,7 +286,8 @@ void IcomSession::onControlReady()
     sendControl(buildLogin(m_control->localSessionId(), m_control->remoteSessionId(),
                                       m_innerSeq++, m_tokenRequestId,
                                       m_params.username.toStdString(),
-                                      m_params.password.toStdString()));
+                                      m_params.password.toStdString(),
+                                      m_outboundPolicy.isAudit() ? m_auditOwnerName : "icom-pc"));
 }
 
 void IcomSession::onControlPayload(const QByteArray& packet)
@@ -427,9 +440,8 @@ void IcomSession::onControlPayload(const QByteArray& packet)
         }
 
     case static_cast<qsizetype>(kLenConnInfo): {
-        if (m_outboundPolicy.isAudit()
-            && parseConnectionUsage(pkt).kind == ConnectionUsageKind::Busy) {
-            fail(QStringLiteral("RX audit refused: radio reports an occupied RS-BA1 session"));
+        if (m_outboundPolicy.isAudit()) {
+            onAuditConnectionUsage(pkt);
             return;
         }
         if (m_connected) {
@@ -474,8 +486,54 @@ void IcomSession::onControlPayload(const QByteArray& packet)
     }
 }
 
+void IcomSession::onAuditConnectionUsage(std::span<const std::uint8_t> packet)
+{
+    if (!m_control) { return; }
+    const AuditConnectionContext context{
+        m_control->remoteSessionId(), m_control->localSessionId(), m_authId, m_radioId,
+        m_authOk, m_haveRadioId, m_auditAvailable, m_streamsRequested, m_streamGranted,
+        m_auditOwnerName, m_auditOwnerIpv4};
+    const auto decision = classifyAuditConnectionUsage(packet, context);
+    // Deliberately no tokens, credentials, owner labels or IPs in diagnostics.
+    qCInfo(lcIcom) << "RX audit conninfo decision=" << static_cast<int>(decision)
+                   << "authenticated=" << m_authOk << "requested=" << m_streamsRequested
+                   << "granted=" << m_streamGranted;
+    switch (decision) {
+    case AuditConnectionDecision::Ignore:
+        ++m_ignoredControlPackets;
+        return;
+    case AuditConnectionDecision::Ambiguous:
+        fail(QStringLiteral("RX audit refused: ambiguous RS-BA1 ownership or conninfo response"));
+        return;
+    case AuditConnectionDecision::Busy:
+        fail(QStringLiteral("RX audit refused: radio reports another RS-BA1 session owner"));
+        return;
+    case AuditConnectionDecision::Available:
+        if (m_streamGranted) {
+            fail(QStringLiteral("RX audit stopped: radio released the current RS-BA1 streams"));
+        } else if (!m_streamsRequested) {
+            m_auditAvailable = true;
+            requestStreamsIfReady();
+        }
+        return;
+    case AuditConnectionDecision::OwnSession:
+        return; // Duplicate notification must not reopen media streams.
+    case AuditConnectionDecision::Grant:
+        m_deviceName = QString::fromStdString(parseStreamGrant(packet).deviceName);
+        // Ownership was correlated with the current token; never adopt auth
+        // from an unsolicited conninfo notification.
+        m_streamGranted = true;
+        openMediaStreams();
+        return;
+    }
+}
+
 void IcomSession::requestStreamsIfReady()
 {
+    if (m_outboundPolicy.isAudit() && !m_auditAvailable) {
+        qCInfo(lcIcom) << "RX audit waiting for a correlated owner-free RS-BA1 notification";
+        return;
+    }
     if (m_streamsRequested || !m_authOk || !m_haveRadioId) {
         qCDebug(lcIcom) << "stream request not yet possible: requested="
                         << m_streamsRequested << "authOk=" << m_authOk

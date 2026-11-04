@@ -1377,6 +1377,16 @@ target_include_directories(icom_rx_audit_egress_test PRIVATE src tests)
 target_link_libraries(icom_rx_audit_egress_test PRIVATE aethercore Qt6::Core Qt6::Test)
 add_test(NAME icom_rx_audit_egress_test COMMAND icom_rx_audit_egress_test)
 
+add_executable(icom_connection_usage_test tests/icom_connection_usage_test.cpp
+    src/core/backends/icom/IcomProtocol.cpp)
+target_include_directories(icom_connection_usage_test PRIVATE src)
+add_test(NAME icom_connection_usage_test COMMAND icom_connection_usage_test)
+
+add_executable(icom_rx_audit_busy_test tests/icom_rx_audit_busy_test.cpp)
+target_include_directories(icom_rx_audit_busy_test PRIVATE src)
+target_link_libraries(icom_rx_audit_busy_test PRIVATE aethercore Qt6::Core Qt6::Test)
+add_test(NAME icom_rx_audit_busy_test COMMAND icom_rx_audit_busy_test)
+
 # Explicit opt-in only: full-suite's default-OFF graph does not require this tool.
 if(TARGET aether-icom-rx-audit)
     add_test(NAME icom_rx_audit_self_check COMMAND aether-icom-rx-audit --self-check)

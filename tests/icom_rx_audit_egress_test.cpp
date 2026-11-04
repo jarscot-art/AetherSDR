@@ -8,6 +8,7 @@
 #include <QCoreApplication>
 #include <QPointer>
 #include <QTimer>
+#include <algorithm>
 #include <cstdio>
 #include <cstdint>
 #include <memory>
@@ -60,7 +61,13 @@ struct IcomCivBackendTestAccess {
         session.m_authOk = session.m_haveRadioId = true;
         session.m_authId = {1,2,3,4,5,6};
     }
-    static void negotiate(IcomSession& session) { session.requestStreamsIfReady(); }
+    static void negotiate(IcomSession& session)
+    {
+        // This egress test injects readiness; ownership negotiation itself is
+        // exercised through real incoming bytes by icom_rx_audit_busy_test.
+        session.m_auditAvailable = true;
+        session.requestStreamsIfReady();
+    }
     static void firstAuth(IcomSession& session)
     {
         session.sendControl(buildAuth(localSid, remoteSid, 1, session.m_authId, AuthKind::First));
@@ -80,6 +87,7 @@ struct IcomCivBackendTestAccess {
         std::vector<std::uint8_t> packet(kLenConnInfo);
         writeHeader(packet, {kLenConnInfo, 0, 0, remoteSid, localSid});
         packet[0x13] = 0x80; packet[0x14] = 3; packet[0x15] = 0; packet[0x60] = 1;
+        std::copy(session.m_authId.begin(), session.m_authId.end(), packet.begin() + 0x1a);
         session.onControlPayload(QByteArray(reinterpret_cast<const char*>(packet.data()), static_cast<int>(packet.size())));
     }
     static bool failing(const IcomSession& session) { return session.m_failing; }
