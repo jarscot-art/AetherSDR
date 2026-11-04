@@ -1,0 +1,2 @@
+4 workflow(s) scanned: 7 test(s) selected by -R; .github/ci-test-gate.txt: 7 frozen; 921 registered in tests/tests.cmake
+ok: per-PR gate matches the frozen list

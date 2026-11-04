@@ -1,0 +1,117 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 140
+    Start 140: icom_rx_audit_init_test
+
+140: Test command: D:\a\AetherSDR\AetherSDR\build\icom_rx_audit_init_test.exe
+140: Working Directory: D:/a/AetherSDR/AetherSDR/build
+140: Environment variables: 
+140:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+140:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+140: Test timeout computed to be: 60
+140: PASS real handshake dispatch emits two ready packets and one login
+140: PASS login emits first auth then token request with sequence 2
+140: PASS early conninfo is retained as bytes, not permission
+140: PASS capabilities alone cannot authorize pending availability
+140: FAIL token accepted revalidates early conninfo and sends exactly one RX-only request
+140: FAIL observed handshake/login/conninfo/capabilities/token/request/grant sequence completes
+140: FAIL repeated grant/token/capabilities never resend the stream request
+140: PASS exact initialization sequence uses final writer with zero sockets and zero denied datagrams
+140: PASS token before capabilities cannot authorize replay early
+140: FAIL capabilities arriving last also revalidates retained conninfo
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS duplicates with changed sequence fields do not refresh age
+140: PASS expired early data is consumed without permission
+140: PASS fresh post-auth notification can recover after early-data expiry
+140: PASS token rotation rechecks cached bytes against final AuthId without rewriting them
+140: PASS old-token notification after rotation remains untrusted
+140: PASS current rotated token can complete a correlated grant
+140: FAIL token rotation rechecks cached bytes against final AuthId without rewriting them
+140: FAIL current rotated token can complete a correlated grant
+140: FAIL early true Busy is fully validated then refuses without claiming streams
+140: FAIL late availability cannot bypass a Busy refusal
+140: PASS conflicting early notifications fail closed in either order
+140: PASS conflicting early notifications fail closed in either order
+140: PASS malformed early notification is not buffered as availability
+140: PASS pre-login data cannot seed the new login's availability
+140: PASS no conninfo means no inferred availability or stream request
+140: PASS stale capabilities cannot complete deferred correlation
+140: FAIL current capabilities finish pending correlation
+140: PASS stale login cannot enable early buffering
+140: PASS wrong login request ID cannot enable early buffering
+140: FAIL repeated login does not replace current token or retained evidence
+140: PASS stop discards buffered bytes and monotonic age
+140: PASS reconnect cannot reuse previous availability even with reused fixture SIDs
+140: init regression failures=10; no sockets bound
+1/1 Test #140: icom_rx_audit_init_test ..........***Failed    0.03 sec
+PASS real handshake dispatch emits two ready packets and one login
+PASS login emits first auth then token request with sequence 2
+PASS early conninfo is retained as bytes, not permission
+PASS capabilities alone cannot authorize pending availability
+FAIL token accepted revalidates early conninfo and sends exactly one RX-only request
+FAIL observed handshake/login/conninfo/capabilities/token/request/grant sequence completes
+FAIL repeated grant/token/capabilities never resend the stream request
+PASS exact initialization sequence uses final writer with zero sockets and zero denied datagrams
+PASS token before capabilities cannot authorize replay early
+FAIL capabilities arriving last also revalidates retained conninfo
+PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+PASS fresh fully correlated confirmation recovers after rejected early data
+PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+PASS fresh fully correlated confirmation recovers after rejected early data
+PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+PASS fresh fully correlated confirmation recovers after rejected early data
+PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+PASS fresh fully correlated confirmation recovers after rejected early data
+PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+PASS fresh fully correlated confirmation recovers after rejected early data
+PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+PASS fresh fully correlated confirmation recovers after rejected early data
+PASS duplicates with changed sequence fields do not refresh age
+PASS expired early data is consumed without permission
+PASS fresh post-auth notification can recover after early-data expiry
+PASS token rotation rechecks cached bytes against final AuthId without rewriting them
+PASS old-token notification after rotation remains untrusted
+PASS current rotated token can complete a correlated grant
+FAIL token rotation rechecks cached bytes against final AuthId without rewriting them
+FAIL current rotated token can complete a correlated grant
+FAIL early true Busy is fully validated then refuses without claiming streams
+FAIL late availability cannot bypass a Busy refusal
+PASS conflicting early notifications fail closed in either order
+PASS conflicting early notifications fail closed in either order
+PASS malformed early notification is not buffered as availability
+PASS pre-login data cannot seed the new login's availability
+PASS no conninfo means no inferred availability or stream request
+PASS stale capabilities cannot complete deferred correlation
+FAIL current capabilities finish pending correlation
+PASS stale login cannot enable early buffering
+PASS wrong login request ID cannot enable early buffering
+FAIL repeated login does not replace current token or retained evidence
+PASS stop discards buffered bytes and monotonic age
+PASS reconnect cannot reuse previous availability even with reused fixture SIDs
+init regression failures=10; no sockets bound
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.06 sec
+
+The following tests FAILED:
+	140 - icom_rx_audit_init_test (Failed)
+Errors while running CTest

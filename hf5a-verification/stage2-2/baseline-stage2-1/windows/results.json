@@ -1,0 +1,72 @@
+[
+  {
+    "test": "icom_outbound_policy_test",
+    "status": "PASS",
+    "seconds": "0.0137923"
+  },
+  {
+    "test": "icom_rx_audit_egress_test",
+    "status": "PASS",
+    "seconds": "0.0411763"
+  },
+  {
+    "test": "icom_connection_usage_test",
+    "status": "PASS",
+    "seconds": "0.0099036"
+  },
+  {
+    "test": "icom_rx_audit_busy_test",
+    "status": "PASS",
+    "seconds": "0.0423055"
+  },
+  {
+    "test": "icom_rx_audit_self_check",
+    "status": "PASS",
+    "seconds": "0.034795"
+  },
+  {
+    "test": "icom_rx_audit_refuses_implicit_connection",
+    "status": "PASS",
+    "seconds": "0.0282716"
+  },
+  {
+    "test": "icom_protocol_test",
+    "status": "PASS",
+    "seconds": "0.0113947"
+  },
+  {
+    "test": "icom_civ_test",
+    "status": "PASS",
+    "seconds": "0.0114065"
+  },
+  {
+    "test": "icom_control_profile_test",
+    "status": "PASS",
+    "seconds": "0.0504279"
+  },
+  {
+    "test": "icom_session_lease_test",
+    "status": "PASS",
+    "seconds": "0.039311"
+  },
+  {
+    "test": "icom_backend_seam_test",
+    "status": "PASS",
+    "seconds": "0.126058"
+  },
+  {
+    "test": "backend_family_switch_test",
+    "status": "PASS",
+    "seconds": "3.49727"
+  },
+  {
+    "test": "transmit_model_test",
+    "status": "PASS",
+    "seconds": "0.0498182"
+  },
+  {
+    "test": "icom_replay_test",
+    "status": "PASS",
+    "seconds": "0.0360749"
+  }
+]

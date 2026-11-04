@@ -1,0 +1,8 @@
+{
+  "baseCommit": "f069490fa2c9e1a2153a7490be1ef7fca58196ea",
+  "hardwareTest": false,
+  "dependencyRecipe": "ci.yml:check-windows",
+  "sourceCommit": "48bb8ee78a2229e1035f6162d06f674e09923686",
+  "runUrl": "https://github.com/jarscot-art/AetherSDR/actions/runs/41890486023",
+  "qt": "6.12.0"
+}

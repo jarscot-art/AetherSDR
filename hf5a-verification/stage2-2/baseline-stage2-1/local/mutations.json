@@ -1,0 +1,20 @@
+[
+  {
+    "mutation": "own-grant-as-busy",
+    "expected": "FAIL",
+    "exitCode": 1,
+    "failures": [
+      "FAIL overlapping wire parsers resolve to own grant only with complete context",
+      "FAIL duplicate grant distinguished"
+    ]
+  },
+  {
+    "mutation": "foreign-owner-as-grant",
+    "expected": "FAIL",
+    "exitCode": 1,
+    "failures": [
+      "FAIL another owner on same IP remains Busy",
+      "FAIL same owner label on another IP remains Busy"
+    ]
+  }
+]

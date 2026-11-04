@@ -1,0 +1,103 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 138
+    Start 138: icom_connection_usage_test
+
+138: Test command: D:\a\AetherSDR\AetherSDR\build\icom_connection_usage_test.exe
+138: Working Directory: D:/a/AetherSDR/AetherSDR/build
+138: Environment variables: 
+138:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+138:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+138: Test timeout computed to be: 60
+138: FAIL overlapping wire parsers resolve to own grant only with complete context
+138: PASS owner label and IPv4 are decoded at 0x64 and network-order 0x84
+138: PASS another owner on same IP remains Busy
+138: PASS same owner label on another IP remains Busy
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS truncated conninfo rejected
+138: PASS oversized conninfo rejected
+138: PASS hidden owner is not proof of own grant
+138: PASS missing owner IP rejected
+138: PASS unknown routed IP rejected
+138: PASS missing login label rejected
+138: PASS no prior availability means no grant
+138: PASS unsolicited own-looking grant rejected
+138: FAIL duplicate grant distinguished
+138: PASS pre-auth notification cannot advance negotiation
+138: PASS unselected radio cannot grant
+138: PASS explicit owner-free notification allows negotiation
+138: PASS available plus owner IP is contradictory
+138: PASS login carries exact bounded per-session owner label
+138: failures=2
+1/1 Test #138: icom_connection_usage_test .......***Failed    0.01 sec
+FAIL overlapping wire parsers resolve to own grant only with complete context
+PASS owner label and IPv4 are decoded at 0x64 and network-order 0x84
+PASS another owner on same IP remains Busy
+PASS same owner label on another IP remains Busy
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS truncated conninfo rejected
+PASS oversized conninfo rejected
+PASS hidden owner is not proof of own grant
+PASS missing owner IP rejected
+PASS unknown routed IP rejected
+PASS missing login label rejected
+PASS no prior availability means no grant
+PASS unsolicited own-looking grant rejected
+FAIL duplicate grant distinguished
+PASS pre-auth notification cannot advance negotiation
+PASS unselected radio cannot grant
+PASS explicit owner-free notification allows negotiation
+PASS available plus owner IP is contradictory
+PASS login carries exact bounded per-session owner label
+failures=2
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.04 sec
+
+The following tests FAILED:
+	138 - icom_connection_usage_test (Failed)
+Errors while running CTest

@@ -1,0 +1,5 @@
+{
+  "sourceHash": "2823D18B80284DCE4911A84E69B91653054AF9E28EB248F95545FAAFF8F6E501",
+  "expected": "FAIL when deferred conninfo is discarded",
+  "ctestExitCode": 8
+}

@@ -1,0 +1,10 @@
+[0/2] Re-checking globbed directories...
+[1/10] Performing build step for 'build_opus'
+ninja: no work to do.
+[2/10] No install step for 'build_opus'
+[3/10] Completed 'build_opus'
+[4/10] Automatic MOC and UIC for target aethercore
+[5/9] Building CXX object CMakeFiles\aethercore.dir\src\core\backends\icom\IcomProtocol.cpp.obj
+[6/9] Building CXX object CMakeFiles\aethercore.dir\src\core\backends\icom\IcomSession.cpp.obj
+[7/9] Linking CXX static library aethercore.lib
+[8/9] Linking CXX executable icom_rx_audit_init_test.exe

@@ -1,0 +1,5 @@
+{
+  "expected": "FAIL with final guard removed",
+  "ctestExitCode": 8,
+  "originalSourceHash": "ABBA5BD378010F0A56BF4C7ADA7749D32F96F6F10DB2C4F67D4952D3EA5BCD47"
+}

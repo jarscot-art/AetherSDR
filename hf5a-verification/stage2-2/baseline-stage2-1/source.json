@@ -1,0 +1,21 @@
+{
+  "base": "11b1480d6270cd2942c767c11046543735a8fbfe",
+  "sourceCommit": "f069490fa2c9e1a2153a7490be1ef7fca58196ea",
+  "branch": "hf5a/stage2-1-busy-fix",
+  "workflowRun": 41842733374,
+  "hardwareConnection": false,
+  "protocolReferences": [
+    {
+      "url": "https://github.com/nonoo/kappanhang/blob/66f2369efcddd4c00caf4d2ddf0e54116582cfaf/controlstream.go#L229-L262",
+      "use": "Public wire example: own stream allocation has conninfo busy=1, computer and IPv4."
+    },
+    {
+      "url": "https://github.com/eliggett/wfview/blob/b7ee805fb99ddec461c33734ab41d922ee2ea930/include/packettypes.h#L286-L339",
+      "use": "Read-only field layout; no GPL implementation copied."
+    },
+    {
+      "url": "https://github.com/eliggett/wfview/blob/b7ee805fb99ddec461c33734ab41d922ee2ea930/src/radio/icomudphandler.cpp#L467-L523",
+      "use": "Read-only corroboration of owner-name/IP semantics and configurable login name."
+    }
+  ]
+}

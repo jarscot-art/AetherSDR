@@ -1,0 +1,38 @@
+PASS overlapping wire parsers resolve to own grant only with complete context
+PASS owner label and IPv4 are decoded at 0x64 and network-order 0x84
+PASS another owner on same IP remains Busy
+PASS same owner label on another IP remains Busy
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS stale SID/AuthId/RadioId cannot grant or report Busy
+PASS foreign association Busy is ignored before ownership
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS malformed envelope/full-width busy fails closed
+PASS truncated conninfo rejected
+PASS oversized conninfo rejected
+PASS hidden owner is not proof of own grant
+PASS missing owner IP rejected
+PASS unknown routed IP rejected
+PASS missing login label rejected
+PASS no prior availability means no grant
+PASS unsolicited own-looking grant rejected
+PASS duplicate grant distinguished
+PASS pre-auth notification cannot advance negotiation
+PASS unselected radio cannot grant
+PASS explicit owner-free notification allows negotiation
+PASS available plus owner IP is contradictory
+PASS login carries exact bounded per-session owner label
+failures=0

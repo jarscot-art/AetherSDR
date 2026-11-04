@@ -1,0 +1,651 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 136
+      Start 136: icom_outbound_policy_test
+
+136: Test command: D:\a\AetherSDR\AetherSDR\build\icom_outbound_policy_test.exe
+136: Working Directory: D:/a/AetherSDR/AetherSDR/build
+136: Environment variables: 
+136:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+136:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+136: Test timeout computed to be: 60
+136: policy: 9 exact queries; 2304 added-data mutations; failures=0
+ 1/15 Test #136: icom_outbound_policy_test ...................   Passed    0.01 sec
+test 137
+      Start 137: icom_rx_audit_egress_test
+
+137: Test command: D:\a\AetherSDR\AetherSDR\build\icom_rx_audit_egress_test.exe
+137: Working Directory: D:/a/AetherSDR/AetherSDR/build
+137: Environment variables: 
+137:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+137:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+137: Test timeout computed to be: 60
+137: PASS approved query reaches last writer
+137: PASS approved query retransmits unchanged
+137: PASS raw/tracked/emergency/authorized-TX/replay cannot leak PTT, OFF, CW, scope or XFC
+137: EVIDENCE serial: packets_before=2 packets_after_forbidden=2 denied=30
+137: PASS denied writes consume no sequence
+137: PASS denials counted at actual egress boundary
+137: PASS old-session retained packet cannot cross new SID
+137: PASS stop uses guarded writer and closes only own stream
+137: PASS audio including silence is denied even with a valid TX grant and replay
+137: EVIDENCE audio: packets=0 denied=4
+137: PASS only deliberately injected forbidden replay exists
+137: PASS audio transport disconnect allowed without PCM
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS canonical login/auth/renew/RX negotiation permitted; caller cannot enable TX
+137: PASS non-ID query cannot leave before radio identification
+137: PASS real decoder unlocks approved polling after directed MK2 reply
+137: PASS audit cannot automatically restart CI-V
+137: PASS audit never creates a TX timer or transmits audio, even with enableTx forced true
+137: PASS teardown sends own deauth and six own disconnects only
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS busy notification cannot become an audit stream grant
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS scope startup and emergency/user writes suppressed before scheduling
+137: PASS audit backend uses real scheduler for approved polling only
+137: PASS backend disconnect cannot issue CW abort or PTT OFF
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS failure callback does not synchronously destroy its session
+137: PASS queued failure cleanup safely retires only the test session
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS readback-reset observer may retire backend without a subsequent dispatch
+137: PASS missing policy fails closed at final writer
+137: RX audit egress failures=0; no sockets bound
+ 2/15 Test #137: icom_rx_audit_egress_test ...................   Passed    0.03 sec
+test 138
+      Start 138: icom_connection_usage_test
+
+138: Test command: D:\a\AetherSDR\AetherSDR\build\icom_connection_usage_test.exe
+138: Working Directory: D:/a/AetherSDR/AetherSDR/build
+138: Environment variables: 
+138:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+138:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+138: Test timeout computed to be: 60
+138: PASS overlapping wire parsers resolve to own grant only with complete context
+138: PASS owner label and IPv4 are decoded at 0x64 and network-order 0x84
+138: PASS another owner on same IP remains Busy
+138: PASS same owner label on another IP remains Busy
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS stale SID/AuthId/RadioId cannot grant or report Busy
+138: PASS foreign association Busy is ignored before ownership
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS malformed envelope/full-width busy fails closed
+138: PASS truncated conninfo rejected
+138: PASS oversized conninfo rejected
+138: PASS hidden owner is not proof of own grant
+138: PASS missing owner IP rejected
+138: PASS unknown routed IP rejected
+138: PASS missing login label rejected
+138: PASS no prior availability means no grant
+138: PASS unsolicited own-looking grant rejected
+138: PASS duplicate grant distinguished
+138: PASS pre-auth notification cannot advance negotiation
+138: PASS unselected radio cannot grant
+138: PASS explicit owner-free notification allows negotiation
+138: PASS available plus owner IP is contradictory
+138: PASS login carries exact bounded per-session owner label
+138: failures=0
+ 3/15 Test #138: icom_connection_usage_test ..................   Passed    0.01 sec
+test 139
+      Start 139: icom_rx_audit_busy_test
+
+139: Test command: D:\a\AetherSDR\AetherSDR\build\icom_rx_audit_busy_test.exe
+139: Working Directory: D:/a/AetherSDR/AetherSDR/build
+139: Environment variables: 
+139:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+139:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+139: Test timeout computed to be: 60
+139: PASS no stream claim before correlated owner-free notification
+139: PASS availability sends exactly one RX-only stream request at terminal writer
+139: PASS correlated own Busy is grant, not occupied-session failure
+139: PASS duplicate own status does not reopen streams
+139: PASS complete negotiation test never binds UDP
+139: PASS current owner-free notification after grant releases session
+139: PASS stop clears ownership evidence before reconnect
+139: PASS foreign availability cannot trigger a stream request
+139: PASS stale SID or mismatched AuthId/RadioId neither fails nor grants nor adopts token
+139: PASS valid reply after stale Busy can complete pending request
+139: PASS foreign availability cannot trigger a stream request
+139: PASS stale SID or mismatched AuthId/RadioId neither fails nor grants nor adopts token
+139: PASS valid reply after stale Busy can complete pending request
+139: PASS foreign availability cannot trigger a stream request
+139: PASS stale SID or mismatched AuthId/RadioId neither fails nor grants nor adopts token
+139: PASS valid reply after stale Busy can complete pending request
+139: PASS foreign availability cannot trigger a stream request
+139: PASS stale SID or mismatched AuthId/RadioId neither fails nor grants nor adopts token
+139: PASS valid reply after stale Busy can complete pending request
+139: PASS foreign availability cannot trigger a stream request
+139: PASS stale SID or mismatched AuthId/RadioId neither fails nor grants nor adopts token
+139: PASS valid reply after stale Busy can complete pending request
+139: PASS foreign availability cannot trigger a stream request
+139: PASS stale SID or mismatched AuthId/RadioId neither fails nor grants nor adopts token
+139: PASS valid reply after stale Busy can complete pending request
+139: PASS real Busy before/after stream request blocks other owner on same IP or another IP
+139: PASS terminal Busy cannot be bypassed by a following own-looking grant
+139: PASS real Busy before/after stream request blocks other owner on same IP or another IP
+139: PASS terminal Busy cannot be bypassed by a following own-looking grant
+139: PASS real Busy before/after stream request blocks other owner on same IP or another IP
+139: PASS terminal Busy cannot be bypassed by a following own-looking grant
+139: PASS real Busy before/after stream request blocks other owner on same IP or another IP
+139: PASS terminal Busy cannot be bypassed by a following own-looking grant
+139: PASS ambiguous current packet fails closed without opening media
+139: PASS ambiguous current packet fails closed without opening media
+139: PASS ambiguous current packet fails closed without opening media
+139: PASS ambiguous current packet fails closed without opening media
+139: PASS ambiguous current packet fails closed without opening media
+139: PASS ambiguous current packet fails closed without opening media
+139: PASS own-looking unsolicited grant before availability cannot claim radio
+139: PASS each login gets a fresh bounded owner label at actual final writer
+139: failures=0
+ 4/15 Test #139: icom_rx_audit_busy_test .....................   Passed    0.03 sec
+test 140
+      Start 140: icom_rx_audit_init_test
+
+140: Test command: D:\a\AetherSDR\AetherSDR\build\icom_rx_audit_init_test.exe
+140: Working Directory: D:/a/AetherSDR/AetherSDR/build
+140: Environment variables: 
+140:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+140:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+140: Test timeout computed to be: 60
+140: PASS real handshake dispatch emits two ready packets and one login
+140: PASS login emits first auth then token request with sequence 2
+140: PASS early conninfo is retained as bytes, not permission
+140: PASS capabilities alone cannot authorize pending availability
+140: PASS token accepted revalidates early conninfo and sends exactly one RX-only request
+140: PASS observed handshake/login/conninfo/capabilities/token/request/grant sequence completes
+140: PASS repeated grant/token/capabilities never resend the stream request
+140: PASS exact initialization sequence uses final writer with zero sockets and zero denied datagrams
+140: PASS token before capabilities cannot authorize replay early
+140: PASS capabilities arriving last also revalidates retained conninfo
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS stale SID or mismatched AuthId/RadioId in early notification never authorizes streams
+140: PASS fresh fully correlated confirmation recovers after rejected early data
+140: PASS duplicates with changed sequence fields do not refresh age
+140: PASS expired early data is consumed without permission
+140: PASS fresh post-auth notification can recover after early-data expiry
+140: PASS token rotation rechecks cached bytes against final AuthId without rewriting them
+140: PASS old-token notification after rotation remains untrusted
+140: PASS current rotated token can complete a correlated grant
+140: PASS token rotation rechecks cached bytes against final AuthId without rewriting them
+140: PASS current rotated token can complete a correlated grant
+140: PASS early true Busy is fully validated then refuses without claiming streams
+140: PASS late availability cannot bypass a Busy refusal
+140: PASS conflicting early notifications fail closed in either order
+140: PASS conflicting early notifications fail closed in either order
+140: PASS malformed early notification is not buffered as availability
+140: PASS pre-login data cannot seed the new login's availability
+140: PASS no conninfo means no inferred availability or stream request
+140: PASS stale capabilities cannot complete deferred correlation
+140: PASS current capabilities finish pending correlation
+140: PASS stale login cannot enable early buffering
+140: PASS wrong login request ID cannot enable early buffering
+140: PASS repeated login does not replace current token or retained evidence
+140: PASS stop discards buffered bytes and monotonic age
+140: PASS reconnect cannot reuse previous availability even with reused fixture SIDs
+140: init regression failures=0; no sockets bound
+ 5/15 Test #140: icom_rx_audit_init_test .....................   Passed    0.03 sec
+test 141
+      Start 141: icom_rx_audit_self_check
+
+141: Test command: D:\a\AetherSDR\AetherSDR\build\aether-icom-rx-audit.exe "--self-check"
+141: Working Directory: D:/a/AetherSDR/AetherSDR/build
+141: Environment variables: 
+141:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+141:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+141: Test timeout computed to be: 60
+141: RX policy self-check: PASS; no session or sockets created
+ 6/15 Test #141: icom_rx_audit_self_check ....................   Passed    0.03 sec
+test 142
+      Start 142: icom_rx_audit_refuses_implicit_connection
+
+142: Test command: D:\a\AetherSDR\AetherSDR\build\aether-icom-rx-audit.exe
+142: Working Directory: D:/a/AetherSDR/AetherSDR/build
+142: Environment variables: 
+142:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+142:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+142: Test timeout computed to be: 60
+142: No connection attempted. Hardware use needs --connect and --exclusive-lan-confirmed.
+ 7/15 Test #142: icom_rx_audit_refuses_implicit_connection ...   Passed    0.02 sec
+test 143
+      Start 143: icom_protocol_test
+
+143: Test command: D:\a\AetherSDR\AetherSDR\build\icom_protocol_test.exe
+143: Working Directory: D:/a/AetherSDR/AetherSDR/build
+143: Environment variables: 
+143:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+143:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+143: Test timeout computed to be: 60
+143: icom_protocol_test: all checks passed
+ 8/15 Test #143: icom_protocol_test ..........................   Passed    0.01 sec
+test 144
+      Start 144: icom_civ_test
+
+144: Test command: D:\a\AetherSDR\AetherSDR\build\icom_civ_test.exe
+144: Working Directory: D:/a/AetherSDR/AetherSDR/build
+144: Environment variables: 
+144:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+144:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+144: Test timeout computed to be: 60
+144: icom_civ_test: all checks passed
+ 9/15 Test #144: icom_civ_test ...............................   Passed    0.01 sec
+test 147
+      Start 147: icom_control_profile_test
+
+147: Test command: D:\a\AetherSDR\AetherSDR\build\icom_control_profile_test.exe
+147: Working Directory: D:/a/AetherSDR/AetherSDR/build
+147: Environment variables: 
+147:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+147:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+147: Test timeout computed to be: 60
+10/15 Test #147: icom_control_profile_test ...................   Passed    0.04 sec
+test 158
+      Start 158: icom_session_lease_test
+
+158: Test command: D:\a\AetherSDR\AetherSDR\build\icom_session_lease_test.exe
+158: Working Directory: D:/a/AetherSDR/AetherSDR/build
+158: Environment variables: 
+158:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+158:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+158: Test timeout computed to be: 60
+158: icom_session_lease_test: all checks passed
+11/15 Test #158: icom_session_lease_test .....................   Passed    0.03 sec
+test 159
+      Start 159: icom_backend_seam_test
+
+159: Test command: D:\a\AetherSDR\AetherSDR\build\icom_backend_seam_test.exe
+159: Working Directory: D:/a/AetherSDR/AetherSDR/build
+159: Environment variables: 
+159:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+159:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+159: Test timeout computed to be: 60
+159: icom_backend_seam_test: all checks passed
+12/15 Test #159: icom_backend_seam_test ......................   Passed    0.15 sec
+test 719
+      Start 719: backend_family_switch_test
+
+719: Test command: D:\a\AetherSDR\AetherSDR\build\backend_family_switch_test.exe
+719: Working Directory: D:/a/AetherSDR/AetherSDR/build
+719: Environment variables: 
+719:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+719:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+719: Test timeout computed to be: 60
+719: -- baseline connect edge
+719: [PASS] baseline: simulator connected
+719: [PASS] baseline: simulator disconnected
+719:   baseline: 1 capabilitiesChanged on one connect edge
+719: -- cold cycle
+719: [PASS] -> sim: model reports the family
+719: [PASS] -> sim: backend present
+719: [PASS] -> sim: backendRebuilt announced exactly once
+719: [PASS] -> sim: teardown+setup within budget (1 ms)
+719: [PASS] -> sim: no slice models carried across
+719: [PASS] -> sim: no pan models carried across
+719: [PASS] -> hl2: model reports the family
+719: [PASS] -> hl2: backend present
+719: [PASS] -> hl2: backendRebuilt announced exactly once
+719: [PASS] -> hl2: teardown+setup within budget (1 ms)
+719: [PASS] -> hl2: no slice models carried across
+719: [PASS] -> hl2: no pan models carried across
+719: [PASS] -> anan: model reports the family
+719: [PASS] -> anan: backend present
+719: [PASS] -> anan: backendRebuilt announced exactly once
+719: [PASS] -> anan: teardown+setup within budget (0 ms)
+719: [PASS] -> anan: no slice models carried across
+719: [PASS] -> anan: no pan models carried across
+719: [PASS] -> icom: model reports the family
+719: [PASS] -> icom: backend present
+719: [PASS] -> icom: backendRebuilt announced exactly once
+719: [PASS] -> icom: teardown+setup within budget (0 ms)
+719: [PASS] -> icom: no slice models carried across
+719: [PASS] -> icom: no pan models carried across
+719:   rtl: not built into this binary, skipped
+719: [PASS] -> flex: model reports the family
+719: [PASS] -> flex: backend present
+719: [PASS] -> flex: backendRebuilt announced exactly once
+719: [PASS] -> flex: teardown+setup within budget (0 ms)
+719: [PASS] -> flex: no slice models carried across
+719: [PASS] -> flex: no pan models carried across
+719: [PASS] -> hl2: model reports the family
+719: [PASS] -> hl2: backend present
+719: [PASS] -> hl2: backendRebuilt announced exactly once
+719: [PASS] -> hl2: teardown+setup within budget (0 ms)
+719: [PASS] -> hl2: no slice models carried across
+719: [PASS] -> hl2: no pan models carried across
+719: [PASS] -> sim: model reports the family
+719: [PASS] -> sim: backend present
+719: [PASS] -> sim: backendRebuilt announced exactly once
+719: [PASS] -> sim: teardown+setup within budget (0 ms)
+719: [PASS] -> sim: no slice models carried across
+719: [PASS] -> sim: no pan models carried across
+719: [PASS] -> icom: model reports the family
+719: [PASS] -> icom: backend present
+719: [PASS] -> icom: backendRebuilt announced exactly once
+719: [PASS] -> icom: teardown+setup within budget (1 ms)
+719: [PASS] -> icom: no slice models carried across
+719: [PASS] -> icom: no pan models carried across
+719: [PASS] -> flex: model reports the family
+719: [PASS] -> flex: backend present
+719: [PASS] -> flex: backendRebuilt announced exactly once
+719: [PASS] -> flex: teardown+setup within budget (0 ms)
+719: [PASS] -> flex: no slice models carried across
+719: [PASS] -> flex: no pan models carried across
+719: [PASS] -> anan: model reports the family
+719: [PASS] -> anan: backend present
+719: [PASS] -> anan: backendRebuilt announced exactly once
+719: [PASS] -> anan: teardown+setup within budget (0 ms)
+719: [PASS] -> anan: no slice models carried across
+719: [PASS] -> anan: no pan models carried across
+719: [PASS] -> flex: model reports the family
+719: [PASS] -> flex: backend present
+719: [PASS] -> flex: backendRebuilt announced exactly once
+719: [PASS] -> flex: teardown+setup within budget (0 ms)
+719: [PASS] -> flex: no slice models carried across
+719: [PASS] -> flex: no pan models carried across
+719: [PASS] native TX observation is seeded before family replacement
+719: [PASS] -> icom: model reports the family
+719: [PASS] -> icom: backend present
+719: [PASS] -> icom: backendRebuilt announced exactly once
+719: [PASS] -> icom: teardown+setup within budget (0 ms)
+719: [PASS] -> icom: no slice models carried across
+719: [PASS] -> icom: no pan models carried across
+719: [PASS] production family replacement clears TX proof
+719: [PASS] replacement backend is not masked by the old ATU reference
+719: -- accumulation check (#4599 defect class)
+719: [PASS] accumulation: simulator connected
+719: [PASS] accumulation: simulator disconnected
+719:   after 12 switches: 1 capabilitiesChanged on one connect edge
+719: [PASS] per-connect capabilitiesChanged does not grow with switches (1 -> 1)
+719: -- live simulator -> hl2
+719: [PASS] live: simulator connected
+719: [PASS] -> hl2: model reports the family
+719: [PASS] -> hl2: backend present
+719: [PASS] -> hl2: backendRebuilt announced exactly once
+719: [PASS] -> hl2: teardown+setup within budget (1 ms)
+719: [PASS] -> hl2: no slice models carried across
+719: [PASS] -> hl2: no pan models carried across
+719: -- live simulator -> disconnect -> flex
+719: [PASS] live: simulator reconnected
+719: [PASS] live: disconnect reported
+719: [PASS] live: the clean disconnect reports disconnected EXACTLY once (1)
+719: [PASS] live: disconnect within budget (50 ms)
+719: [PASS] -> flex: model reports the family
+719: [PASS] -> flex: backend present
+719: [PASS] -> flex: backendRebuilt announced exactly once
+719: [PASS] -> flex: teardown+setup within budget (1 ms)
+719: [PASS] -> flex: no slice models carried across
+719: [PASS] -> flex: no pan models carried across
+719: -- stale-status race (secondary)
+719: [PASS] -> hl2: model reports the family
+719: [PASS] -> hl2: backend present
+719: [PASS] -> hl2: backendRebuilt announced exactly once
+719: [PASS] -> hl2: teardown+setup within budget (1 ms)
+719: [PASS] -> hl2: no slice models carried across
+719: [PASS] -> hl2: no pan models carried across
+719: [PASS] race: no stale event removed the new slice (0)
+719: [PASS] race: one seam sliceChanged -> one sliceAdded (1)
+719: -- deterministic stale-status injection
+719: [PASS] inject: simulator connected
+719: [PASS] inject: backend is the simulator
+719: [PASS] inject: the simulator vends a RadioConnection
+719: [PASS] inject: that connection lives on its own thread
+719: [PASS] -> hl2: model reports the family
+719: [PASS] -> hl2: backend present
+719: [PASS] -> hl2: backendRebuilt announced exactly once
+719: [PASS] -> hl2: teardown+setup within budget (1 ms)
+719: [PASS] -> hl2: no slice models carried across
+719: [PASS] -> hl2: no pan models carried across
+719: [PASS] inject: the injected stale status did not remove the new slice (0)
+719: [PASS] inject: one sliceAdded (1)
+719: [PASS] inject: exactly one slice model exists (1)
+719: [PASS] -> sim: model reports the family
+719: [PASS] -> sim: backend present
+719: [PASS] -> sim: backendRebuilt announced exactly once
+719: [PASS] -> sim: teardown+setup within budget (0 ms)
+719: [PASS] -> sim: no slice models carried across
+719: [PASS] -> sim: no pan models carried across
+719: [PASS] -> hl2: model reports the family
+719: [PASS] -> hl2: backend present
+719: [PASS] -> hl2: backendRebuilt announced exactly once
+719: [PASS] -> hl2: teardown+setup within budget (1 ms)
+719: [PASS] -> hl2: no slice models carried across
+719: [PASS] -> hl2: no pan models carried across
+719: [PASS] stale spectrum cannot inherit replacement backend geometry
+719: [PASS] current backend spectrum still reaches the feed
+719: -- power latches across a family switch
+719: [PASS] latch: outgoing radio's drive is confirmed
+719: [PASS] latch: outgoing radio's 500 W ceiling is reported
+719: [PASS] -> sim: model reports the family
+719: [PASS] -> sim: backend present
+719: [PASS] -> sim: backendRebuilt announced exactly once
+719: [PASS] -> sim: teardown+setup within budget (0 ms)
+719: [PASS] -> sim: no slice models carried across
+719: [PASS] -> sim: no pan models carried across
+719: [PASS] latch: drive is unreported again after a family switch
+719: [PASS] latch: the ceiling is unreported again after a family switch
+719: [PASS] latch: drive is not confirmed after a family switch
+719: [PASS] latch: the stale value survives, unvouched-for
+719: -- SmartLink prepare after a non-Flex session
+719: [PASS] -> hl2: model reports the family
+719: [PASS] -> hl2: backend present
+719: [PASS] -> hl2: backendRebuilt announced exactly once
+719: [PASS] -> hl2: teardown+setup within budget (1 ms)
+719: [PASS] -> hl2: no slice models carried across
+719: [PASS] -> hl2: no pan models carried across
+719: [PASS] wan: the hl2 backend has no PanadapterStream
+719: [PASS] wan: prepare reports a stream after hl2
+719: [PASS] wan: prepare switched the family to flex
+719: [PASS] wan: prepare left a PanadapterStream
+719: [PASS] wan: prepare announced backendRebuilt once (1)
+719: [PASS] -> flex: model reports the family
+719: [PASS] -> flex: backend present
+719: [PASS] -> flex: backendRebuilt announced exactly once
+719: [PASS] -> flex: teardown+setup within budget (0 ms)
+719: [PASS] -> flex: no slice models carried across
+719: [PASS] -> flex: no pan models carried across
+719: [PASS] wan: prepare reports a stream on flex
+719: [PASS] wan: prepare on flex kept the same backend
+719: [PASS] wan: prepare on flex rebuilt nothing
+719: [PASS] -> hl2: model reports the family
+719: [PASS] -> hl2: backend present
+719: [PASS] -> hl2: backendRebuilt announced exactly once
+719: [PASS] -> hl2: teardown+setup within budget (0 ms)
+719: [PASS] -> hl2: no slice models carried across
+719: [PASS] -> hl2: no pan models carried across
+719: -- destroy with hl2 attached
+719: [PASS] destroy with a backend attached is bounded (1 ms)
+719: 0 failure(s)
+13/15 Test #719: backend_family_switch_test ..................   Passed    3.49 sec
+test 821
+      Start 821: transmit_model_test
+
+821: Test command: D:\a\AetherSDR\AetherSDR\build\transmit_model_test.exe
+821: Working Directory: D:/a/AetherSDR/AetherSDR/build
+821: Environment variables: 
+821:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+821:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+821: Test timeout computed to be: 60
+821: [ OK ] legacy frequency publications preserve their numeric contract
+821: [ OK ] an explicit TX report preserves the existing ATU reference
+821: [ OK ] unrelated partial deltas do not erase provenance
+821: [ OK ] timeout invalidates live TX without zeroing ATU's historical frequency
+821: [ OK ] a validity flag alone cannot revive an old frequency
+821: [ OK ] invalid zero readback does not corrupt the last valid number
+821: [ OK ] nonfinite readback cannot become valid
+821: [ OK ] ATU reference and actual TX can differ without weakening proof
+821: [ OK ] a timeout leaves the established ATU reference untouched
+821: [ OK ] backend replacement clears proof but preserves the legacy getter
+821: [ OK ] the next legacy backend adopts frequency normally
+821: [ OK ] frequency observation and expiry issue no control intent
+821: [ OK ] TX arriving before RX cannot initialize the ATU dial reference
+821: [ OK ] TX arriving first after reconnect cannot overwrite the retained ATU reference
+821: [ OK ] an already expired queued report cannot renew freshness without the backend pump
+821: [ OK ] backend expiry still notifies observers after getter-level expiry
+821: [ OK ] a fresh report of the same frequency announces restoration of validity
+821: [ OK ] session reset clears proof while retaining the legacy reference
+821: [ OK ] radio-reported MOX is retained without claiming local TX intent
+821: [ OK ] radio-reported MOX emits no local transmit-ownership edges
+821: [ OK ] radio-reported MOX raises stateChanged() so isMox() consumers repaint
+821: [ OK ] an unchanged MOX value raises no redundant stateChanged()
+821: [ OK ] the un-key edge repaints too, so the label cannot latch on stale current
+821: [ OK ] and none of that reopened the local moxChanged path
+821: [ OK ] the model starts on MIC, as a Flex would report
+821: [ OK ] adopting a forced selection reports that it changed something
+821: [ OK ] and the model now agrees with the screen
+821: [ OK ] WITHOUT emitting a command — a forced value is not operator intent
+821: [ OK ] re-adopting the same value is a no-op
+821: [ OK ] and an empty selection is refused rather than stored
+821: [ OK ] so the last good value survives
+821: [ OK ] none of which touched the wire
+821: [ OK ] the OPERATOR choosing a source still emits a command
+821: [ OK ] CW paddle swap is adopted locally and still commands Flex
+821: [ OK ] CWL selection is adopted locally and still commands Flex
+821: [ OK ] two-tone tune sets mode and tags the tune source before starting
+821: [ OK ] two-tone tune toggle stops and restores single-tone mode
+821: [ OK ] two-tone tune toggle starts two-tone when not tuning
+821: [ OK ] single-tone tune tags the tune source before starting
+821: [ OK ] tune refuses CW key-down and CWX text, admits key-up
+821: [ OK ] stopping tune re-admits CW keying and CWX text
+821: [ OK ] tune reported by the radio alone refuses key-down and CWX, admits key-up
+821: [ OK ] radio tune=0 re-admits CW keying and CWX text
+821: [ OK ] TUNE start is refused while CW is keyed
+821: [ OK ] TUNE starts again once CW is released
+821: [ OK ] single-tone tune mode command is accepted
+821: [ OK ] invalid tune mode is ignored
+821: [ OK ] DEXP toggle sends compander command and updates local state
+821: [ OK ] DEXP level sends compander_level command and updates local state
+821: [ OK ] compander status updates DEXP state
+821: [ OK ] canonical compander status wins over legacy DEXP aliases
+821: [ OK ] legacy DEXP aliases update state when canonical compander status is absent
+821: [ OK ] tune preflight blocks tune command
+821: [ OK ] two-tone preflight blocks setup and tune commands
+821: [ OK ] TX profile load uses profile tx load
+821: [ OK ] Mic profile load uses profile mic load
+821: [ OK ] radio-reported rf_power emits rfPowerChanged
+821: [ OK ] radio-reported tune_power emits tunePowerChanged
+821: [ OK ] unchanged rf_power does not re-emit
+821: [ OK ] setRfPower emits rfPowerChanged
+821: [ OK ] setTunePower emits tunePowerChanged
+821: [ OK ] setRfPower to the same value does not re-emit
+821: [ OK ] paired TX filter update is sent atomically
+821: [ OK ] setTxFilter adopts the passband without waiting for a status echo
+821: [ OK ] setTxFilter announces operator intent for the seam
+821: [ OK ] setTxFilterLow preserves the high cut
+821: [ OK ] setTxFilterHigh preserves the low cut
+821: [ OK ] an eSSB passband is not clamped away
+821: [ OK ] radio status still updates the passband
+821: [ OK ] applying radio status does not emit operator intent
+821: [ OK ] setMicLevel adopts the level
+821: [ OK ] setMicLevel announces operator intent for the seam
+821: [ OK ] re-setting an unchanged mic level still re-asserts to the seam
+821: [ OK ] an over-range mic level is clamped before it reaches the seam
+821: [ OK ] radio status still updates the mic level
+821: [ OK ] applying radio status does not emit mic operator intent
+821: [ OK ] hold off: a speed-coupled delay drop is adopted, no command emitted
+821: [ OK ] a combined speed+delay status delta is adopted wholesale
+821: [ OK ] hold off: setCwSpeed emits only the wpm command
+821: [ OK ] hold on: the committed delay is re-asserted after the wpm command
+821: [ OK ] hold on: the re-assert still goes out after the radio walked the delay
+821: [ OK ] hold on: the re-assert does NOT overwrite radio truth locally
+821: [ OK ] hold on: applyChanges still only adopts, never re-commands
+821: [ OK ] hold on: each operator speed change re-asserts the committed delay
+821: [ OK ] hold on: an unchanged speed re-sends wpm but never the delay
+821: [ OK ] a committed delay of 0 (QSK) is never re-asserted
+821: [ OK ] holdBreakInDelayChanged fires once on enable
+821: [ OK ] hold on but no operator-set delay: nothing is re-asserted (not the radio's 40)
+821: [ OK ] once the operator sets a delay, hold re-asserts it
+821: [ OK ] the committed delay tracks the operator's latest setCwDelay
+821: [ OK ] holdBreakInDelayChanged fires only on a real transition
+821: [ OK ] hold off again: no re-assert
+821: [ OK ] a fresh model is not armed
+821: [ OK ] enabling hold turns it on but does not arm it
+821: [ OK ] enabling hold emits no arming edge
+821: [ OK ] a radio-reported delay does not arm the hold
+821: [ OK ] the operator setting a delay arms the hold, once
+821: [ OK ] a further delay change does not re-emit the arming edge
+821: [ OK ] a committed delay of 0 (QSK) disarms the hold
+821: [ OK ] after a disconnect the hold is still ON but no longer armed
+821: [ OK ] resetState emits the disarming edge so the UI can show it
+821: [ OK ] holdBreakInDelayArmed() already agrees with every edge as it is emitted
+821: [ OK ] resetState clears the previous session's DAX flag
+821: [ OK ] resetState announces the DAX change through micStateChanged
+821: [ OK ] resetState keeps the hold preference
+821: [ OK ] resetState clears the committed delay — radio A's value is not re-asserted at radio B
+821: [ OK ] after reset the committed delay rebuilds from the new session
+821: [ OK ] WSPR PTT bypasses Quindar signaling
+821: [ OK ] InProgress -> FailBypass emits atuTuneFailed
+821: [ OK ] InProgress -> Fail emits atuTuneFailed
+821: [ OK ] InProgress -> Successful does not emit atuTuneFailed
+821: [ OK ] InProgress -> OK does not emit atuTuneFailed
+821: [ OK ] User-aborted tune does not emit atuTuneFailed on FailBypass
+821: [ OK ] Initial status FailBypass without InProgress does not emit atuTuneFailed
+821: [ OK ] PTT mic override is unreported before any transmit status
+821: [ OK ] pre-4.3 transmit status without the key leaves it unreported
+821: [ OK ] a reported 0 default latches the key and announces it
+821: [ OK ] the radio's echo is adopted
+821: [ OK ] a session reset forgets the radio's PTT mic override
+821: [ OK ] an applied CW pitch announces the report before the change
+821: [ OK ] a repeated CW pitch is announced as a report without a change
+821: [ OK ] a local CW pitch change is not announced as a report
+14/15 Test #821: transmit_model_test .........................   Passed    0.04 sec
+test 862
+      Start 862: icom_replay_test
+
+862: Test command: D:\a\AetherSDR\AetherSDR\build\icom_replay_test.exe
+862: Working Directory: D:/a/AetherSDR/AetherSDR/build
+862: Environment variables: 
+862:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+862:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+862: Test timeout computed to be: 60
+862: icom_replay_test: all checks passed
+15/15 Test #862: icom_replay_test ............................   Passed    0.03 sec
+
+The following tests passed:
+	icom_outbound_policy_test
+	icom_rx_audit_egress_test
+	icom_connection_usage_test
+	icom_rx_audit_busy_test
+	icom_rx_audit_init_test
+	icom_rx_audit_self_check
+	icom_rx_audit_refuses_implicit_connection
+	icom_protocol_test
+	icom_civ_test
+	icom_control_profile_test
+	icom_session_lease_test
+	icom_backend_seam_test
+	backend_family_switch_test
+	transmit_model_test
+	icom_replay_test
+
+100% tests passed out of 15
+
+Total Test time (real) =   3.99 sec

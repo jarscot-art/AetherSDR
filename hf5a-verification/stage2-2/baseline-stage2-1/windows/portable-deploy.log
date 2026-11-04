@@ -1,0 +1,62 @@
+Adding local dependencyD:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/hidapi.dll
+Adding local dependencyD:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/libfftw3-3.dll
+Adding local dependencyD:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/libfftw3f-3.dll
+Adding local dependencyD:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/deepfilter.dll
+D:\a\AetherSDR\AetherSDR\hf5a-stage2-1-portable\aether-icom-rx-audit.exe 64 bit, release executable
+Adding in plugin type generic for module: Qt6Gui
+Adding in plugin type iconengines for module: Qt6Gui
+Adding Qt6Svg for qsvgicon.dll from plugin type: iconengines
+Adding in plugin type imageformats for module: Qt6Gui
+Adding in plugin type multimedia for module: Qt6Multimedia
+Adding in plugin type networkinformation for module: Qt6Network
+Adding in plugin type platforms for module: Qt6Gui
+Adding in plugin type tls for module: Qt6Network
+Skipping plugin qopensslbackend.dll. Use -force-openssl or specify -openssl-root if you want to use it.
+Performing additional pass of finding Qt plugins due to updated Qt module list: Qt6Core Qt6Gui Qt6Multimedia Qt6Network Qt6SerialPort Qt6Svg Qt6WebSockets
+Adding in plugin type generic for module: Qt6Gui
+Adding in plugin type iconengines for module: Qt6Gui
+Adding in plugin type imageformats for module: Qt6Gui
+Adding in plugin type multimedia for module: Qt6Multimedia
+Adding in plugin type networkinformation for module: Qt6Network
+Adding in plugin type platforms for module: Qt6Gui
+Adding in plugin type tls for module: Qt6Network
+Skipping plugin qopensslbackend.dll. Use -force-openssl or specify -openssl-root if you want to use it.
+Direct dependencies: Qt6Core Qt6Gui Qt6Multimedia Qt6Network Qt6SerialPort Qt6WebSockets
+All dependencies   : Qt6Core Qt6Gui Qt6Multimedia Qt6Network Qt6SerialPort Qt6WebSockets
+To be deployed     : Qt6Core Qt6Gui Qt6Multimedia Qt6Network Qt6SerialPort Qt6Svg Qt6WebSockets
+Skipping system library C:/Windows/system32/icuuc.dll
+Updating Qt6Core.dll.
+Updating Qt6Gui.dll.
+Updating Qt6Multimedia.dll.
+Updating Qt6Network.dll.
+Updating Qt6SerialPort.dll.
+Updating Qt6Svg.dll.
+Updating Qt6WebSockets.dll.
+Updating opengl32sw.dll.
+Updating d3dcompiler_47.dll.
+Updating dxcompiler.dll.
+Updating dxil.dll.
+Updating avcodec-63.dll.
+Updating avformat-63.dll.
+Updating avutil-61.dll.
+Updating swresample-7.dll.
+Updating swscale-10.dll.
+Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/generic.
+Updating qtuiotouchplugin.dll.
+Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/iconengines.
+Updating qsvgicon.dll.
+Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/imageformats.
+Updating qgif.dll.
+Updating qico.dll.
+Updating qjpeg.dll.
+Updating qsvg.dll.
+Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/multimedia.
+Updating ffmpegmediaplugin.dll.
+Updating windowsmediaplugin.dll.
+Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/networkinformation.
+Updating qnetworklistmanager.dll.
+Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/platforms.
+Updating qwindows.dll.
+Creating directory D:/a/AetherSDR/AetherSDR/hf5a-stage2-1-portable/tls.
+Updating qcertonlybackend.dll.
+Updating qschannelbackend.dll.

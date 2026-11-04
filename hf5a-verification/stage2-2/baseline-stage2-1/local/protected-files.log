@@ -1,0 +1,25 @@
+exit=0
+
+Protected paths:
+src/core/backends/icom/IcomOutboundPolicy.cpp
+src/core/backends/icom/IcomOutboundPolicy.h
+.github/ci-test-gate.txt
+.github/workflows/appimage.yml
+.github/workflows/build-sherpa-onnx-aarch64.yml
+.github/workflows/cache-cleanup.yml
+.github/workflows/ci.yml
+.github/workflows/codeql.yml
+.github/workflows/docker-ci-image.yml
+.github/workflows/docs.yml
+.github/workflows/full-suite.yml
+.github/workflows/hf5a-stage2-rx-only-offline.yml
+.github/workflows/hf5a-stage2-rx-only-repackage.yml
+.github/workflows/macos-dmg.yml
+.github/workflows/sanitizers.yml
+.github/workflows/sign-release.yml
+.github/workflows/static-checks.yml
+.github/workflows/system-libs-canary.yml
+.github/workflows/tailnet-shim.yml
+.github/workflows/update-manifest.yml
+.github/workflows/update-rnnoise.yml
+.github/workflows/windows-installer.yml

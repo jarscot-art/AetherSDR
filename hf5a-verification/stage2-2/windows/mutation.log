@@ -1,0 +1,91 @@
+UpdateCTestConfiguration  from :D:/a/AetherSDR/AetherSDR/build/DartConfiguration.tcl
+Test project D:/a/AetherSDR/AetherSDR/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 137
+    Start 137: icom_rx_audit_egress_test
+
+137: Test command: D:\a\AetherSDR\AetherSDR\build\icom_rx_audit_egress_test.exe
+137: Working Directory: D:/a/AetherSDR/AetherSDR/build
+137: Environment variables: 
+137:  AETHER_WDSP_FFTW_TIMELIMIT=0.001
+137:  AETHER_WDSP_WISDOM_DIR=D:/a/AetherSDR/AetherSDR/build/test-fftw-wisdom
+137: Test timeout computed to be: 60
+137: PASS approved query reaches last writer
+137: PASS approved query retransmits unchanged
+137: FAIL raw/tracked/emergency/authorized-TX/replay cannot leak PTT, OFF, CW, scope or XFC
+137: EVIDENCE serial: packets_before=2 packets_after_forbidden=22 denied=10
+137: PASS denied writes consume no sequence
+137: FAIL denials counted at actual egress boundary
+137: FAIL old-session retained packet cannot cross new SID
+137: FAIL stop uses guarded writer and closes only own stream
+137: FAIL audio including silence is denied even with a valid TX grant and replay
+137: EVIDENCE audio: packets=2 denied=2
+137: PASS only deliberately injected forbidden replay exists
+137: FAIL audio transport disconnect allowed without PCM
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS canonical login/auth/renew/RX negotiation permitted; caller cannot enable TX
+137: PASS non-ID query cannot leave before radio identification
+137: PASS real decoder unlocks approved polling after directed MK2 reply
+137: PASS audit cannot automatically restart CI-V
+137: PASS audit never creates a TX timer or transmits audio, even with enableTx forced true
+137: PASS teardown sends own deauth and six own disconnects only
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS busy notification cannot become an audit stream grant
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS scope startup and emergency/user writes suppressed before scheduling
+137: PASS audit backend uses real scheduler for approved polling only
+137: PASS backend disconnect cannot issue CW abort or PTT OFF
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS failure callback does not synchronously destroy its session
+137: PASS queued failure cleanup safely retires only the test session
+137: PASS real session factory propagates immutable audit policy to all streams
+137: PASS readback-reset observer may retire backend without a subsequent dispatch
+137: FAIL missing policy fails closed at final writer
+137: RX audit egress failures=7; no sockets bound
+1/1 Test #137: icom_rx_audit_egress_test ........***Failed    0.03 sec
+PASS approved query reaches last writer
+PASS approved query retransmits unchanged
+FAIL raw/tracked/emergency/authorized-TX/replay cannot leak PTT, OFF, CW, scope or XFC
+EVIDENCE serial: packets_before=2 packets_after_forbidden=22 denied=10
+PASS denied writes consume no sequence
+FAIL denials counted at actual egress boundary
+FAIL old-session retained packet cannot cross new SID
+FAIL stop uses guarded writer and closes only own stream
+FAIL audio including silence is denied even with a valid TX grant and replay
+EVIDENCE audio: packets=2 denied=2
+PASS only deliberately injected forbidden replay exists
+FAIL audio transport disconnect allowed without PCM
+PASS real session factory propagates immutable audit policy to all streams
+PASS canonical login/auth/renew/RX negotiation permitted; caller cannot enable TX
+PASS non-ID query cannot leave before radio identification
+PASS real decoder unlocks approved polling after directed MK2 reply
+PASS audit cannot automatically restart CI-V
+PASS audit never creates a TX timer or transmits audio, even with enableTx forced true
+PASS teardown sends own deauth and six own disconnects only
+PASS real session factory propagates immutable audit policy to all streams
+PASS busy notification cannot become an audit stream grant
+PASS real session factory propagates immutable audit policy to all streams
+PASS scope startup and emergency/user writes suppressed before scheduling
+PASS audit backend uses real scheduler for approved polling only
+PASS backend disconnect cannot issue CW abort or PTT OFF
+PASS real session factory propagates immutable audit policy to all streams
+PASS failure callback does not synchronously destroy its session
+PASS queued failure cleanup safely retires only the test session
+PASS real session factory propagates immutable audit policy to all streams
+PASS readback-reset observer may retire backend without a subsequent dispatch
+FAIL missing policy fails closed at final writer
+RX audit egress failures=7; no sockets bound
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.06 sec
+
+The following tests FAILED:
+	137 - icom_rx_audit_egress_test (Failed)
+Errors while running CTest

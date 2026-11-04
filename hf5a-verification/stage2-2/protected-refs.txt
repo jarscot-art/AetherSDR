@@ -1,0 +1,5 @@
+58f663f7bcda25c54e8f4c158929a6e18ce10011	refs/heads/hf5a/stage1-split-tx-readback
+f069490fa2c9e1a2153a7490be1ef7fca58196ea	refs/heads/hf5a/stage2-1-busy-fix
+48bb8ee78a2229e1035f6162d06f674e09923686	refs/heads/hf5a/stage2-2-init-fix
+11b1480d6270cd2942c767c11046543735a8fbfe	refs/heads/hf5a/stage2-rx-only-audit
+33975b2354972a83bf7a6378ab2786e17cb49767	refs/heads/main

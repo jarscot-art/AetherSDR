@@ -1,0 +1,4 @@
+[0/2] Re-checking globbed directories...
+[1/5] Automatic MOC and UIC for target icom_connection_usage_test
+[2/4] Building CXX object CMakeFiles\icom_connection_usage_test.dir\src\core\backends\icom\IcomProtocol.cpp.obj
+[3/4] Linking CXX executable icom_connection_usage_test.exe
