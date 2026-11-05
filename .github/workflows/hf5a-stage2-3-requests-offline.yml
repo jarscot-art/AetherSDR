@@ -427,7 +427,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Request mutation build failed' }
           ctest --test-dir build -R '^icom_rx_audit_requests_test$' --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage2-3-results/requests-mutation.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage2-3-results/requests-mutation.log"
           $code=$LASTEXITCODE
-          $reproduced=Select-String hf5a-stage2-3-results/requests-mutation.log -SimpleMatch 'mode-response deniedRequests=34' -Quiet
+          $reproduced = Select-String -Path 'hf5a-stage2-3-results/requests-mutation.log' -Pattern 'mode-response deniedRequests=34' -SimpleMatch -Quiet
           @{expected='FAIL and exactly 34 denials for eleven USB-D reports'; ctestExitCode=$code; reproduced34=$reproduced; sourceHash=$hash} | ConvertTo-Json | Set-Content hf5a-stage2-3-results/requests-mutation.json
           if ($code -ne 8 -or -not $reproduced) { throw 'Did not reproduce the 34-request defect' }
         } finally {
