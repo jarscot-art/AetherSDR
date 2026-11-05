@@ -1372,6 +1372,12 @@ add_executable(icom_outbound_policy_test tests/icom_outbound_policy_test.cpp
 target_include_directories(icom_outbound_policy_test PRIVATE src)
 add_test(NAME icom_outbound_policy_test COMMAND icom_outbound_policy_test)
 
+add_executable(icom_rx_audit_requests_test tests/icom_rx_audit_requests_test.cpp)
+target_include_directories(icom_rx_audit_requests_test PRIVATE src tests)
+target_link_libraries(icom_rx_audit_requests_test PRIVATE aethercore Qt6::Core Qt6::Test)
+add_test(NAME icom_rx_audit_requests_test COMMAND icom_rx_audit_requests_test)
+set_tests_properties(icom_rx_audit_requests_test PROPERTIES TIMEOUT 60)
+
 add_executable(icom_rx_audit_egress_test tests/icom_rx_audit_egress_test.cpp)
 target_include_directories(icom_rx_audit_egress_test PRIVATE src tests)
 target_link_libraries(icom_rx_audit_egress_test PRIVATE aethercore Qt6::Core Qt6::Test)
@@ -10399,6 +10405,7 @@ if(TARGET Qt6::WebSockets)
 endif()
 
 set(AETHER_SETTINGS_CONSUMERS
+    icom_rx_audit_requests_test
     icom_rx_audit_egress_test
     update_controller_test
     update_installer_test

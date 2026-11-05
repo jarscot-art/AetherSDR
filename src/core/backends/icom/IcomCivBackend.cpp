@@ -1429,14 +1429,15 @@ bool IcomCivBackend::adoptCivIdentity(std::uint8_t address, std::uint8_t modelId
         // Native CW may still be queued in the radio even when PTT reads RX.
         // Send a response-free abort before withdrawing its keyer capability;
         // Clear/ESC can no longer route to that keyer after publication below.
-        if (capabilities().hasRadioSideCwKeyer) {
+        if (m_outboundPolicy.isProduction() && capabilities().hasRadioSideCwKeyer) {
             queueEmergencyWriteNoReply(cmdAbortCwMessage(m_session->civAddress()),
                                        "cw.message");
             pumpCiv(nowMs());
         }
         // Release the destination previously selected by this session before
         // withdrawing its profile. Do not redirect an unkey to the seed address.
-        if (m_keyed || m_tuning || m_pendingPttIntent.value_or(false)) {
+        if (m_outboundPolicy.isProduction()
+            && (m_keyed || m_tuning || m_pendingPttIntent.value_or(false))) {
             if (m_lastTxOperation.permitsCleanup()) {
                 setKeying(false, m_lastTxOperation);
             } else {
@@ -2033,6 +2034,7 @@ bool IcomCivBackend::wasCommandedTune(std::uint64_t hz) const
 // the tunes it sent. The session's first report is a reading, not a move.
 void IcomCivBackend::onScopeVfoMoved(std::uint64_t previousHz, std::uint64_t hz)
 {
+    if (m_outboundPolicy.isAudit()) { return; }
     if (!scopeViewUsesEdgeSlot() || !m_connected || hz == 0 || previousHz == 0
         || previousHz == hz) {
         return;
@@ -2839,7 +2841,8 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             }
             m_frequencyEchoAtMs = nowMs();
             onScopeVfoMoved(previousHz, *hz);
-            if (!std::ranges::equal(oldPreampLabels, preampLabelsFor(*m_model, m_frequencyHz))) {
+            if (!m_outboundPolicy.isAudit()
+                && !std::ranges::equal(oldPreampLabels, preampLabelsFor(*m_model, m_frequencyHz))) {
                 publishPreampControls();
                 // A range change changes the choices, never the radio setting.
                 // Read back the current stage after publishing its new ladder.
@@ -3228,7 +3231,7 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
                 return;
             m_txBandwidthSlot = v;
             const int item = activeTxBandwidthItem();
-            if (item >= 0 && m_session) {
+            if (item >= 0 && m_session && !m_outboundPolicy.isAudit()) {
                 const auto read = cmdReadSetting(m_session->civAddress(), item);
                 queueRead(read, semanticKey(read), IcomCivScheduler::Priority::Maintenance);
                 pumpCiv(nowMs());
@@ -3409,6 +3412,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
         if (st->filter != 0)
             m_filter = st->filter;
         publishModeState();
+        // RX audit observes mode/DATA/filter but does not inventory passbands
+        // or TX settings. Do not generate requests merely to have policy deny
+        // them on every 26 00 reply; keep the denial counters authoritative.
+        if (m_outboundPolicy.isAudit()) { return; }
         // Width and both PBTs are stored per mode, DATA flag and filter slot,
         // and the radio swaps them silently. Re-read whenever that context
         // differs from the one the width was read in — not on a detected
@@ -4000,7 +4007,7 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             if (restoreTunePower >= 0) {
                 setTxPower(restoreTunePower);
             }
-            if (m_session && extendedFmReadbackProfileFor(m_model)) {
+            if (m_session && !m_outboundPolicy.isAudit() && extendedFmReadbackProfileFor(m_model)) {
                 // The IC-9700 can clear or retain XFC across a PTT edge. Ask
                 // for both facts after the confirmed edge and record the
                 // radio's answer; never infer the TX frequency from our RX
