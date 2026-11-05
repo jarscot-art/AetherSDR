@@ -1,0 +1,557 @@
+name: HF5A stage 3 RX readback GUI offline Windows verification
+'on':
+  workflow_dispatch: null
+  push:
+    branches:
+    - hf5a/stage3-rx-readback-gui
+    paths:
+    - src/**
+    - tests/icom_*
+    - tests/rx_readback_gui_test.cpp
+    - tests/tests.cmake
+    - CMakeLists.txt
+    - .github/workflows/hf5a-stage3-gui-offline.yml
+permissions:
+  contents: read
+env:
+  QT_VERSION: 6.12.0
+  QT_PACKAGE_REVISION: '202609280346'
+  AQTINSTALL_VERSION: 3.3.0
+  AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+  PY7ZR_VERSION: 1.1.3
+  QT_MODULE_FLOOR: '10'
+jobs:
+  windows-offline:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      SCCACHE_DIR: D:\sccache
+      SCCACHE_CACHE_SIZE: 1G
+      QT_ARCH: win64_msvc2022_64
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        persist-credentials: false
+    - name: Initialize exact-source evidence
+      run: |
+        New-Item -ItemType Directory -Force hf5a-stage3-results | Out-Null
+        @{ sourceCommit=(git rev-parse HEAD).Trim(); baseCommit='2bfd9ebd36409ed5d7783ff534eee244ccc4ba04';
+           runUrl="https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID";
+           hardwareTest=$false; dependencyRecipe='ci.yml:check-windows'; qt='6.12.0' } |
+           ConvertTo-Json | Set-Content hf5a-stage3-results/source.json
+    - name: Restore Qt
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-qt-win
+      with:
+        path: ${{ runner.workspace }}\Qt
+        key: qt-${{ env.QT_VERSION }}-${{ env.QT_PACKAGE_REVISION }}-windows-${{ env.QT_ARCH }}-aqt${{ env.AQTINSTALL_GIT_REF
+          }}-mm.ws.sp.st
+    - name: Verify the restored Qt tree
+      id: qt-verify-win
+      if: steps.cache-qt-win.outputs.cache-hit == 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage3-results/verify-the-restored-qt-tree.log"
+        try {
+          $qtRoot = "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION\" + ($env:QT_ARCH -replace '^win64_', '')
+          $complete = $true
+          # -PathType Leaf so a directory of that name cannot pass. There is no
+          # Windows analogue of the macOS side's executable-bit test.
+          if (-not (Test-Path "$qtRoot\bin\qmake.exe" -PathType Leaf)) {
+            Write-Host "missing: bin\qmake.exe"
+            $complete = $false
+          }
+          # The path Export Qt environment hands find_package(Qt6) as Qt6_DIR.
+          if (-not (Test-Path "$qtRoot\lib\cmake\Qt6\Qt6Config.cmake" -PathType Leaf)) {
+            Write-Host "missing: lib\cmake\Qt6\Qt6Config.cmake"
+            $complete = $false
+          }
+          $targets = @(Get-ChildItem "$qtRoot\lib\cmake" -Filter 'Qt6*Targets*.cmake' -Recurse -File -ErrorAction SilentlyContinue)
+          $modules = @($targets |
+            Select-String -Pattern '\$\{_IMPORT_PREFIX\}/include/(Qt[A-Za-z0-9_]+)' -AllMatches |
+            ForEach-Object { $_.Matches } |
+            ForEach-Object { $_.Groups[1].Value } |
+            Sort-Object -Unique)
+          foreach ($m in $modules) {
+            $dir = "$qtRoot\include\$m"
+            if (-not (Test-Path $dir -PathType Container)) {
+              Write-Host "missing: include\$m"
+              $complete = $false
+            } elseif (-not (Get-ChildItem $dir -File -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+              Write-Host "empty include directory: include\$m"
+              $complete = $false
+            }
+          }
+          # Anti-vacuity, as on macOS, and on the same quantity: declared
+          # modules, not directories found.
+          if ($modules.Count -lt [int]$env:QT_MODULE_FLOOR) {
+            Write-Host "only $($modules.Count) Qt module(s) declared under lib\cmake (floor $env:QT_MODULE_FLOOR)"
+            $complete = $false
+          }
+          if ($complete) {
+            Write-Host "Qt tree complete: $($modules.Count) module(s) declared, every include directory present and populated"
+            "complete=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          } else {
+            $key = "qt-${env:QT_VERSION}-${env:QT_PACKAGE_REVISION}-windows-${env:QT_ARCH}-aqt${env:AQTINSTALL_GIT_REF}-mm.ws.sp.st"
+            Write-Host "::warning title=Qt cache restore incomplete::Restored Qt tree is short; discarding it and reinstalling via aqt. If this repeats on the same key the stored entry is bad, and it can only be cleared by hand: gh cache delete $key --ref refs/heads/main"
+            Remove-Item -Recurse -Force "$env:RUNNER_WORKSPACE\Qt" -ErrorAction SilentlyContinue
+            # A partial delete would leave aqt extracting over the corrupt tree
+            # this step just rejected, which is the state it exists to avoid.
+            if (Test-Path "$env:RUNNER_WORKSPACE\Qt") {
+              Write-Host "ERROR: could not remove the incomplete Qt tree at $env:RUNNER_WORKSPACE\Qt"
+              exit 1
+            }
+            "complete=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+        } finally { Stop-Transcript }
+    - name: Install Qt LTS via aqtinstall
+      if: steps.cache-qt-win.outputs.cache-hit != 'true' || steps.qt-verify-win.outputs.complete != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage3-results/install-qt-lts-via-aqtinstall.log"
+        try {
+          # aqt goes in a venv and is pinned, for the reason check-macos and
+          # .github/docker/Dockerfile give: it is the tool that decides what
+          # Qt lands here, so an unreviewed aqt upgrade is an unreviewed
+          # change to the Qt this job builds against.
+          python -m venv "$env:RUNNER_TEMP\aqtvenv"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # PyPI 3.3.0 cannot locate Windows 6.11+ Updates.xml (aqtinstall#959).
+          # Install the unreleased #1000 fix from a pinned master commit.
+          & "$env:RUNNER_TEMP\aqtvenv\Scripts\pip.exe" install -q "git+https://github.com/miurahr/aqtinstall.git@$env:AQTINSTALL_GIT_REF" "py7zr==$env:PY7ZR_VERSION"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $sevenZip = (Get-Command 7z.exe -ErrorAction Stop).Source
+          # Parallel 7-Zip workers race while creating the common output root
+          # on a fresh SDK install. Create it once before extraction starts.
+          $qtRoot = "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION\" + ($env:QT_ARCH -replace '^win64_', '')
+          New-Item -ItemType Directory -Force -Path $qtRoot | Out-Null
+          & "$env:RUNNER_TEMP\aqtvenv\Scripts\aqt.exe" install-qt windows desktop $env:QT_VERSION $env:QT_ARCH `
+            -m qtmultimedia qtwebsockets qtserialport qtshadertools `
+            --external $sevenZip `
+            --outputdir "$env:RUNNER_WORKSPACE\Qt"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        } finally { Stop-Transcript }
+    - name: Export Qt environment
+      shell: pwsh
+      run: "Start-Transcript -Path \"hf5a-stage3-results/export-qt-environment.log\"\ntry {\n  # aqt lays the\
+        \ tree down under <version>/<arch minus the win64_ host\n  # prefix>: win64_msvc2022_64 -> msvc2022_64.\n\
+        \  $qtRoot = \"$env:RUNNER_WORKSPACE\\Qt\\$env:QT_VERSION\\\" + ($env:QT_ARCH -replace '^win64_', '')\n\
+        \  if (-not (Test-Path \"$qtRoot\\bin\\qmake.exe\")) {\n    # A bad entry on main is only clearable by hand:\
+        \ the key is a\n    # content hash nothing re-saves, and no sweeper matches qt-* there.\n    Write-Host\
+        \ \"ERROR: no qmake at $qtRoot \u2014 aqt layout changed, or a stale cache entry\"\n    Write-Host \"  \
+        \     (clear a stale entry: gh cache delete <the Restore Qt key> --ref refs/heads/main)\"\n    Get-ChildItem\
+        \ \"$env:RUNNER_WORKSPACE\\Qt\\$env:QT_VERSION\" -ErrorAction SilentlyContinue\n    exit 1\n  }\n  @(\n\
+        \    \"QT_ROOT_DIR=$qtRoot\",\n    \"Qt6_DIR=$qtRoot\\lib\\cmake\\Qt6\",\n    \"CMAKE_PREFIX_PATH=$qtRoot\"\
+        ,\n    \"QT_PLUGIN_PATH=$qtRoot\\plugins\",\n    \"QML2_IMPORT_PATH=$qtRoot\\qml\"\n  ) | Out-File -FilePath\
+        \ $env:GITHUB_ENV -Append\n  \"$qtRoot\\bin\" | Out-File -FilePath $env:GITHUB_PATH -Append\n  & \"$qtRoot\\\
+        bin\\qmake.exe\" -query QT_VERSION\n\n  if ((& \"$qtRoot\\bin\\qmake.exe\" -query QT_VERSION).Trim() -ne\
+        \ \"6.12.0\") { throw \"Wrong Qt version\" }\n} finally { Stop-Transcript }\n"
+    - name: Restore FFTW3
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-fftw
+      with:
+        path: third_party/fftw3
+        key: ${{ runner.os }}-fftw3-3.3.5-${{ hashFiles('scripts/setup/setup-fftw.ps1') }}
+    - name: Install FFTW3
+      if: steps.cache-fftw.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage3-results/install-fftw3.log"
+        try {
+          .\scripts\setup\setup-fftw.ps1
+        } finally { Stop-Transcript }
+    - name: Restore DeepFilterNet3
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-deepfilter
+      with:
+        path: third_party/deepfilter
+        key: deepfilter-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/setup/setup-deepfilter.ps1')
+          }}
+    - name: Setup DeepFilterNet3 (DFNR)
+      if: steps.cache-deepfilter.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage3-results/setup-deepfilternet3-dfnr.log"
+        try {
+          .\scripts\setup\setup-deepfilter.ps1
+        } finally { Stop-Transcript }
+    - name: Restore sccache objects
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: D:\sccache
+        key: sccache-windows-
+        restore-keys: |
+          sccache-windows-
+    - name: Setup sccache
+      uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba
+    - name: Setup MSVC environment
+      uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
+      with:
+        arch: x64
+    - name: Setup hidapi (HID encoder support)
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage3-results/setup-hidapi-hid-encoder-support.log"
+        try {
+          .\scripts\setup\setup-hidapi.ps1
+        } finally { Stop-Transcript }
+    - name: Setup PortAudio (CW sidetone callback sink)
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage3-results/setup-portaudio-cw-sidetone-callback-sink.log"
+        try {
+          .\scripts\setup\setup-portaudio.ps1
+        } finally { Stop-Transcript }
+    - name: Test sccache health
+      id: sccache_health
+      shell: pwsh
+      continue-on-error: true
+      run: "Start-Transcript -Path \"hf5a-stage3-results/test-sccache-health.log\"\ntry {\n  'int main(){return\
+        \ 0;}' | Out-File -Encoding ASCII test.cpp\n  # cl.exe's /Fo takes NO colon separator. `/Fo:test.obj` names\
+        \ the\n  # output file \":test.obj\", which is not a legal Windows path, so this\n  # pre-flight failed\
+        \ on EVERY run from #1963 (2026-04-25) to #4655:\n  #   failed to open file `D:\\a\\AetherSDR\\AetherSDR\\\
+        :test.obj`:\n  #   The filename, directory name, or volume label syntax is\n  #   incorrect. (os error 123)\n\
+        \  # Because the step is continue-on-error and its failure path only\n  # sets healthy=false, the job went\
+        \ green while quietly dropping\n  # CMAKE_{C,CXX}_COMPILER_LAUNCHER \u2014 \"Compile requests 0 / Cache\
+        \ hits\n  # 0\" for three months on a required check. Keep it as /Fo<file>.\n  sccache cl /c test.cpp /Fotest.obj\
+        \ 2>&1 | Tee-Object -Variable scOut\n  $exit = $LASTEXITCODE\n  Remove-Item test.cpp,test.obj -ErrorAction\
+        \ SilentlyContinue\n  if ($exit -eq 0) {\n    \"healthy=true\" | Out-File -FilePath $env:GITHUB_OUTPUT -Append\n\
+        \    Write-Host \"sccache OK\"\n  } else {\n    \"healthy=false\" | Out-File -FilePath $env:GITHUB_OUTPUT\
+        \ -Append\n    Write-Host \"::warning::sccache unhealthy (exit $exit) \u2014 building without compiler cache\"\
+        \n  }\n} finally { Stop-Transcript }\n"
+    - name: Configure
+      shell: pwsh
+      run: "Start-Transcript -Path \"hf5a-stage3-results/configure.log\"\ntry {\n  $launcher = \"${{ steps.sccache_health.outputs.healthy\
+        \ }}\" -eq \"true\"\n  $cargs = @(\n    \"-B\",\"build\",\"-G\",\"Ninja\",\n    \"-DCMAKE_BUILD_TYPE=Release\"\
+        ,\n    \"-DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded\",\n    \"-DENABLE_NVIDIA_AFX=ON\",\n    \"-DREQUIRE_SERIALPORT=ON\"\
+        ,\n    # ASR OFF for this PR sanity check: its job is Windows-only APP\n    # regressions (WASAPI, Q_OS_WIN),\
+        \ not ASR. Building whisper/ggml from\n    # source here linked the large static libs into AetherSDR.exe,\
+        \ and that\n    # memory-heavy link concurrently starved the small test-exe links on the\n    # 16 GB runner\
+        \ (link.exe stalling on a different test each run \u2014 dstar,\n    # CAT_Flex \u2014 none of which hang\
+        \ on main, which has no ASR). ASR-on-Windows\n    # is fully built + linked + packaged by the windows-installer\
+        \ workflow,\n    # so nothing is lost here.\n    \"-DENABLE_ASR=OFF\",\n    # Stated rather than left to\
+        \ the CMake default so the assertion\n    # below has a request to check against.\n    \"-DAETHER_GPU_SPECTRUM=ON\"\
+        ,\n    \"-DCMAKE_TOOLCHAIN_FILE=$env:CMAKE_TOOLCHAIN_FILE\",\n    \"-DVCPKG_TARGET_TRIPLET=$env:VCPKG_TARGET_TRIPLET\"\
+        \n  )\n  if ($launcher) {\n    $cargs += \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\"\n    $cargs += \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\"\
+        \n  }\n  # Tee without `2>&1`: GitHub runs pwsh with $ErrorActionPreference=\n  # 'Stop', where merging\
+        \ a native command's stderr into the pipeline\n  # can promote an ordinary CMake warning to a terminating\
+        \ error and\n  # fail configure on a non-problem. Nothing is lost \u2014 every line the\n  # assertion reads\
+        \ is message(STATUS), which CMake writes to stdout.\n  # No pipefail equivalent is needed either: $LASTEXITCODE\
+        \ tracks the\n  # last *native* command (cmake), and Tee-Object is a cmdlet.\n  $cargs += \"-DAETHER_BUILD_ICOM_RX_AUDIT=ON\", \"-DAETHER_RX_READBACK_GUI_ONLY=ON\"\
+        \n  & cmake @cargs | Tee-Object -FilePath configure.log\n\n  if ($LASTEXITCODE -ne 0) { throw \"CMake failed:\
+        \ $LASTEXITCODE\" }\n} finally { Stop-Transcript }\n"
+    - name: Assert GPU spectrum rendering actually enabled
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage3-results/assert-gpu-spectrum-rendering-actually-enabled.log"
+        try {
+          if (-not (Select-String -Path configure.log -Pattern 'GPU spectrum rendering enabled' -Quiet)) {
+            Write-Host "ERROR: -DAETHER_GPU_SPECTRUM=ON but CMake disabled it. Relevant output:"
+            Select-String -Path configure.log -Pattern 'GPU spectrum|Qt6GuiPrivate|private headers'
+            exit 1
+          }
+          Select-String -Path configure.log -Pattern 'GPU spectrum rendering enabled'
+        } finally { Stop-Transcript }
+    - name: Assert PortAudio sidetone sink actually enabled
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage3-results/assert-portaudio-sidetone-sink-actually-enabled.log"
+        try {
+          if (-not (Select-String -Path configure.log -Pattern 'PortAudio \(third_party\) found' -Quiet)) {
+            Write-Host "ERROR: setup-portaudio.ps1 ran but CMake did not find third_party/portaudio."
+            # NOT Select-String on configure.log: the not-found leg is a
+            # message(WARNING), which CMake writes to stderr, and the configure
+            # step tees stdout only (see the note there). Show the tree the
+            # detection actually keys on instead.
+            Write-Host "--- third_party/portaudio ---"
+            if (Test-Path third_party\portaudio) {
+              Get-ChildItem -Recurse third_party\portaudio | Select-Object -ExpandProperty FullName
+            } else {
+              Write-Host "(third_party/portaudio does not exist)"
+            }
+            exit 1
+          }
+          Select-String -Path configure.log -Pattern 'PortAudio \(third_party\) found'
+          # The line above proves CMake found a lib, not that the lib carries
+          # the #5713 patch set - and CMake's detection is EXISTS-only, so a
+          # stale or partially-restored tree passes it. The stamp records the
+          # patch signature setup-portaudio.ps1 built with, so check it too.
+          if (-not (Test-Path third_party\portaudio\.patched-5713)) {
+            Write-Host "ERROR: third_party/portaudio has no #5713 patch stamp."
+            Write-Host "The PortAudio in this build may still free a stack address in Pa_Initialize."
+            exit 1
+          }
+          Write-Host "PortAudio patch stamp: $(Get-Content -Raw third_party\portaudio\.patched-5713)"
+        } finally { Stop-Transcript }
+    - name: Build Opus dependency
+      run: cmake --build build --target build_opus --parallel $env:NUMBER_OF_PROCESSORS
+    - name: Build desktop, audit tool and offline test targets
+      timeout-minutes: 60
+      run: |
+        Start-Transcript -Path hf5a-stage3-results/build.log
+        try {
+          cmake --build build --parallel $env:NUMBER_OF_PROCESSORS --target AetherSDR rx_readback_gui_test icom_rx_audit_requests_test icom_rx_audit_init_test icom_connection_usage_test icom_rx_audit_busy_test icom_outbound_policy_test icom_rx_audit_egress_test icom_protocol_test icom_replay_test icom_session_lease_test icom_civ_test icom_control_profile_test icom_backend_seam_test transmit_model_test backend_family_switch_test aether-icom-rx-audit -- -k 0
+          $code=$LASTEXITCODE
+          $code | Set-Content hf5a-stage3-results/build-exit-code.txt
+        } finally { Stop-Transcript }
+        exit $code
+    - name: Stage explicit runtime DLLs for offline tests
+      run: |
+        $rows=@(foreach ($folder in @('third_party/fftw3/bin','third_party/deepfilter/lib/windows-x86_64','third_party/hidapi/bin')) {
+          foreach ($dll in Get-ChildItem $folder -Filter '*.dll' -File) {
+            $destination=Join-Path (Resolve-Path build).Path $dll.Name
+            Copy-Item $dll.FullName $destination -Force
+            [pscustomobject]@{source=$dll.FullName; destination=$destination; sha256=(Get-FileHash $destination).Hash}
+          }
+        })
+        $rows | Export-Csv hf5a-stage3-results/runtime-dlls.csv -NoTypeInformation
+        $env:PATH | Set-Content hf5a-stage3-results/PATH.txt
+    - name: Verify exact CTest selection and bounded offline timeouts
+      run: |
+        $names=@('rx_readback_gui_test','icom_rx_readback_gui_self_check','icom_rx_readback_gui_refuses_implicit_connection','icom_rx_audit_requests_test','icom_rx_audit_init_test','icom_connection_usage_test','icom_rx_audit_busy_test','icom_outbound_policy_test','icom_rx_audit_egress_test','icom_protocol_test','icom_replay_test','icom_session_lease_test','icom_civ_test','icom_control_profile_test','icom_backend_seam_test','transmit_model_test','backend_family_switch_test','icom_rx_audit_self_check','icom_rx_audit_refuses_implicit_connection')
+        $pattern='^(rx_readback_gui_test|icom_rx_readback_gui_self_check|icom_rx_readback_gui_refuses_implicit_connection|icom_rx_audit_requests_test|icom_rx_audit_init_test|icom_connection_usage_test|icom_rx_audit_busy_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_protocol_test|icom_replay_test|icom_session_lease_test|icom_civ_test|icom_control_profile_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test|icom_rx_audit_self_check|icom_rx_audit_refuses_implicit_connection)$'
+        $inventory=ctest --test-dir build --show-only=json-v1 -R $pattern --no-tests=error
+        if ($LASTEXITCODE -ne 0) { throw 'CTest inventory failed' }
+        $inventory -join "`n" | Set-Content hf5a-stage3-results/ctest-selection-original.json
+        $selected=@(($inventory -join "`n" | ConvertFrom-Json).tests | ForEach-Object name)
+        if ($selected.Count -ne 19 -or @(Compare-Object ($names | Sort-Object) ($selected | Sort-Object)).Count) { throw 'Wrong test selection' }
+        # Bound generated CTest properties; no repository test source is edited here.
+        ('set_tests_properties(' + ($names -join ' ') + ' PROPERTIES TIMEOUT 60)') |
+          Add-Content build/CTestTestfile.cmake
+        ctest --test-dir build --show-only=json-v1 -R $pattern --no-tests=error |
+          Set-Content hf5a-stage3-results/ctest-selection.json
+    - name: Baseline final-writer test before mutation
+      timeout-minutes: 3
+      run: |
+        ctest --test-dir build -R '^icom_rx_audit_egress_test$' --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage3-results/egress-baseline.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage3-results/egress-baseline.log"
+        exit $LASTEXITCODE
+    - name: Prove the final guard matters, then restore exact source
+      timeout-minutes: 10
+      run: |
+        $path=Join-Path $env:GITHUB_WORKSPACE 'src/core/backends/icom/IcomStream.cpp'
+        $original=[IO.File]::ReadAllBytes($path)
+        $hash=(Get-FileHash $path).Hash
+        $needle='    if (!validateOutbound(packet)) { return false; }'
+        $text=[IO.File]::ReadAllText($path)
+        if ([regex]::Matches($text,[regex]::Escape($needle)).Count -ne 1) { throw 'Mutation point is not unique' }
+        $restoreCode=-1
+        try {
+          [IO.File]::WriteAllText($path,$text.Replace($needle,'    // Offline mutation: final guard deliberately bypassed.'),[Text.UTF8Encoding]::new($false))
+          cmake --build build --target icom_rx_audit_egress_test --parallel $env:NUMBER_OF_PROCESSORS |
+            Tee-Object hf5a-stage3-results/mutation-build.log
+          if ($LASTEXITCODE -ne 0) { throw 'Mutation build failed' }
+          ctest --test-dir build -R '^icom_rx_audit_egress_test$' --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage3-results/mutation.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage3-results/mutation.log"
+          $mutantCode=$LASTEXITCODE
+          @{expected='FAIL with final guard removed'; ctestExitCode=$mutantCode; originalSourceHash=$hash} |
+            ConvertTo-Json | Set-Content hf5a-stage3-results/mutation.json
+          if ($mutantCode -eq 0) { throw 'Egress test failed to detect removal of the final guard' }
+        } finally {
+          [IO.File]::WriteAllBytes($path,$original)
+          if ((Get-FileHash $path).Hash -ne $hash) { throw 'Failed to restore exact source bytes' }
+          cmake --build build --target icom_rx_audit_egress_test --parallel $env:NUMBER_OF_PROCESSORS |
+            Tee-Object hf5a-stage3-results/restored-build.log
+          $restoreCode=$LASTEXITCODE
+          @{restoredSourceHash=(Get-FileHash $path).Hash; expectedHash=$hash; rebuildExitCode=$restoreCode} |
+            ConvertTo-Json | Set-Content hf5a-stage3-results/restoration.json
+        }
+        if ($restoreCode -ne 0) { throw 'Restored-source build failed' }
+        exit 0
+    - name: Prove Busy regression then restore classifier
+      timeout-minutes: 10
+      run: |2
+
+        $path=Join-Path $env:GITHUB_WORKSPACE 'src/core/backends/icom/IcomProtocol.cpp'
+        $original=[IO.File]::ReadAllBytes($path)
+        $hash=(Get-FileHash $path).Hash
+        $needle='return context.streamGranted ? Decision::OwnSession : Decision::Grant;'
+        $text=[IO.File]::ReadAllText($path)
+        if ([regex]::Matches($text,[regex]::Escape($needle)).Count -ne 1) { throw 'Busy mutation point not unique' }
+        try {
+          [IO.File]::WriteAllText($path,$text.Replace($needle,'return Decision::Busy; // Deliberate offline regression'),[Text.UTF8Encoding]::new($false))
+          cmake --build build --target icom_connection_usage_test --parallel $env:NUMBER_OF_PROCESSORS | Tee-Object hf5a-stage3-results/busy-mutation-build.log
+          if ($LASTEXITCODE -ne 0) { throw 'Busy mutation build failed' }
+          ctest --test-dir build -R '^icom_connection_usage_test$' --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage3-results/busy-mutation.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage3-results/busy-mutation.log"
+          $code=$LASTEXITCODE
+          @{expected='FAIL when own grant is classified Busy'; ctestExitCode=$code; sourceHash=$hash} | ConvertTo-Json | Set-Content hf5a-stage3-results/busy-mutation.json
+          if ($code -ne 8) { throw "Expected CTest test-failure exit 8, got $code" }
+        } finally {
+          [IO.File]::WriteAllBytes($path,$original)
+          if ((Get-FileHash $path).Hash -ne $hash) { throw 'Classifier restoration failed' }
+          cmake --build build --target icom_connection_usage_test --parallel $env:NUMBER_OF_PROCESSORS | Tee-Object hf5a-stage3-results/busy-restored-build.log
+          $restoreCode=$LASTEXITCODE
+          @{restoredHash=(Get-FileHash $path).Hash; expectedHash=$hash; rebuildExitCode=$restoreCode} | ConvertTo-Json | Set-Content hf5a-stage3-results/busy-restoration.json
+        }
+        if ($restoreCode -ne 0) { throw 'Restored classifier build failed' }
+        exit 0
+    - name: Prove initialization regression then restore session
+      timeout-minutes: 10
+      run: |
+        $path=Join-Path $env:GITHUB_WORKSPACE 'src/core/backends/icom/IcomSession.cpp'
+        $original=[IO.File]::ReadAllBytes($path)
+        $hash=(Get-FileHash $path).Hash
+        $needle='                onAuditConnectionUsage(asSpan(packet));'
+        $text=[IO.File]::ReadAllText($path)
+        if ([regex]::Matches($text,[regex]::Escape($needle)).Count -ne 1) { throw 'Init mutation point not unique' }
+        try {
+          [IO.File]::WriteAllText($path,$text.Replace($needle,'                // Offline mutation: deferred conninfo is ignored again.'),[Text.UTF8Encoding]::new($false))
+          cmake --build build --target icom_rx_audit_init_test --parallel $env:NUMBER_OF_PROCESSORS | Tee-Object hf5a-stage3-results/init-mutation-build.log
+          if ($LASTEXITCODE -ne 0) { throw 'Init mutation build failed' }
+          ctest --test-dir build -R '^icom_rx_audit_init_test$' --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage3-results/init-mutation.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage3-results/init-mutation.log"
+          $code=$LASTEXITCODE
+          @{expected='FAIL when deferred conninfo is discarded'; ctestExitCode=$code; sourceHash=$hash} | ConvertTo-Json | Set-Content hf5a-stage3-results/init-mutation.json
+          if ($code -ne 8) { throw "Expected CTest failure 8, got $code" }
+        } finally {
+          [IO.File]::WriteAllBytes($path,$original)
+          if ((Get-FileHash $path).Hash -ne $hash) { throw 'Session restoration failed' }
+          cmake --build build --target icom_rx_audit_init_test --parallel $env:NUMBER_OF_PROCESSORS | Tee-Object hf5a-stage3-results/init-restored-build.log
+          $restoreCode=$LASTEXITCODE
+          @{restoredHash=(Get-FileHash $path).Hash; expectedHash=$hash; rebuildExitCode=$restoreCode} | ConvertTo-Json | Set-Content hf5a-stage3-results/init-restoration.json
+        }
+        if ($restoreCode -ne 0) { throw 'Restored session build failed' }
+        exit 0
+    - name: Prove the 34-request regression then restore backend
+      timeout-minutes: 10
+      run: |
+        $path=Join-Path $env:GITHUB_WORKSPACE 'src/core/backends/icom/IcomCivBackend.cpp'
+        $original=[IO.File]::ReadAllBytes($path)
+        $hash=(Get-FileHash $path).Hash
+        $needle='        if (m_outboundPolicy.isAudit()) { return; }'
+        $text=[IO.File]::ReadAllText($path)
+        if ([regex]::Matches($text,[regex]::Escape($needle)).Count -ne 1) { throw 'Request mutation point not unique' }
+        try {
+          [IO.File]::WriteAllText($path,$text.Replace($needle,'        // Offline mutation: restore forbidden mode follow-up reads.'),[Text.UTF8Encoding]::new($false))
+          cmake --build build --target icom_rx_audit_requests_test --parallel $env:NUMBER_OF_PROCESSORS | Tee-Object hf5a-stage3-results/requests-mutation-build.log
+          if ($LASTEXITCODE -ne 0) { throw 'Request mutation build failed' }
+          ctest --test-dir build -R '^icom_rx_audit_requests_test$' --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage3-results/requests-mutation.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage3-results/requests-mutation.log"
+          $code=$LASTEXITCODE
+          $reproduced = Select-String -Path 'hf5a-stage3-results/requests-mutation.log' -Pattern 'mode-response deniedRequests=34' -SimpleMatch -Quiet
+          @{expected='FAIL and exactly 34 denials for eleven USB-D reports'; ctestExitCode=$code; reproduced34=$reproduced; sourceHash=$hash} | ConvertTo-Json | Set-Content hf5a-stage3-results/requests-mutation.json
+          if ($code -ne 8 -or -not $reproduced) { throw 'Did not reproduce the 34-request defect' }
+        } finally {
+          [IO.File]::WriteAllBytes($path,$original)
+          if ((Get-FileHash $path).Hash -ne $hash) { throw 'Backend restoration failed' }
+          cmake --build build --target icom_rx_audit_requests_test --parallel $env:NUMBER_OF_PROCESSORS | Tee-Object hf5a-stage3-results/requests-restored-build.log
+          $restoreCode=$LASTEXITCODE
+          @{restoredHash=(Get-FileHash $path).Hash; expectedHash=$hash; rebuildExitCode=$restoreCode} | ConvertTo-Json | Set-Content hf5a-stage3-results/requests-restoration.json
+        }
+        if ($restoreCode -ne 0) { throw 'Restored backend build failed' }
+        exit 0
+    - name: Run nineteen offline checks on restored exact source
+      timeout-minutes: 15
+      run: |
+        ctest --test-dir build -R '^(rx_readback_gui_test|icom_rx_readback_gui_self_check|icom_rx_readback_gui_refuses_implicit_connection|icom_rx_audit_requests_test|icom_rx_audit_init_test|icom_connection_usage_test|icom_rx_audit_busy_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_protocol_test|icom_replay_test|icom_session_lease_test|icom_civ_test|icom_control_profile_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test|icom_rx_audit_self_check|icom_rx_audit_refuses_implicit_connection)$' --parallel 1 --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage3-results/results.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage3-results/ctest.log"
+        $code=$LASTEXITCODE
+        $code | Set-Content hf5a-stage3-results/ctest-exit-code.txt
+        exit $code
+    - name: Preserve compiled audit inputs for packaging diagnostics
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: hf5a-stage3-built-audit-inputs-${{ github.sha }}
+        path: |-
+          build/AetherSDR.exe
+          build/*.dll
+        retention-days: 90
+        if-no-files-found: error
+    - name: Prepare portable audit executable without an installer
+      run: |
+        New-Item -ItemType Directory -Force hf5a-stage3-portable | Out-Null
+        Copy-Item build/AetherSDR.exe hf5a-stage3-portable/aether-icom-rx-readback-gui.exe
+        Copy-Item LICENSE hf5a-stage3-portable/
+        Copy-Item docs/hf5a-stage2-rx-only-audit.md hf5a-stage3-portable/
+        Copy-Item docs/hf5a-stage3-rx-readback-gui.md hf5a-stage3-portable/README.md
+        Copy-Item build/*.dll hf5a-stage3-portable/
+        & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations --no-compiler-runtime --dir hf5a-stage3-portable hf5a-stage3-portable/aether-icom-rx-readback-gui.exe |
+          Tee-Object hf5a-stage3-results/portable-deploy.log
+        if ($LASTEXITCODE -ne 0) { throw 'Qt portable deployment failed' }
+        # MQTT TLS is linked by the shared core; the audit tool starts no MQTT client.
+        $opensslBin=Join-Path $env:ProgramFiles 'OpenSSL/bin'
+        $opensslVersion=(& "$opensslBin/openssl.exe" version)
+        if ($LASTEXITCODE -ne 0) { throw 'Cannot identify the OpenSSL SDK runtime' }
+        $opensslVersion | Set-Content hf5a-stage3-results/portable-openssl-version.txt
+        foreach ($name in @('libssl-3-x64.dll','libcrypto-3-x64.dll')) {
+          $source=Join-Path $opensslBin $name
+          Copy-Item $source hf5a-stage3-portable/ -Force
+          "$source $((Get-FileHash $source).Hash)" | Add-Content hf5a-stage3-results/portable-openssl-runtime.txt
+        }
+        $crt=Get-ChildItem "$env:VCToolsRedistDir/x64" -Directory -Filter 'Microsoft.VC*.CRT' |
+          Sort-Object Name -Descending | Select-Object -First 1
+        if (-not $crt) { throw 'App-local MSVC runtime DLL directory not found' }
+        Copy-Item "$($crt.FullName)/*.dll" hf5a-stage3-portable/
+        # Preserve every direct/delay import and the initial dependency diagnosis.
+        $images=Get-ChildItem hf5a-stage3-portable -Recurse -File | Where-Object Extension -in '.exe','.dll'
+        foreach ($image in $images) {
+          "IMAGE: $($image.FullName)" | Add-Content hf5a-stage3-results/portable-imports.log
+          & dumpbin /nologo /DEPENDENTS $image.FullName | Add-Content hf5a-stage3-results/portable-imports.log
+          if ($LASTEXITCODE -ne 0) { throw 'dumpbin failed' }
+        }
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage3-portable |
+          Tee-Object hf5a-stage3-results/portable-dependencies-before.log
+        $LASTEXITCODE | Set-Content hf5a-stage3-results/portable-dependencies-before-exit-code.txt
+        # Use the existing version-matched CRT + OpenMP staging recipe; no installer.
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/stage-msvc-runtime.ps1 -OutputDir hf5a-stage3-portable |
+          Tee-Object hf5a-stage3-results/portable-runtime.log
+        if ($LASTEXITCODE -ne 0) { throw 'MSVC runtime staging failed' }
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage3-portable |
+          Tee-Object hf5a-stage3-results/portable-dependencies.log
+        if ($LASTEXITCODE -ne 0) { throw 'Portable import validation failed' }
+        if (@(Get-ChildItem hf5a-stage3-portable -Recurse -Filter '*.exe' | Where-Object Name -ne 'aether-icom-rx-readback-gui.exe').Count) { throw 'Unexpected executable in portable bundle' }
+        Copy-Item hf5a-stage3-results/source.json hf5a-stage3-portable/
+        $savedPath=$env:PATH
+        try {
+          # Prove the bundle does not borrow Qt or the compiler runtime from setup PATH.
+          $env:PATH="$env:SystemRoot/System32;$env:SystemRoot"
+          '' | Set-Content hf5a-stage3-results/portable-self-check.log
+          & ./hf5a-stage3-portable/aether-icom-rx-readback-gui.exe --self-check |
+            Tee-Object hf5a-stage3-results/portable-self-check.log
+          $portableCode=$LASTEXITCODE
+          @{exitCode=$portableCode; hex=('0x{0:X8}' -f $portableCode)} |
+            ConvertTo-Json | Set-Content hf5a-stage3-results/portable-self-check-exit.json
+          if ($portableCode -ne 0) { throw "Portable tool self-check failed: $portableCode" }
+        } finally { $env:PATH=$savedPath }
+        Get-ChildItem hf5a-stage3-portable -File -Recurse | Get-FileHash -Algorithm SHA256 |
+          Select-Object Path,Hash | Export-Csv hf5a-stage3-results/portable-sha256.csv -NoTypeInformation
+        Copy-Item hf5a-stage3-results/portable-sha256.csv hf5a-stage3-portable/
+
+        $bundle=(Resolve-Path hf5a-stage3-portable).Path
+        Get-ChildItem $bundle -File -Recurse | Sort-Object FullName | ForEach-Object {
+          $relative=[IO.Path]::GetRelativePath($bundle,$_.FullName).Replace('\','/')
+          "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $relative"
+        } | Set-Content hf5a-stage3-portable/SHA256SUMS.txt
+        Copy-Item hf5a-stage3-portable/SHA256SUMS.txt hf5a-stage3-results/
+    - name: Preserve actual results and source integrity
+      if: ${{ always() }}
+      run: |
+        $rows=@()
+        if (Test-Path hf5a-stage3-results/results.junit.xml) {
+          [xml]$xml=Get-Content -Raw hf5a-stage3-results/results.junit.xml
+          $rows=@(foreach($case in $xml.SelectNodes('//testcase')) {
+            $status=if ($case.GetAttribute('status') -eq 'notrun' -or $case.SelectSingleNode('skipped')) {'NOT RUN'} elseif ($case.SelectSingleNode('failure') -or $case.SelectSingleNode('error')) {'FAIL'} else {'PASS'}
+            [pscustomobject]@{test=$case.GetAttribute('name'); status=$status; seconds=$case.GetAttribute('time')}
+          })
+        }
+        $rows | ConvertTo-Json | Set-Content hf5a-stage3-results/results.json
+        $rows | Export-Csv hf5a-stage3-results/results.csv -NoTypeInformation
+        git status --porcelain --untracked-files=no | Set-Content hf5a-stage3-results/tracked-changes.txt
+        git diff --exit-code -- src tests CMakeLists.txt .github/workflows
+        $integrity=$LASTEXITCODE
+        $integrity | Set-Content hf5a-stage3-results/source-integrity-exit-code.txt
+        $rows | Format-Table | Out-String | Out-File $env:GITHUB_STEP_SUMMARY -Append
+        if ($integrity -ne 0) { throw 'Source was not restored to the tested commit' }
+    - name: Upload portable audit tool (no installer, no hardware invocation)
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: aether-icom-rx-readback-gui-${{ github.sha }}
+        path: hf5a-stage3-portable/
+        retention-days: 90
+        if-no-files-found: error
+    - name: Upload offline evidence
+      if: ${{ always() }}
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: hf5a-stage3-offline-${{ github.run_id }}
+        path: hf5a-stage3-results/
+        retention-days: 90
+        if-no-files-found: error

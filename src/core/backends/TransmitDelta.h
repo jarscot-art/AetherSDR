@@ -35,6 +35,14 @@ struct TransmitDelta {
     // report TX independently while keeping the established selected-dial
     // ATU contract. This field never confirms or invalidates actual TX.
     std::optional<double>  legacyTransmitFreq;
+    // Independent, radio-confirmed readbacks. RX is the selected dial (RIT is
+    // not folded into it); TX readback is not an observation of VFO B.
+    std::optional<bool> split;
+    std::optional<bool> splitValid;
+    std::optional<QDeadlineTimer> splitDeadline;
+    std::optional<double> receiveDialFreq;
+    std::optional<bool> receiveDialFreqValid;
+    std::optional<QDeadlineTimer> receiveDialFreqDeadline;
     std::optional<int>     maxPowerLevel;    // unclamped
     std::optional<QString> tuneMode;
     std::optional<QString> txSliceMode;

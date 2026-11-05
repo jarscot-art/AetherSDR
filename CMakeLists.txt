@@ -965,6 +965,7 @@ set(CORE_SOURCES
     src/core/backends/icom/IcomModels.cpp    # IcomCIV Phase 5 (per-model capability table)
     src/core/backends/icom/IcomControls.cpp  # the CI-V control registry (controls.map / controls.scrub)
     src/core/backends/icom/IcomCivBackend.cpp # IcomCIV (IRadioBackend impl)
+    src/core/backends/icom/IcomRxAuditRunner.cpp
     src/core/backends/icom/IcomSettings.cpp  # owned config, "Icom" root key (Principle V)
     src/core/backends/icom/IcomCredentials.cpp # password -> keychain, NEVER settings
     src/core/dsp/FftwPlannerLock.cpp # the one process-global FFTW planner lock (#5895)
@@ -1312,6 +1313,7 @@ set(MODEL_SOURCES
 add_subdirectory(third_party/QGeoView/lib EXCLUDE_FROM_ALL)
 
 set(GUI_SOURCES
+    src/gui/RxReadbackWidget.cpp
     src/gui/ControlAvailabilityRegistry.cpp
     src/gui/MainWindow.cpp
     src/gui/MainWindowHelpers.cpp
@@ -1930,6 +1932,12 @@ target_link_libraries(AetherSDR PRIVATE
     aetherdesktop_support
     aether_qrcodegen   # QrCodeImage: the Remote Access sign-in QR code
 )
+
+option(AETHER_RX_READBACK_GUI_ONLY "Build AetherSDR with only the isolated RX audit GUI entry point" OFF)
+if(AETHER_RX_READBACK_GUI_ONLY)
+    target_sources(AetherSDR PRIVATE src/IcomRxReadbackGui.cpp)
+    target_compile_definitions(AetherSDR PRIVATE AETHER_RX_READBACK_GUI_ONLY)
+endif()
 
 add_executable(aetherd
     src/aetherd/main.cpp

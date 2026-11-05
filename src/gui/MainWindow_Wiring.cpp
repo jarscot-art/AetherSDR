@@ -69,6 +69,7 @@
 #include "PanSliceTitle.h"
 #include "SpectrumOverlayMenu.h"
 #include "SpectrumWidget.h"
+#include "RxReadbackWidget.h"
 #include "core/AdaptiveFilterEngine.h"
 #include "VfoWidget.h"
 #include "core/BandStackSettings.h"
@@ -108,6 +109,26 @@ namespace AetherSDR {
 
 void MainWindow::wireStatusBarMessages()
 {
+    auto* readback = new RxReadbackWidget(m_statusBarContainer);
+    m_statusBarContainer->layout()->addWidget(readback);
+    auto* readbackRefresh = new QTimer(readback);
+    const auto refreshReadback = [this, readback] {
+        const auto& transmit = m_radioModel.transmitModel();
+        const bool connected = m_radioModel.isConnected();
+        readback->refresh(transmit, connected);
+        // This is an informational cluster, not a hidden capability control.
+        readback->setVisible(transmit.hasFrequencyReadback());
+        const auto tx = connected && transmit.hasFrequencyReadback()
+            ? transmit.confirmedTransmitFreq() : std::nullopt;
+        for (auto* spectrum : findChildren<SpectrumWidget*>()) {
+            spectrum->setConfirmedTxReadback(tx, transmit.transmitFreqDeadline());
+        }
+    };
+    connect(readbackRefresh, &QTimer::timeout, readback, refreshReadback);
+    connect(&m_radioModel.transmitModel(), &TransmitModel::stateChanged, readback, refreshReadback);
+    connect(&m_radioModel, &RadioModel::connectionStateChanged, readback, refreshReadback);
+    readbackRefresh->start(100);
+    refreshReadback();
     QHBoxLayout* layout = qobject_cast<QHBoxLayout*>(m_statusBarContainer->layout());
     const int stationIndex = layout->indexOf(m_stationNickLabel);
     connect(statusBar(), &QStatusBar::messageChanged, this,

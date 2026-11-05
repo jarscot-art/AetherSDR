@@ -14686,6 +14686,7 @@ void SpectrumWidget::renderGpuFrame(QRhiCommandBuffer* cb,
             }
             drawSwrSweep(frequencyPainter, specRect);
             drawSliceMarkers(frequencyPainter, specRect, wfRect);
+            drawConfirmedTxReadback(frequencyPainter, specRect);
             drawOffScreenSlices(frequencyPainter, specRect);
 
             m_overlayStatic.fill(Qt::transparent);
@@ -15875,6 +15876,7 @@ void SpectrumWidget::paintEvent(QPaintEvent* ev)
     if (m_showSpots || m_showSHistory) drawSpotMarkers(p, specRect);
     drawSwrSweep(p, specRect);
     drawSliceMarkers(p, specRect, wfRect);
+    drawConfirmedTxReadback(p, specRect);
     drawSmartMtrValueLabels(p);
     drawOffScreenSlices(p, specRect);
 
@@ -17848,6 +17850,14 @@ void SpectrumWidget::drawDssDepthGeometry(
         painter.drawLine(line.line);
     }
     painter.restore();
+}
+
+void SpectrumWidget::drawConfirmedTxReadback(QPainter& painter, const QRect& rect)
+{
+    if (const auto frequency = m_txReadbackMarker.confirmed()) {
+        m_txReadbackMarker.paint(painter, rect, mhzToX(*frequency),
+            ThemeManager::instance().color(QStringLiteral("color.slice.tx")));
+    }
 }
 
 void SpectrumWidget::drawSliceMarkers(QPainter& p, const QRect& specRect, const QRect& wfRect)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AutoBlackMode.h"
+#include "TxReadbackMarker.h"
 #include "DbmRangeTransition.h"
 #include "core/backends/SquelchLevelScale.h"
 #include "RfGainPresentation.h"
@@ -355,6 +356,12 @@ public:
 
     // Set the VFO frequency (draws the orange VFO marker).
     void setVfoFrequency(double freqMhz);
+    void setConfirmedTxReadback(std::optional<double> mhz, QDeadlineTimer deadline) {
+        if (!mhz && !m_txReadbackMarker.frequencyMhz) { return; }
+        m_txReadbackMarker = {mhz, deadline};
+        markOverlayDirty();
+    }
+    std::optional<double> confirmedTxReadback() const { return m_txReadbackMarker.confirmed(); }
 
     // Set the filter edges (Hz offsets from VFO frequency).
     void setVfoFilter(int lowHz, int highHz);
@@ -1128,6 +1135,8 @@ private:
     void drawGrid(QPainter& p, const QRect& r);
     void drawSpectrum(QPainter& p, const QRect& r);
     void drawSliceMarkers(QPainter& p, const QRect& specRect, const QRect& wfRect);
+    void drawConfirmedTxReadback(QPainter& painter, const QRect& rect);
+    TxReadbackMarker m_txReadbackMarker;
     struct DssDepthBand {
         QPolygonF polygon;
         QColor frontColor;

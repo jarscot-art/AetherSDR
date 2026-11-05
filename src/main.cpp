@@ -1,3 +1,6 @@
+#ifdef AETHER_RX_READBACK_GUI_ONLY
+#include "IcomRxReadbackGui.h"
+#endif
 #include "gui/MainWindow.h"
 #include "gui/ConnectionPanel.h"
 #include "gui/FramelessMessageBox.h"
@@ -308,6 +311,9 @@ static const char* displayPresenceName(AetherSDR::DisplayPresence p)
 
 int main(int argc, char* argv[])
 {
+#ifdef AETHER_RX_READBACK_GUI_ONLY
+    return AetherSDR::runIcomRxReadbackGui(argc, argv);
+#else
     if (argc >= 2 && qstrcmp(argv[1], "--config") == 0) {
         return runConfigCli(argc, argv);
     }
@@ -839,4 +845,5 @@ int main(int argc, char* argv[])
     logManager.shutdownLogging();
 
     return exitCode;
+#endif
 }

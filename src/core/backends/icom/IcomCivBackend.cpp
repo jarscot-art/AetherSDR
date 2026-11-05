@@ -2492,12 +2492,23 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             && (identity || (alive->m_model == model && alive->m_civAmbiguous == ambiguous));
     };
     const bool nativeReadback = profileFor(*m_model).splitTxReadback.has_value();
+    const bool receiveReply = nativeReadback
+        && (frame.cmd == cmd::kReadFreq || frame.cmd == cmd::kSetFreqTrx);
+    if (receiveReply) {
+        const auto hz = decodeFreqExact(frame.data, m_model->freqBytes);
+        if (!frame.hasNormalTerminator || frame.hasSub || !m_session
+            || m_civReported == 0 || m_civAmbiguous || frame.from != m_session->civAddress()
+            || (frame.to != kControllerAddress && frame.to != kBroadcastAddress)
+            || !hz || *hz == 0 || *hz < m_model->tuningMinHz || *hz > m_model->tuningMaxHz) {
+            return;
+        }
+    }
     const bool splitReply = nativeReadback && frame.cmd == cmd::kDuplex;
     const bool txReply = nativeReadback && frame.cmd == cmd::kControl
         && frame.sub == control::kReadTxFreq;
     const std::string inFlightKey = m_civScheduler.stats().inFlightKey;
     const bool readbackAck = nativeReadback && (frame.isOk() || frame.isNg())
-        && (inFlightKey == "split" || inFlightKey == "tx.frequency");
+        && (inFlightKey == "split" || inFlightKey == "tx.frequency" || inFlightKey == "frequency");
     std::optional<QDeadlineTimer> txReadbackDeadline;
     if (splitReply || txReply || readbackAck) {
         if (!frame.hasNormalTerminator || !m_session || m_civReported == 0 || m_civAmbiguous
@@ -2741,7 +2752,8 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
         resetScopeEdgeState();
     }
     if (readbackAck && observation == IcomCivScheduler::Observation::Accepted) {
-        ReadbackSample& sample = inFlightKey == "split" ? m_splitReadback : m_txReadback;
+        ReadbackSample& sample = inFlightKey == "split" ? m_splitReadback
+            : inFlightKey == "frequency" ? m_receiveDialReadback : m_txReadback;
         if (sample.serial == sample.attemptSerial) {
             const QString status = frame.isNg() ? QStringLiteral("refused") : QStringLiteral("no-data");
             if (inFlightKey == "tx.frequency") {
@@ -2750,6 +2762,8 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
             } else {
                 sample.valid = false;
                 sample.status = status;
+                publishReceiveSplitReadback();
+                if (!sessionCurrent()) { return; }
             }
         }
     }
@@ -2839,6 +2853,14 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
                 invalidateTxReadback(QStringLiteral("previous-context"));
                 if (!sessionCurrent()) { return; }
             }
+            if (receiveReply) {
+                m_receiveDialReadback.value = *hz;
+                m_receiveDialReadback.atMs = frameAtMs;
+                m_receiveDialReadback.valid = true;
+                ++m_receiveDialReadback.serial;
+                publishReceiveSplitReadback();
+                if (!sessionCurrent()) { return; }
+            }
             m_frequencyEchoAtMs = nowMs();
             onScopeVfoMoved(previousHz, *hz);
             if (!m_outboundPolicy.isAudit()
@@ -2926,6 +2948,7 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
                 invalidateTxReadback(QStringLiteral("previous-context"));
                 if (!sessionCurrent()) { return; }
             }
+            publishReceiveSplitReadback();
             return;
         }
         const FmRepeaterProfile* fm = basicFmProfileFor(m_model);
@@ -4597,8 +4620,11 @@ void IcomCivBackend::pumpCiv(qint64 nowMs)
         serviceSchedulerWaiters(nowMs);
         return;
     }
-    if (dispatch->key == "split" || dispatch->key == "tx.frequency") {
-        ReadbackSample& sample = dispatch->key == "split" ? m_splitReadback : m_txReadback;
+    if (dispatch->key == "split" || dispatch->key == "tx.frequency"
+        || (dispatch->key == "frequency" && dispatch->frame.size() > 4
+            && dispatch->frame[4] == cmd::kReadFreq)) {
+        ReadbackSample& sample = dispatch->key == "split" ? m_splitReadback
+            : dispatch->key == "frequency" ? m_receiveDialReadback : m_txReadback;
         sample.attemptSerial = sample.serial;
         sample.attemptGeneration = dispatch->generation;
     }
@@ -4677,6 +4703,7 @@ void IcomCivBackend::resetSplitTxReadback(const QString& reason)
 {
     const bool publishInvalid = m_txReadback.valid || profileFor(*m_model).splitTxReadback.has_value();
     m_splitReadback = {};
+    m_receiveDialReadback = {};
     m_txReadback = {};
     m_splitReadback.status = reason;
     m_txReadback.status = reason;
@@ -4687,6 +4714,8 @@ void IcomCivBackend::resetSplitTxReadback(const QString& reason)
     if (publishInvalid) {
         TransmitDelta t;
         t.transmitFreqValid = false;
+        t.splitValid = false;
+        t.receiveDialFreqValid = false;
         emit transmitChanged(t);
     }
 }
@@ -4696,14 +4725,16 @@ void IcomCivBackend::serviceSplitTxReadback(qint64 now)
     const auto profile = profileFor(*m_model).splitTxReadback;
     if (!profile) { return; }
     std::optional<QString> invalidTxReason;
+    bool receiveSplitInvalidated = false;
     for (const auto& event : m_civScheduler.recentTransactions()) {
         if (event.eventId <= m_splitTxEventId) { continue; }
         m_splitTxEventId = event.eventId;
         if (event.completion != IcomCivScheduler::Completion::Timeout
-            || (event.key != "split" && event.key != "tx.frequency")) {
+            || (event.key != "split" && event.key != "tx.frequency" && event.key != "frequency")) {
             continue;
         }
-        ReadbackSample& sample = event.key == "split" ? m_splitReadback : m_txReadback;
+        ReadbackSample& sample = event.key == "split" ? m_splitReadback
+            : event.key == "frequency" ? m_receiveDialReadback : m_txReadback;
         if (event.generation != sample.attemptGeneration
             || sample.serial != sample.attemptSerial) {
             continue; // a newer radio report already superseded this attempt
@@ -4713,17 +4744,51 @@ void IcomCivBackend::serviceSplitTxReadback(qint64 now)
         } else {
             sample.valid = false;
             sample.status = QStringLiteral("timeout");
+            receiveSplitInvalidated = true;
         }
     }
     if (m_splitReadback.valid && now - m_splitReadback.atMs > profile->freshnessMs) {
         m_splitReadback.valid = false;
         m_splitReadback.status = QStringLiteral("stale");
+        receiveSplitInvalidated = true;
+    }
+    if (m_receiveDialReadback.valid && now - m_receiveDialReadback.atMs > profile->freshnessMs) {
+        m_receiveDialReadback.valid = false;
+        receiveSplitInvalidated = true;
     }
     if (!invalidTxReason && m_txReadback.valid && now - m_txReadback.atMs > profile->freshnessMs) {
         invalidTxReason = QStringLiteral("stale");
     }
     // Emit only after iterating: a direct observer may clear scheduler history.
+    const QPointer<IcomCivBackend> alive(this);
+    const auto generation = m_sessionGeneration;
     if (invalidTxReason) { invalidateTxReadback(*invalidTxReason, false); }
+    if (!alive || generation != m_sessionGeneration) { return; }
+    if (receiveSplitInvalidated) { publishReceiveSplitReadback(); }
+}
+
+void IcomCivBackend::publishReceiveSplitReadback()
+{
+    const auto profile = profileFor(*m_model).splitTxReadback;
+    if (!profile) { return; }
+    const auto remaining = [&](const ReadbackSample& sample) -> qint64 {
+        if (!m_connected || !sample.valid || !sample.value || sample.atMs < 0) { return 0; }
+        return std::max<qint64>(0, profile->freshnessMs - (nowMs() - sample.atMs));
+    };
+    TransmitDelta delta;
+    const auto splitRemaining = remaining(m_splitReadback);
+    delta.splitValid = splitRemaining > 0;
+    if (splitRemaining > 0) {
+        delta.split = *m_splitReadback.value != 0;
+        delta.splitDeadline = QDeadlineTimer(splitRemaining, Qt::PreciseTimer);
+    }
+    const auto receiveRemaining = remaining(m_receiveDialReadback);
+    delta.receiveDialFreqValid = receiveRemaining > 0;
+    if (receiveRemaining > 0) {
+        delta.receiveDialFreq = static_cast<double>(*m_receiveDialReadback.value) / 1e6;
+        delta.receiveDialFreqDeadline = QDeadlineTimer(receiveRemaining, Qt::PreciseTimer);
+    }
+    emit transmitChanged(delta);
 }
 
 QVariantMap IcomCivBackend::splitTxReadbackDiagnostics(qint64 now, bool withValues) const

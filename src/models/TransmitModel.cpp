@@ -154,6 +154,23 @@ void TransmitModel::applyChanges(const TransmitDelta& d)
     if (d.legacyTransmitFreq && std::isfinite(*d.legacyTransmitFreq) && *d.legacyTransmitFreq >= 0.0) {
         changed |= assign(d.legacyTransmitFreq, m_transmitFreq);
     }
+    if (d.splitValid.has_value()) {
+        m_splitValid = *d.splitValid && d.split.has_value() && d.splitDeadline.has_value();
+        if (m_splitValid == true) {
+            m_split = d.split; m_splitDeadline = *d.splitDeadline;
+        }
+        changed = true;
+    }
+    if (d.receiveDialFreqValid.has_value()) {
+        m_receiveDialFreqValid = *d.receiveDialFreqValid && d.receiveDialFreq
+            && std::isfinite(*d.receiveDialFreq) && *d.receiveDialFreq > 0.0
+            && d.receiveDialFreqDeadline.has_value();
+        if (m_receiveDialFreqValid == true) {
+            m_receiveDialFreq = d.receiveDialFreq;
+            m_receiveDialFreqDeadline = *d.receiveDialFreqDeadline;
+        }
+        changed = true;
+    }
     const auto previousFrequencyValidity = m_transmitFreqValid;
     const auto previousQualifiedFrequencyValidity = transmitFreqValidity();
     if (d.transmitFreqValid.has_value()) {
@@ -169,6 +186,8 @@ void TransmitModel::applyChanges(const TransmitDelta& d)
         }
     } else if (d.transmitFreq) {
         changed |= assign(d.transmitFreq, m_transmitFreq);
+        m_splitValid.reset(); m_split.reset();
+        m_receiveDialFreqValid.reset(); m_receiveDialFreq.reset();
         m_transmitFreqValid.reset(); // legacy publications make no freshness claim
         m_confirmedTransmitFreq.reset();
     }

@@ -126,11 +126,24 @@ public:
     {
         return transmitFreqValidity() == true ? m_confirmedTransmitFreq : std::nullopt;
     }
+    bool hasFrequencyReadback() const { return m_splitValid.has_value(); }
+    std::optional<bool> confirmedSplit() const
+    {
+        return m_splitValid == true && !m_splitDeadline.hasExpired() ? m_split : std::nullopt;
+    }
+    std::optional<double> confirmedReceiveDialFreq() const
+    {
+        return m_receiveDialFreqValid == true && !m_receiveDialFreqDeadline.hasExpired()
+            ? m_receiveDialFreq : std::nullopt;
+    }
+    QDeadlineTimer transmitFreqDeadline() const { return m_transmitFreqDeadline; }
     // No signal on teardown: RadioModel can also call this from destruction.
     void resetTransmitFrequencyObservation()
     {
         m_transmitFreqValid.reset();
         m_confirmedTransmitFreq.reset();
+        m_splitValid.reset(); m_split.reset();
+        m_receiveDialFreqValid.reset(); m_receiveDialFreq.reset();
     }
     void    setTransmitting(bool tx);
 
@@ -703,6 +716,12 @@ private:
     bool   m_tune{false};
     bool   m_mox{false};
     double m_transmitFreq{0.0};   // MHz — last reported "transmit freq=..."
+    std::optional<bool> m_splitValid;
+    std::optional<bool> m_split;
+    QDeadlineTimer m_splitDeadline;
+    std::optional<bool> m_receiveDialFreqValid;
+    std::optional<double> m_receiveDialFreq;
+    QDeadlineTimer m_receiveDialFreqDeadline;
     std::optional<bool> m_transmitFreqValid;
     std::optional<double> m_confirmedTransmitFreq;
     QDeadlineTimer m_transmitFreqDeadline{QDeadlineTimer::Forever};

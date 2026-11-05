@@ -1372,6 +1372,19 @@ add_executable(icom_outbound_policy_test tests/icom_outbound_policy_test.cpp
 target_include_directories(icom_outbound_policy_test PRIVATE src)
 add_test(NAME icom_outbound_policy_test COMMAND icom_outbound_policy_test)
 
+add_executable(rx_readback_gui_test tests/rx_readback_gui_test.cpp src/gui/RxReadbackWidget.cpp)
+target_include_directories(rx_readback_gui_test PRIVATE src tests)
+target_link_libraries(rx_readback_gui_test PRIVATE aetherdesktop_support Qt6::Widgets Qt6::Test)
+add_test(NAME rx_readback_gui_test COMMAND rx_readback_gui_test)
+set_tests_properties(rx_readback_gui_test PROPERTIES TIMEOUT 60 ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+if(AETHER_RX_READBACK_GUI_ONLY)
+    add_test(NAME icom_rx_readback_gui_self_check COMMAND AetherSDR --self-check)
+    add_test(NAME icom_rx_readback_gui_refuses_implicit_connection COMMAND AetherSDR)
+    set_tests_properties(icom_rx_readback_gui_self_check icom_rx_readback_gui_refuses_implicit_connection
+        PROPERTIES TIMEOUT 60 ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    set_tests_properties(icom_rx_readback_gui_refuses_implicit_connection PROPERTIES WILL_FAIL TRUE)
+endif()
+
 add_executable(icom_rx_audit_requests_test tests/icom_rx_audit_requests_test.cpp)
 target_include_directories(icom_rx_audit_requests_test PRIVATE src tests)
 target_link_libraries(icom_rx_audit_requests_test PRIVATE aethercore Qt6::Core Qt6::Test)
@@ -10405,6 +10418,7 @@ if(TARGET Qt6::WebSockets)
 endif()
 
 set(AETHER_SETTINGS_CONSUMERS
+    rx_readback_gui_test
     icom_rx_audit_requests_test
     icom_rx_audit_egress_test
     update_controller_test

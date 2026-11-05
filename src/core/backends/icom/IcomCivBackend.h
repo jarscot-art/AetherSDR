@@ -346,6 +346,7 @@ private:
     void invalidateTxReadback(const QString& reason, bool refresh = true);
     void resetSplitTxReadback(const QString& reason);
     void serviceSplitTxReadback(qint64 nowMs);
+    void publishReceiveSplitReadback();
     [[nodiscard]] QVariantMap splitTxReadbackDiagnostics(qint64 nowMs, bool withValues) const;
     // Adopt (or refuse) the address the radio reported in its 0x19 0x00 reply.
     bool adoptCivIdentity(std::uint8_t address, std::uint8_t modelId);
@@ -434,6 +435,7 @@ private:
         std::uint64_t attemptSerial = 0;
         std::uint64_t attemptGeneration = 0;
     };
+    ReadbackSample m_receiveDialReadback;
     ReadbackSample m_splitReadback;
     ReadbackSample m_txReadback;
     qint64 m_splitTxPollAtMs = -1;
