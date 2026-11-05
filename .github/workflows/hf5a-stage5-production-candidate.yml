@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         persist-credentials: false
-        fetch-depth: 2
+        fetch-depth: 3
     - name: Initialize exact-source evidence
       run: |
         New-Item -ItemType Directory -Force hf5a-stage5-results | Out-Null
@@ -216,41 +216,49 @@ jobs:
         \ -eq 0) {\n    \"healthy=true\" | Out-File -FilePath $env:GITHUB_OUTPUT -Append\n    Write-Host \"sccache OK\"\n  } else {\n    \"healthy=false\"\
         \ | Out-File -FilePath $env:GITHUB_OUTPUT -Append\n    Write-Host \"::warning::sccache unhealthy (exit $exit) \u2014 building without\
         \ compiler cache\"\n  }\n} finally { Stop-Transcript }\n"
+    - name: Verify dependency process exit contract
+      run: |
+        & pwsh -NoLogo -NoProfile -NonInteractive -File tools/test_hf5a_setup_exit.ps1 | Tee-Object hf5a-stage5-results/setup-exit-contract.log
+        if ($LASTEXITCODE -ne 0) { throw 'Dependency process exit regression failed' }
     - name: Setup release dependency RTL-SDR and libusb
       run: |
         Start-Transcript -Path hf5a-stage5-results/setup-rtl-deps.ps1.log
         try {
-          & ./scripts/setup/setup-rtl-deps.ps1
+          & pwsh -NoLogo -NoProfile -NonInteractive -File ./scripts/setup/setup-rtl-deps.ps1
           if ($LASTEXITCODE -ne 0) { throw 'RTL-SDR and libusb setup failed' }
         } finally { Stop-Transcript }
     - name: Setup release dependency QtKeychain
       run: |
         Start-Transcript -Path hf5a-stage5-results/setup-qtkeychain.ps1.log
         try {
-          & ./scripts/setup/setup-qtkeychain.ps1
+          & pwsh -NoLogo -NoProfile -NonInteractive -File ./scripts/setup/setup-qtkeychain.ps1
           if ($LASTEXITCODE -ne 0) { throw 'QtKeychain setup failed' }
         } finally { Stop-Transcript }
     - name: Setup release dependency ONNX Runtime
       run: |
         Start-Transcript -Path hf5a-stage5-results/setup-onnxruntime.ps1.log
         try {
-          & ./scripts/setup/setup-onnxruntime.ps1
+          & pwsh -NoLogo -NoProfile -NonInteractive -File ./scripts/setup/setup-onnxruntime.ps1
           if ($LASTEXITCODE -ne 0) { throw 'ONNX Runtime setup failed' }
         } finally { Stop-Transcript }
     - name: Setup release dependency sherpa-onnx
       run: |
         Start-Transcript -Path hf5a-stage5-results/setup-sherpa-onnx.ps1.log
         try {
-          & ./scripts/setup/setup-sherpa-onnx.ps1
+          & pwsh -NoLogo -NoProfile -NonInteractive -File ./scripts/setup/setup-sherpa-onnx.ps1
           if ($LASTEXITCODE -ne 0) { throw 'sherpa-onnx setup failed' }
         } finally { Stop-Transcript }
     - name: Setup release dependency Vulkan SDK
       run: |
         Start-Transcript -Path hf5a-stage5-results/setup-vulkan-sdk.ps1.log
         try {
-          & ./scripts/setup/setup-vulkan-sdk.ps1
+          & pwsh -NoLogo -NoProfile -NonInteractive -File ./scripts/setup/setup-vulkan-sdk.ps1
           if ($LASTEXITCODE -ne 0) { throw 'Vulkan SDK setup failed' }
         } finally { Stop-Transcript }
+    - name: Verify complete release dependency payloads
+      run: |
+        & pwsh -NoLogo -NoProfile -NonInteractive -File tools/verify_hf5a_windows_dependencies.ps1 -ReportPath hf5a-stage5-results/dependency-payloads.json
+        if ($LASTEXITCODE -ne 0) { throw 'Required dependency payload validation failed' }
     - name: Configure
       shell: pwsh
       run: |

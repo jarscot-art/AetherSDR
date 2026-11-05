@@ -26,8 +26,20 @@ $OrtSha256  = "c5c81710938e68079ff1a192b04897faabe4b43830d48f39f27ecd4e16138bfc"
 $OutDir     = "third_party\onnxruntime"
 $ZipFile    = "third_party\onnxruntime-win-x64-${OrtVersion}.zip"
 
+function Assert-OrtPayload {
+    foreach ($relative in @('include/onnxruntime_c_api.h', 'include/onnxruntime_cxx_api.h',
+                            'include/onnxruntime_cxx_inline.h', 'include/onnxruntime_float16.h',
+                            'lib/onnxruntime.lib', 'bin/onnxruntime.dll')) {
+        $path = Join-Path $OutDir $relative
+        if (-not (Test-Path $path -PathType Leaf) -or (Get-Item $path).Length -le 0) {
+            throw "Incomplete ONNX Runtime payload: $path"
+        }
+    }
+}
+
 # ── Check if already set up ──────────────────────────────────────────────
 if (Test-Path "$OutDir\lib\onnxruntime.lib") {
+    Assert-OrtPayload
     Write-Host "ONNX Runtime already set up in $OutDir" -ForegroundColor Green
     exit 0
 }
@@ -43,8 +55,8 @@ New-Item -ItemType Directory -Force -Path "$OutDir\bin" | Out-Null
 if (-not (Test-Path $ZipFile)) {
     Write-Host "Downloading ONNX Runtime ${OrtVersion} prebuilt package..." -ForegroundColor Cyan
     Invoke-WebRequest -Uri $OrtUrl -OutFile $ZipFile
-    Confirm-Sha256 -Path $ZipFile -Expected $OrtSha256
 }
+Confirm-Sha256 -Path $ZipFile -Expected $OrtSha256
 
 # ── Extract ──────────────────────────────────────────────────────────────
 Write-Host "Extracting..." -ForegroundColor Cyan
@@ -76,6 +88,7 @@ Copy-Item $libFile.FullName "$OutDir\lib\onnxruntime.lib"
 foreach ($dll in $dllFiles) {
     Copy-Item $dll.FullName "$OutDir\bin\$($dll.Name)"
 }
+Assert-OrtPayload
 
 # ── Cleanup ──────────────────────────────────────────────────────────────
 Remove-Item -Recurse -Force $tempDir
@@ -88,3 +101,4 @@ Write-Host "  DLLs:    $OutDir\bin\"
 Write-Host ""
 Write-Host "Re-run CMake to pick up ONNX Runtime:" -ForegroundColor Yellow
 Write-Host "  cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo"
+exit 0
