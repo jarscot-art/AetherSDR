@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <algorithm>
 #include <cstdio>
+#include <cstdint>
 #include <memory>
 #include <set>
 #include <vector>
@@ -67,7 +68,7 @@ struct IcomCivBackendTestAccess {
     static void drain(IcomCivBackend& b)
     {
         // Exercise timeout recovery and the real terminal writer, without sockets.
-        auto now = std::max(b.nowMs(), b.m_civScheduler.stats().lastDispatchMs);
+        auto now = std::max<qint64>(b.nowMs(), b.m_civScheduler.stats().lastDispatchMs);
         for (int i = 0; i < 50; ++i) { b.pumpCiv(now += 1000); }
     }
     static QVariantMap readback(const IcomCivBackend& b)
