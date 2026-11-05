@@ -27,6 +27,7 @@
 #include <QJsonObject>
 #include <QMap>
 #include <QStandardPaths>
+#include <QTemporaryDir>
 #include <QXmlStreamWriter>
 
 #include <cstdio>
@@ -1176,17 +1177,42 @@ int main(int argc, char** argv)
                "profile legacy source stays byte-identical");
     } else if (scenario == QStringLiteral("explicit-profile-path-isolation")) {
 #if defined(Q_OS_MACOS) || defined(Q_OS_WIN)
-        // Windows known folders do not honor HOME overrides. Keep Qt test
-        // mode there, and skip rather than create a fixture outside our root.
+#ifdef Q_OS_WIN
+        // Known folders ignore HOME. Allocate a unique native-path fixture
+        // under Qt's test root, then make AppConfigLocation resolve INTO it.
+        QStandardPaths::setTestModeEnabled(true);
+        QCoreApplication::setOrganizationName(QStringLiteral("HF5A-Isolation"));
+        QCoreApplication::setApplicationName(QStringLiteral("native-fixtures"));
+        const QString nativeParent = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+        if (!QDir::fromNativeSeparators(nativeParent).contains(QStringLiteral("/qttest/"))
+            || !QDir().mkpath(nativeParent)) {
+            std::fprintf(stderr, "[FAIL] cannot create a native fixture inside Qt test mode\n");
+            return 1;
+        }
+        QTemporaryDir nativeFixture(nativeParent + QStringLiteral("/case-XXXXXX"));
+        if (!nativeFixture.isValid()) { return 1; }
+        QCoreApplication::setApplicationName(QStringLiteral("native-fixtures/")
+                                             + QFileInfo(nativeFixture.path()).fileName());
+#endif
 #ifdef Q_OS_MACOS
         QStandardPaths::setTestModeEnabled(false);
 #endif
         const QString oldPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation)
             + QStringLiteral("/AetherSDR/AetherSDR.settings");
+#ifdef Q_OS_WIN
+        const QString expected = nativeFixture.path() + QStringLiteral("/AetherSDR/AetherSDR.settings");
+        if (QDir::cleanPath(oldPath) != QDir::cleanPath(expected)) {
+            std::fprintf(stderr, "[FAIL] native path did not resolve into the allocated fixture\n");
+            return 1;
+        }
+        std::printf("[EVIDENCE] native fixture=%s explicit profile=%s\n",
+                    qPrintable(oldPath), qPrintable(SettingsPaths::configDir()));
+#else
         if (!QFileInfo(oldPath).absoluteFilePath().startsWith(profile.path() + '/')) {
             std::fprintf(stderr, "[SKIP] native path cannot be redirected into private profile\n");
             return 77;
         }
+#endif
         const QByteArray original = settingsDocument(3, QStringLiteral("NATIVE-XML"));
         expect(writeFile(oldPath, original), "create isolated legacy path fixture");
         AppSettings::instance().load();

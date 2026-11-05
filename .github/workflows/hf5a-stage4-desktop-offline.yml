@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         persist-credentials: false
-        fetch-depth: 2
+        fetch-depth: 3
     - name: Initialize exact-source evidence
       run: |
         New-Item -ItemType Directory -Force hf5a-stage4-results | Out-Null
@@ -328,6 +328,26 @@ jobs:
         $code=$LASTEXITCODE
         $code | Set-Content hf5a-stage4-results/ctest-exit-code.txt
         exit $code
+    - name: Require all tests and orderly desktop shutdown before packaging
+      run: |
+        [xml]$report=Get-Content -Raw hf5a-stage4-results/results.junit.xml
+        $cases=@($report.SelectNodes('//testcase'))
+        $bad=@($cases | Where-Object {
+          $_.GetAttribute('status') -ne 'run' -or $_.SelectSingleNode('skipped') -or
+          $_.SelectSingleNode('failure') -or $_.SelectSingleNode('error')
+        })
+        if ($cases.Count -ne 31 -or $bad.Count) { throw 'All 31 tests must execute and pass; skipped tests cannot qualify the ZIP' }
+        $logs=@(Get-ChildItem "$env:TEMP/hf5a-desktop-stage4-*/logs/aethersdr-*.log" -File)
+        $startup=@($logs | Where-Object {
+          Select-String -Path $_.FullName -Pattern 'HF5A offline startup assertions: true close accepted: true' -SimpleMatch -Quiet
+        })
+        if ($startup.Count -ne 1) { throw 'Missing unique desktop startup/close evidence' }
+        foreach ($marker in @('phase=main_window.close_event event=end result=ok', 'phase=spots.thread.join event=end result=ok', 'phase=application event=complete')) {
+          if (-not (Select-String -Path $startup[0].FullName -Pattern $marker -SimpleMatch -Quiet)) { throw "Missing shutdown evidence: $marker" }
+        }
+        Copy-Item $startup[0].FullName hf5a-stage4-results/desktop-startup-and-shutdown.log
+        'PASS: 31 executed tests; startup assertions; accepted close; SpotClients joined; application completed' |
+          Set-Content hf5a-stage4-results/desktop-qualification.txt
     - name: Prepare full desktop portable ZIP without an installer
       run: |
         New-Item -ItemType Directory -Force hf5a-stage4-portable | Out-Null

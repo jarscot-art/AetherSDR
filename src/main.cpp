@@ -851,7 +851,12 @@ int main(int argc, char* argv[])
                         == QStringLiteral("False")
                     && !AetherSDR::AutomationBridgeSettings::enabled();
                 std::printf("HF5A full desktop offline startup: %s\n", ok ? "PASS" : "FAIL");
-                app.exit(ok ? EXIT_SUCCESS : EXIT_FAILURE);
+                // closeEvent joins SpotClients and retires the other desktop
+                // workers. QCoreApplication::exit alone bypasses that path.
+                const bool closed = window.close();
+                qInfo() << "HF5A offline startup assertions:" << ok << "close accepted:" << closed;
+                AetherSDR::LogManager::instance().flushLog();
+                app.exit(ok && closed ? EXIT_SUCCESS : EXIT_FAILURE);
             });
         }
 #endif
