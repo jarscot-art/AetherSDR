@@ -7943,6 +7943,17 @@ add_test(NAME icom_credentials_singleflight_test
          COMMAND icom_credentials_singleflight_test)
 set_tests_properties(icom_credentials_singleflight_test PROPERTIES TIMEOUT 10)
 
+option(HF5A_BUILD_KEYCHAIN_TEST "Qualify the real keychain using a disposable CI namespace" OFF)
+if(HF5A_BUILD_KEYCHAIN_TEST)
+    if(NOT Qt6Keychain_FOUND)
+        message(FATAL_ERROR "HF5A credential qualification requires real Qt6Keychain")
+    endif()
+    add_executable(hf5a_keychain_runtime_test tests/hf5a_keychain_runtime_test.cpp)
+    target_link_libraries(hf5a_keychain_runtime_test PRIVATE Qt6::Core Qt6Keychain::Qt6Keychain)
+    add_test(NAME hf5a_keychain_runtime_test COMMAND hf5a_keychain_runtime_test)
+    set_tests_properties(hf5a_keychain_runtime_test PROPERTIES TIMEOUT 60)
+endif()
+
 # ANAN-G2 settings ("Anan" root key, Principle V). Own process because
 # AppSettings is a process-wide singleton, same reasoning as icom_settings_test.
 add_executable(anan_settings_test tests/anan_settings_test.cpp)

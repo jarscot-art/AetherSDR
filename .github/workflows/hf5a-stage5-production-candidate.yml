@@ -1,0 +1,529 @@
+name: HF5A stage 5 normal desktop production candidate Windows
+'on':
+  workflow_dispatch: null
+  push:
+    branches:
+    - hf5a/stage5-production-candidate
+permissions:
+  contents: read
+env:
+  QT_VERSION: 6.12.0
+  QT_PACKAGE_REVISION: '202609280346'
+  AQTINSTALL_VERSION: 3.3.0
+  AQTINSTALL_GIT_REF: 076e1659807d0b362a3ed684d54c2e9c775eb9c7
+  PY7ZR_VERSION: 1.1.3
+  QT_MODULE_FLOOR: '10'
+jobs:
+  windows-offline:
+    runs-on: windows-latest
+    timeout-minutes: 330
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      SCCACHE_DIR: D:\sccache
+      SCCACHE_CACHE_SIZE: 1G
+      QT_ARCH: win64_msvc2022_64
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        persist-credentials: false
+        fetch-depth: 2
+    - name: Initialize exact-source evidence
+      run: |
+        New-Item -ItemType Directory -Force hf5a-stage5-results | Out-Null
+        @{ sourceCommit=(git rev-parse HEAD).Trim(); baseCommit='82019c813cf90708aa2a1abcecdc4c34d72cbf02';
+           runUrl="https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID";
+           hardwareTest=$false; dependencyRecipe='ci.yml:check-windows'; qt='6.12.0' } |
+           ConvertTo-Json | Set-Content hf5a-stage5-results/source.json
+    - name: Check readback and TX source integrity and registration
+      run: |
+        python tools/check_hf5a_stage5.py | Tee-Object hf5a-stage5-results/source-contracts.log
+        if ($LASTEXITCODE -ne 0) { throw 'Stage 4 source contract failed' }
+        python tools/check_test_registration.py --strict
+        if ($LASTEXITCODE -ne 0) { throw 'Test registration failed' }
+        python tools/check_ci_test_gate.py
+        if ($LASTEXITCODE -ne 0) { throw 'Frozen test gate changed' }
+    - name: Restore Qt
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-qt-win
+      with:
+        path: ${{ runner.workspace }}\Qt
+        key: qt-${{ env.QT_VERSION }}-${{ env.QT_PACKAGE_REVISION }}-windows-${{ env.QT_ARCH }}-aqt${{ env.AQTINSTALL_GIT_REF }}-mm.ws.sp.st
+    - name: Verify the restored Qt tree
+      id: qt-verify-win
+      if: steps.cache-qt-win.outputs.cache-hit == 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage5-results/verify-the-restored-qt-tree.log"
+        try {
+          $qtRoot = "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION\" + ($env:QT_ARCH -replace '^win64_', '')
+          $complete = $true
+          # -PathType Leaf so a directory of that name cannot pass. There is no
+          # Windows analogue of the macOS side's executable-bit test.
+          if (-not (Test-Path "$qtRoot\bin\qmake.exe" -PathType Leaf)) {
+            Write-Host "missing: bin\qmake.exe"
+            $complete = $false
+          }
+          # The path Export Qt environment hands find_package(Qt6) as Qt6_DIR.
+          if (-not (Test-Path "$qtRoot\lib\cmake\Qt6\Qt6Config.cmake" -PathType Leaf)) {
+            Write-Host "missing: lib\cmake\Qt6\Qt6Config.cmake"
+            $complete = $false
+          }
+          $targets = @(Get-ChildItem "$qtRoot\lib\cmake" -Filter 'Qt6*Targets*.cmake' -Recurse -File -ErrorAction SilentlyContinue)
+          $modules = @($targets |
+            Select-String -Pattern '\$\{_IMPORT_PREFIX\}/include/(Qt[A-Za-z0-9_]+)' -AllMatches |
+            ForEach-Object { $_.Matches } |
+            ForEach-Object { $_.Groups[1].Value } |
+            Sort-Object -Unique)
+          foreach ($m in $modules) {
+            $dir = "$qtRoot\include\$m"
+            if (-not (Test-Path $dir -PathType Container)) {
+              Write-Host "missing: include\$m"
+              $complete = $false
+            } elseif (-not (Get-ChildItem $dir -File -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+              Write-Host "empty include directory: include\$m"
+              $complete = $false
+            }
+          }
+          # Anti-vacuity, as on macOS, and on the same quantity: declared
+          # modules, not directories found.
+          if ($modules.Count -lt [int]$env:QT_MODULE_FLOOR) {
+            Write-Host "only $($modules.Count) Qt module(s) declared under lib\cmake (floor $env:QT_MODULE_FLOOR)"
+            $complete = $false
+          }
+          if ($complete) {
+            Write-Host "Qt tree complete: $($modules.Count) module(s) declared, every include directory present and populated"
+            "complete=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          } else {
+            $key = "qt-${env:QT_VERSION}-${env:QT_PACKAGE_REVISION}-windows-${env:QT_ARCH}-aqt${env:AQTINSTALL_GIT_REF}-mm.ws.sp.st"
+            Write-Host "::warning title=Qt cache restore incomplete::Restored Qt tree is short; discarding it and reinstalling via aqt. If this repeats on the same key the stored entry is bad, and it can only be cleared by hand: gh cache delete $key --ref refs/heads/main"
+            Remove-Item -Recurse -Force "$env:RUNNER_WORKSPACE\Qt" -ErrorAction SilentlyContinue
+            # A partial delete would leave aqt extracting over the corrupt tree
+            # this step just rejected, which is the state it exists to avoid.
+            if (Test-Path "$env:RUNNER_WORKSPACE\Qt") {
+              Write-Host "ERROR: could not remove the incomplete Qt tree at $env:RUNNER_WORKSPACE\Qt"
+              exit 1
+            }
+            "complete=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+        } finally { Stop-Transcript }
+    - name: Install Qt LTS via aqtinstall
+      if: steps.cache-qt-win.outputs.cache-hit != 'true' || steps.qt-verify-win.outputs.complete != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage5-results/install-qt-lts-via-aqtinstall.log"
+        try {
+          # aqt goes in a venv and is pinned, for the reason check-macos and
+          # .github/docker/Dockerfile give: it is the tool that decides what
+          # Qt lands here, so an unreviewed aqt upgrade is an unreviewed
+          # change to the Qt this job builds against.
+          python -m venv "$env:RUNNER_TEMP\aqtvenv"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # PyPI 3.3.0 cannot locate Windows 6.11+ Updates.xml (aqtinstall#959).
+          # Install the unreleased #1000 fix from a pinned master commit.
+          & "$env:RUNNER_TEMP\aqtvenv\Scripts\pip.exe" install -q "git+https://github.com/miurahr/aqtinstall.git@$env:AQTINSTALL_GIT_REF" "py7zr==$env:PY7ZR_VERSION"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $sevenZip = (Get-Command 7z.exe -ErrorAction Stop).Source
+          # Parallel 7-Zip workers race while creating the common output root
+          # on a fresh SDK install. Create it once before extraction starts.
+          $qtRoot = "$env:RUNNER_WORKSPACE\Qt\$env:QT_VERSION\" + ($env:QT_ARCH -replace '^win64_', '')
+          New-Item -ItemType Directory -Force -Path $qtRoot | Out-Null
+          & "$env:RUNNER_TEMP\aqtvenv\Scripts\aqt.exe" install-qt windows desktop $env:QT_VERSION $env:QT_ARCH `
+            -m qtmultimedia qtwebsockets qtserialport qtshadertools `
+            --external $sevenZip `
+            --outputdir "$env:RUNNER_WORKSPACE\Qt"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        } finally { Stop-Transcript }
+    - name: Export Qt environment
+      shell: pwsh
+      run: "Start-Transcript -Path \"hf5a-stage5-results/export-qt-environment.log\"\ntry {\n  # aqt lays the tree down under <version>/<arch\
+        \ minus the win64_ host\n  # prefix>: win64_msvc2022_64 -> msvc2022_64.\n  $qtRoot = \"$env:RUNNER_WORKSPACE\\Qt\\$env:QT_VERSION\\\"\
+        \ + ($env:QT_ARCH -replace '^win64_', '')\n  if (-not (Test-Path \"$qtRoot\\bin\\qmake.exe\")) {\n    # A bad entry on main is only clearable\
+        \ by hand: the key is a\n    # content hash nothing re-saves, and no sweeper matches qt-* there.\n    Write-Host \"ERROR: no qmake at\
+        \ $qtRoot \u2014 aqt layout changed, or a stale cache entry\"\n    Write-Host \"       (clear a stale entry: gh cache delete <the Restore\
+        \ Qt key> --ref refs/heads/main)\"\n    Get-ChildItem \"$env:RUNNER_WORKSPACE\\Qt\\$env:QT_VERSION\" -ErrorAction SilentlyContinue\n \
+        \   exit 1\n  }\n  @(\n    \"QT_ROOT_DIR=$qtRoot\",\n    \"Qt6_DIR=$qtRoot\\lib\\cmake\\Qt6\",\n    \"CMAKE_PREFIX_PATH=$qtRoot\",\n \
+        \   \"QT_PLUGIN_PATH=$qtRoot\\plugins\",\n    \"QML2_IMPORT_PATH=$qtRoot\\qml\"\n  ) | Out-File -FilePath $env:GITHUB_ENV -Append\n  \"\
+        $qtRoot\\bin\" | Out-File -FilePath $env:GITHUB_PATH -Append\n  & \"$qtRoot\\bin\\qmake.exe\" -query QT_VERSION\n\n  if ((& \"$qtRoot\\\
+        bin\\qmake.exe\" -query QT_VERSION).Trim() -ne \"6.12.0\") { throw \"Wrong Qt version\" }\n} finally { Stop-Transcript }\n"
+    - name: Restore FFTW3
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-fftw
+      with:
+        path: third_party/fftw3
+        key: ${{ runner.os }}-fftw3-3.3.5-${{ hashFiles('scripts/setup/setup-fftw.ps1') }}
+    - name: Install FFTW3
+      if: steps.cache-fftw.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage5-results/install-fftw3.log"
+        try {
+          .\scripts\setup\setup-fftw.ps1
+        } finally { Stop-Transcript }
+    - name: Restore DeepFilterNet3
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      id: cache-deepfilter
+      with:
+        path: third_party/deepfilter
+        key: deepfilter-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/setup/setup-deepfilter.ps1') }}
+    - name: Setup DeepFilterNet3 (DFNR)
+      if: steps.cache-deepfilter.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage5-results/setup-deepfilternet3-dfnr.log"
+        try {
+          .\scripts\setup\setup-deepfilter.ps1
+        } finally { Stop-Transcript }
+    - name: Restore sccache objects
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: D:\sccache
+        key: sccache-windows-
+        restore-keys: |
+          sccache-windows-
+    - name: Setup sccache
+      uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba
+    - name: Setup MSVC environment
+      uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756
+      with:
+        arch: x64
+    - name: Setup hidapi (HID encoder support)
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage5-results/setup-hidapi-hid-encoder-support.log"
+        try {
+          .\scripts\setup\setup-hidapi.ps1
+        } finally { Stop-Transcript }
+    - name: Setup PortAudio (CW sidetone callback sink)
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage5-results/setup-portaudio-cw-sidetone-callback-sink.log"
+        try {
+          .\scripts\setup\setup-portaudio.ps1
+        } finally { Stop-Transcript }
+    - name: Test sccache health
+      id: sccache_health
+      shell: pwsh
+      continue-on-error: true
+      run: "Start-Transcript -Path \"hf5a-stage5-results/test-sccache-health.log\"\ntry {\n  'int main(){return 0;}' | Out-File -Encoding ASCII\
+        \ test.cpp\n  # cl.exe's /Fo takes NO colon separator. `/Fo:test.obj` names the\n  # output file \":test.obj\", which is not a legal Windows\
+        \ path, so this\n  # pre-flight failed on EVERY run from #1963 (2026-04-25) to #4655:\n  #   failed to open file `D:\\a\\AetherSDR\\AetherSDR\\\
+        :test.obj`:\n  #   The filename, directory name, or volume label syntax is\n  #   incorrect. (os error 123)\n  # Because the step is continue-on-error\
+        \ and its failure path only\n  # sets healthy=false, the job went green while quietly dropping\n  # CMAKE_{C,CXX}_COMPILER_LAUNCHER \u2014\
+        \ \"Compile requests 0 / Cache hits\n  # 0\" for three months on a required check. Keep it as /Fo<file>.\n  sccache cl /c test.cpp /Fotest.obj\
+        \ 2>&1 | Tee-Object -Variable scOut\n  $exit = $LASTEXITCODE\n  Remove-Item test.cpp,test.obj -ErrorAction SilentlyContinue\n  if ($exit\
+        \ -eq 0) {\n    \"healthy=true\" | Out-File -FilePath $env:GITHUB_OUTPUT -Append\n    Write-Host \"sccache OK\"\n  } else {\n    \"healthy=false\"\
+        \ | Out-File -FilePath $env:GITHUB_OUTPUT -Append\n    Write-Host \"::warning::sccache unhealthy (exit $exit) \u2014 building without\
+        \ compiler cache\"\n  }\n} finally { Stop-Transcript }\n"
+    - name: Setup release dependency RTL-SDR and libusb
+      run: |
+        Start-Transcript -Path hf5a-stage5-results/setup-rtl-deps.ps1.log
+        try {
+          & ./scripts/setup/setup-rtl-deps.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'RTL-SDR and libusb setup failed' }
+        } finally { Stop-Transcript }
+    - name: Setup release dependency QtKeychain
+      run: |
+        Start-Transcript -Path hf5a-stage5-results/setup-qtkeychain.ps1.log
+        try {
+          & ./scripts/setup/setup-qtkeychain.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'QtKeychain setup failed' }
+        } finally { Stop-Transcript }
+    - name: Setup release dependency ONNX Runtime
+      run: |
+        Start-Transcript -Path hf5a-stage5-results/setup-onnxruntime.ps1.log
+        try {
+          & ./scripts/setup/setup-onnxruntime.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'ONNX Runtime setup failed' }
+        } finally { Stop-Transcript }
+    - name: Setup release dependency sherpa-onnx
+      run: |
+        Start-Transcript -Path hf5a-stage5-results/setup-sherpa-onnx.ps1.log
+        try {
+          & ./scripts/setup/setup-sherpa-onnx.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'sherpa-onnx setup failed' }
+        } finally { Stop-Transcript }
+    - name: Setup release dependency Vulkan SDK
+      run: |
+        Start-Transcript -Path hf5a-stage5-results/setup-vulkan-sdk.ps1.log
+        try {
+          & ./scripts/setup/setup-vulkan-sdk.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'Vulkan SDK setup failed' }
+        } finally { Stop-Transcript }
+    - name: Configure
+      shell: pwsh
+      run: |
+        Start-Transcript -Path hf5a-stage5-results/configure.log
+        try {
+          $cargs=@('-B','build','-G','Ninja','-DCMAKE_BUILD_TYPE=RelWithDebInfo',
+            '-DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded','-DCMAKE_EXPORT_COMPILE_COMMANDS=ON',
+            '-DAETHER_HF5A_DESKTOP_TEST=OFF','-DAETHER_RX_READBACK_GUI_ONLY=OFF',
+            '-DHF5A_BUILD_KEYCHAIN_TEST=ON','-DAETHER_BUILD_ICOM_RX_AUDIT=ON',
+            '-DREQUIRE_KEYCHAIN=ON','-DREQUIRE_SERIALPORT=ON','-DENABLE_ASR=ON',
+            '-DREQUIRE_ASR_ONNX=ON','-DREQUIRE_ASR_SHERPA=ON','-DREQUIRE_ASR_GPU=ON',
+            '-DENABLE_RTL=ON','-DREQUIRE_RTL=ON','-DAETHER_GPU_SPECTRUM=ON',
+            '-DENABLE_NVIDIA_AFX=ON','-DENABLE_RADE=ON','-DENABLE_DSTAR=ON','-DMQTT_TLS=ON',
+            "-DCMAKE_PREFIX_PATH=$env:VULKAN_SDK",
+            "-DCMAKE_TOOLCHAIN_FILE=$env:CMAKE_TOOLCHAIN_FILE",
+            "-DVCPKG_TARGET_TRIPLET=$env:VCPKG_TARGET_TRIPLET")
+          if ('${{ steps.sccache_health.outputs.healthy }}' -eq 'true') {
+            $cargs += '-DCMAKE_C_COMPILER_LAUNCHER=sccache','-DCMAKE_CXX_COMPILER_LAUNCHER=sccache'
+          }
+          cmake @cargs | Tee-Object configure.log
+          if ($LASTEXITCODE -ne 0) { throw 'Normal desktop configure failed' }
+        } finally { Stop-Transcript }
+    - name: Assert GPU spectrum rendering actually enabled
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage5-results/assert-gpu-spectrum-rendering-actually-enabled.log"
+        try {
+          if (-not (Select-String -Path configure.log -Pattern 'GPU spectrum rendering enabled' -Quiet)) {
+            Write-Host "ERROR: -DAETHER_GPU_SPECTRUM=ON but CMake disabled it. Relevant output:"
+            Select-String -Path configure.log -Pattern 'GPU spectrum|Qt6GuiPrivate|private headers'
+            exit 1
+          }
+          Select-String -Path configure.log -Pattern 'GPU spectrum rendering enabled'
+        } finally { Stop-Transcript }
+    - name: Assert PortAudio sidetone sink actually enabled
+      shell: pwsh
+      run: |
+        Start-Transcript -Path "hf5a-stage5-results/assert-portaudio-sidetone-sink-actually-enabled.log"
+        try {
+          if (-not (Select-String -Path configure.log -Pattern 'PortAudio \(third_party\) found' -Quiet)) {
+            Write-Host "ERROR: setup-portaudio.ps1 ran but CMake did not find third_party/portaudio."
+            # NOT Select-String on configure.log: the not-found leg is a
+            # message(WARNING), which CMake writes to stderr, and the configure
+            # step tees stdout only (see the note there). Show the tree the
+            # detection actually keys on instead.
+            Write-Host "--- third_party/portaudio ---"
+            if (Test-Path third_party\portaudio) {
+              Get-ChildItem -Recurse third_party\portaudio | Select-Object -ExpandProperty FullName
+            } else {
+              Write-Host "(third_party/portaudio does not exist)"
+            }
+            exit 1
+          }
+          Select-String -Path configure.log -Pattern 'PortAudio \(third_party\) found'
+          # The line above proves CMake found a lib, not that the lib carries
+          # the #5713 patch set - and CMake's detection is EXISTS-only, so a
+          # stale or partially-restored tree passes it. The stamp records the
+          # patch signature setup-portaudio.ps1 built with, so check it too.
+          if (-not (Test-Path third_party\portaudio\.patched-5713)) {
+            Write-Host "ERROR: third_party/portaudio has no #5713 patch stamp."
+            Write-Host "The PortAudio in this build may still free a stack address in Pa_Initialize."
+            exit 1
+          }
+          Write-Host "PortAudio patch stamp: $(Get-Content -Raw third_party\portaudio\.patched-5713)"
+        } finally { Stop-Transcript }
+    - name: Build Opus dependency
+      run: cmake --build build --target build_opus --parallel $env:NUMBER_OF_PROCESSORS
+    - name: Build release ASR engine
+      timeout-minutes: 60
+      run: |
+        cmake --build build --parallel $env:NUMBER_OF_PROCESSORS --target whisper
+        if ($LASTEXITCODE -ne 0) { throw 'ASR build failed' }
+    - name: Build desktop, audit tool and offline test targets
+      timeout-minutes: 240
+      run: |
+        Start-Transcript -Path hf5a-stage5-results/build.log
+        try {
+          cmake --build build --parallel 2 --target AetherSDR aether-dv-waveform AetherSDRUpdater
+          if ($LASTEXITCODE -ne 0) { throw 'Normal desktop build failed' }
+          cmake --build build --parallel 2 --target rx_readback_gui_test icom_rx_audit_requests_test icom_rx_audit_init_test icom_connection_usage_test icom_rx_audit_busy_test icom_outbound_policy_test icom_rx_audit_egress_test icom_protocol_test icom_replay_test icom_session_lease_test icom_civ_test icom_control_profile_test icom_backend_seam_test transmit_model_test backend_family_switch_test icom_ptt_authority_test tx_operation_integration_test tune_inhibit_restore_test flex_ptt_stop_tracker_test flex_ptt_wire_session_test local_memory_store_test local_memory_bank_test midi_settings_test theme_manager_test control_transmit_service_test transmit_inhibit_policy_test hf5a_keychain_runtime_test control_credential_vault_test peripheral_auth_keychain_test icom_credentials_singleflight_test icom_settings_test asr_whisper_smoke_test asr_segmenter_test app_settings_safety_test aether-icom-rx-audit
+          if ($LASTEXITCODE -ne 0) { throw 'Offline test build failed' }
+          '0' | Set-Content hf5a-stage5-results/build-exit-code.txt
+        } finally { Stop-Transcript }
+    - name: Stage explicit runtime DLLs for offline tests
+      run: |
+        $rows=@(foreach ($folder in @('third_party/fftw3/bin','third_party/deepfilter/lib/windows-x86_64','third_party/hidapi/bin','third_party/qtkeychain/bin','third_party/rtl-deps/bin')) {
+          foreach ($dll in Get-ChildItem $folder -Filter '*.dll' -File) {
+            $destination=Join-Path (Resolve-Path build).Path $dll.Name
+            Copy-Item $dll.FullName $destination -Force
+            [pscustomobject]@{source=$dll.FullName; destination=$destination; sha256=(Get-FileHash $destination).Hash}
+          }
+        })
+        $rows | Export-Csv hf5a-stage5-results/runtime-dlls.csv -NoTypeInformation
+        $env:PATH | Set-Content hf5a-stage5-results/PATH.txt
+
+        $vkCandidates=@((Join-Path $env:VULKAN_SDK 'runtime/x64/vulkan-1.dll'),(Join-Path $env:VULKAN_SDK 'Bin/vulkan-1.dll'),"$env:SystemRoot/System32/vulkan-1.dll")
+        $vkDll=$vkCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+        if (-not $vkDll) { throw 'Required Vulkan loader missing' }
+        Copy-Item $vkDll build/
+        if (-not (Select-String -Path configure.log -Pattern 'Qt6Keychain found' -SimpleMatch -Quiet)) { throw 'Credential persistence not compiled' }
+        $commands=Get-Content -Raw build/compile_commands.json | ConvertFrom-Json
+        $main=@($commands | Where-Object { $_.file.Replace('\','/').EndsWith('/src/main.cpp') })
+        if ($main.Count -ne 1 -or $main[0].command -notmatch 'HAVE_KEYCHAIN' -or $main[0].command -match 'AETHER_HF5A_DESKTOP_TEST|AETHER_RX_READBACK_GUI_ONLY') { throw 'Not a normal credential-enabled desktop entry point' }
+        $main | ConvertTo-Json -Depth 5 | Set-Content hf5a-stage5-results/normal-entry-compile.json
+    - name: Block normal EXE network before early-exit offline probes
+      run: |
+        $profiles=@(Get-NetFirewallProfile)
+        if ($profiles.Count -ne 3 -or @($profiles | Where-Object { -not $_.Enabled }).Count) { throw 'Firewall is not enforcing all profiles; refuse offline launch' }
+        if ((Get-Service MpsSvc).Status -ne 'Running') { throw 'Windows Firewall service not running' }
+        $exe=(Resolve-Path build/AetherSDR.exe).Path
+        foreach ($direction in @('Inbound','Outbound')) {
+          New-NetFirewallRule -DisplayName "HF5A-stage5-build-$direction" -Direction $direction -Program $exe -Action Block -Profile Any -Enabled True -ErrorAction Stop | Out-Null
+        }
+        Get-NetFirewallRule -DisplayName 'HF5A-stage5-build-*' | Format-List | Out-File hf5a-stage5-results/offline-firewall.txt
+        Get-NetFirewallRule -DisplayName 'HF5A-stage5-build-*' | Get-NetFirewallApplicationFilter | Format-List | Out-File hf5a-stage5-results/offline-firewall-programs.txt
+    - name: Verify exact CTest selection and bounded offline timeouts
+      run: |
+        $names=@('rx_readback_gui_test','icom_rx_audit_requests_test','icom_rx_audit_init_test','icom_connection_usage_test','icom_rx_audit_busy_test','icom_outbound_policy_test','icom_rx_audit_egress_test','icom_protocol_test','icom_replay_test','icom_session_lease_test','icom_civ_test','icom_control_profile_test','icom_backend_seam_test','transmit_model_test','backend_family_switch_test','icom_rx_audit_self_check','icom_rx_audit_refuses_implicit_connection','icom_ptt_authority_test','tx_operation_integration_test','tune_inhibit_restore_test','flex_ptt_stop_tracker_test','flex_ptt_wire_session_test','local_memory_store_test','local_memory_bank_test','midi_settings_test','app_settings_safety_explicit-profile-path-isolation','theme_manager_test','control_transmit_service_test','transmit_inhibit_policy_test','hf5a_keychain_runtime_test','control_credential_vault_test','peripheral_auth_keychain_test','icom_credentials_singleflight_test','icom_settings_test','asr_whisper_smoke_test','asr_segmenter_test')
+        $pattern='^(rx_readback_gui_test|icom_rx_audit_requests_test|icom_rx_audit_init_test|icom_connection_usage_test|icom_rx_audit_busy_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_protocol_test|icom_replay_test|icom_session_lease_test|icom_civ_test|icom_control_profile_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test|icom_rx_audit_self_check|icom_rx_audit_refuses_implicit_connection|icom_ptt_authority_test|tx_operation_integration_test|tune_inhibit_restore_test|flex_ptt_stop_tracker_test|flex_ptt_wire_session_test|local_memory_store_test|local_memory_bank_test|midi_settings_test|app_settings_safety_explicit-profile-path-isolation|theme_manager_test|control_transmit_service_test|transmit_inhibit_policy_test|hf5a_keychain_runtime_test|control_credential_vault_test|peripheral_auth_keychain_test|icom_credentials_singleflight_test|icom_settings_test|asr_whisper_smoke_test|asr_segmenter_test)$'
+        $inventory=ctest --test-dir build --show-only=json-v1 -R $pattern --no-tests=error
+        if ($LASTEXITCODE -ne 0) { throw 'CTest inventory failed' }
+        $inventory -join "`n" | Set-Content hf5a-stage5-results/ctest-selection-original.json
+        $selected=@(($inventory -join "`n" | ConvertFrom-Json).tests | ForEach-Object name)
+        if ($selected.Count -ne 36 -or @(Compare-Object ($names | Sort-Object) ($selected | Sort-Object)).Count) { throw 'Wrong test selection' }
+        # Bound generated CTest properties; no repository test source is edited here.
+        ('set_tests_properties(' + ($names -join ' ') + ' PROPERTIES TIMEOUT 60)') |
+          Add-Content build/CTestTestfile.cmake
+        ctest --test-dir build --show-only=json-v1 -R $pattern --no-tests=error |
+          Set-Content hf5a-stage5-results/ctest-selection.json
+    - name: Run 36 normal desktop regressions and credential checks
+      timeout-minutes: 15
+      run: |
+        ctest --test-dir build -R '^(rx_readback_gui_test|icom_rx_audit_requests_test|icom_rx_audit_init_test|icom_connection_usage_test|icom_rx_audit_busy_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_protocol_test|icom_replay_test|icom_session_lease_test|icom_civ_test|icom_control_profile_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test|icom_rx_audit_self_check|icom_rx_audit_refuses_implicit_connection|icom_ptt_authority_test|tx_operation_integration_test|tune_inhibit_restore_test|flex_ptt_stop_tracker_test|flex_ptt_wire_session_test|local_memory_store_test|local_memory_bank_test|midi_settings_test|app_settings_safety_explicit-profile-path-isolation|theme_manager_test|control_transmit_service_test|transmit_inhibit_policy_test|hf5a_keychain_runtime_test|control_credential_vault_test|peripheral_auth_keychain_test|icom_credentials_singleflight_test|icom_settings_test|asr_whisper_smoke_test|asr_segmenter_test)$' --parallel 1 --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage5-results/results.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage5-results/ctest.log"
+        $code=$LASTEXITCODE
+        $code | Set-Content hf5a-stage5-results/ctest-exit-code.txt
+        exit $code
+    - name: Require all tests and persistent profile probes before packaging
+      run: |
+        [xml]$report=Get-Content -Raw hf5a-stage5-results/results.junit.xml
+        $cases=@($report.SelectNodes('//testcase'))
+        $bad=@($cases | Where-Object {
+          $_.GetAttribute('status') -ne 'run' -or $_.SelectSingleNode('skipped') -or
+          $_.SelectSingleNode('failure') -or $_.SelectSingleNode('error')
+        })
+        if ($cases.Count -ne 36 -or $bad.Count) { throw 'All 36 tests must execute and pass; skipped tests cannot qualify the ZIP' }
+        python tools/hf5a_stage5_offline.py --exe build/AetherSDR.exe --report hf5a-stage5-results/normal-exe
+        if ($LASTEXITCODE -ne 0) { throw 'Normal EXE offline isolation failed' }
+    - name: Prepare full desktop portable ZIP without an installer
+      run: |
+        New-Item -ItemType Directory -Force hf5a-stage5-portable | Out-Null
+        Copy-Item build/AetherSDR.exe hf5a-stage5-portable/AetherSDR.exe
+        Copy-Item LICENSE hf5a-stage5-portable/
+        Copy-Item build/aether-dv-waveform.exe,build/AetherSDRUpdater.exe,build/AetherDV.cfg hf5a-stage5-portable/
+        New-Item -ItemType Directory -Force hf5a-stage5-portable/licenses/rtl | Out-Null
+        Copy-Item third_party/rtl-deps/share/aethersdr-rtl-sources hf5a-stage5-portable/licenses/rtl/ -Recurse
+        Copy-Item third_party/fftw3/share/aethersdr-rtl-sources hf5a-stage5-portable/licenses/fftw -Recurse
+        Copy-Item docs/hf5a-stage5-production-candidate.md hf5a-stage5-portable/README.md
+        Copy-Item build/*.dll hf5a-stage5-portable/
+        & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations --no-compiler-runtime --dir hf5a-stage5-portable hf5a-stage5-portable/AetherSDR.exe |
+          Tee-Object hf5a-stage5-results/portable-deploy.log
+        if ($LASTEXITCODE -ne 0) { throw 'Qt portable deployment failed' }
+        Copy-Item "$env:QT_ROOT_DIR/plugins/platforms/qoffscreen.dll" hf5a-stage5-portable/platforms/
+        @('[Paths]','Prefix=.','Plugins=.','Libraries=.','Binaries=.') | Set-Content hf5a-stage5-portable/qt.conf -Encoding ascii
+        if (-not (Test-Path hf5a-stage5-portable/platforms/qwindows.dll)) { throw 'Native Windows platform plugin missing' }
+        # MQTT TLS dependencies are bundled for the normal desktop as well.
+        $opensslBin=Join-Path $env:ProgramFiles 'OpenSSL/bin'
+        $opensslVersion=(& "$opensslBin/openssl.exe" version)
+        if ($LASTEXITCODE -ne 0) { throw 'Cannot identify the OpenSSL SDK runtime' }
+        $opensslVersion | Set-Content hf5a-stage5-results/portable-openssl-version.txt
+        foreach ($name in @('libssl-3-x64.dll','libcrypto-3-x64.dll')) {
+          $source=Join-Path $opensslBin $name
+          Copy-Item $source hf5a-stage5-portable/ -Force
+          "$source $((Get-FileHash $source).Hash)" | Add-Content hf5a-stage5-results/portable-openssl-runtime.txt
+        }
+        $crt=Get-ChildItem "$env:VCToolsRedistDir/x64" -Directory -Filter 'Microsoft.VC*.CRT' |
+          Sort-Object Name -Descending | Select-Object -First 1
+        if (-not $crt) { throw 'App-local MSVC runtime DLL directory not found' }
+        Copy-Item "$($crt.FullName)/*.dll" hf5a-stage5-portable/
+        # Preserve every direct/delay import and the initial dependency diagnosis.
+        $images=Get-ChildItem hf5a-stage5-portable -Recurse -File | Where-Object Extension -in '.exe','.dll'
+        foreach ($image in $images) {
+          "IMAGE: $($image.FullName)" | Add-Content hf5a-stage5-results/portable-imports.log
+          & dumpbin /nologo /DEPENDENTS $image.FullName | Add-Content hf5a-stage5-results/portable-imports.log
+          if ($LASTEXITCODE -ne 0) { throw 'dumpbin failed' }
+        }
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage5-portable |
+          Tee-Object hf5a-stage5-results/portable-dependencies-before.log
+        $LASTEXITCODE | Set-Content hf5a-stage5-results/portable-dependencies-before-exit-code.txt
+        # Use the existing version-matched CRT + OpenMP staging recipe; no installer.
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/stage-msvc-runtime.ps1 -OutputDir hf5a-stage5-portable |
+          Tee-Object hf5a-stage5-results/portable-runtime.log
+        if ($LASTEXITCODE -ne 0) { throw 'MSVC runtime staging failed' }
+        & powershell -NoProfile -ExecutionPolicy Bypass -File packaging/windows/check-deploy-dependencies.ps1 -DeployDir hf5a-stage5-portable |
+          Tee-Object hf5a-stage5-results/portable-dependencies.log
+        if ($LASTEXITCODE -ne 0) { throw 'Portable import validation failed' }
+        if (@(Get-ChildItem hf5a-stage5-portable -Recurse -Filter '*.exe' | Where-Object { $_.Name -notin @('AetherSDR.exe','aether-dv-waveform.exe','AetherSDRUpdater.exe') }).Count) { throw 'Unexpected executable in portable bundle' }
+        python tools/check_rtl_package.py hf5a-stage5-portable --platform windows
+        if ($LASTEXITCODE -ne 0) { throw 'RTL runtime/licenses incomplete' }
+        if (-not (Test-Path hf5a-stage5-portable/qt6keychain.dll)) { throw 'QtKeychain DLL missing' }
+        Copy-Item hf5a-stage5-results/source.json hf5a-stage5-portable/
+        $python=(Get-Command python).Source
+        $savedPath=$env:PATH
+        try {
+          # Prove the bundle does not borrow Qt or the compiler runtime from setup PATH.
+          $env:PATH="$env:SystemRoot/System32;$env:SystemRoot"
+          '' | Set-Content hf5a-stage5-results/portable-self-check.log
+          $exe=(Resolve-Path hf5a-stage5-portable/AetherSDR.exe).Path
+          foreach ($direction in @('Inbound','Outbound')) {
+            New-NetFirewallRule -DisplayName "HF5A-stage5-portable-$direction" -Direction $direction -Program $exe -Action Block -Profile Any -Enabled True -ErrorAction Stop | Out-Null
+          }
+          & $python tools/hf5a_stage5_offline.py --exe $exe --report hf5a-stage5-results/portable-self-check |
+            Tee-Object hf5a-stage5-results/portable-self-check.log
+          $portableCode=$LASTEXITCODE
+          @{exitCode=$portableCode; hex=('0x{0:X8}' -f $portableCode)} |
+            ConvertTo-Json | Set-Content hf5a-stage5-results/portable-self-check-exit.json
+          if ($portableCode -ne 0) { throw "Portable tool self-check failed: $portableCode" }
+        } finally { $env:PATH=$savedPath }
+        Get-ChildItem hf5a-stage5-portable -File -Recurse | Get-FileHash -Algorithm SHA256 |
+          Select-Object Path,Hash | Export-Csv hf5a-stage5-results/portable-sha256.csv -NoTypeInformation
+        Copy-Item hf5a-stage5-results/portable-sha256.csv hf5a-stage5-portable/
+
+        $bundle=(Resolve-Path hf5a-stage5-portable).Path
+        Get-ChildItem $bundle -File -Recurse | Sort-Object FullName | ForEach-Object {
+          $relative=[IO.Path]::GetRelativePath($bundle,$_.FullName).Replace('\','/')
+          "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $relative"
+        } | Set-Content hf5a-stage5-portable/SHA256SUMS.txt
+        Copy-Item hf5a-stage5-portable/SHA256SUMS.txt hf5a-stage5-results/
+
+        $zip="AetherSDR-26.11.1-HF5A-RC-$env:GITHUB_SHA.zip"
+        Compress-Archive -Path hf5a-stage5-portable/* -DestinationPath $zip -CompressionLevel Optimal
+        $exeHash=(Get-FileHash hf5a-stage5-portable/AetherSDR.exe -Algorithm SHA256).Hash.ToLower()
+        $zipHash=(Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+        @{exe='AetherSDR.exe'; exeSHA256=$exeHash; zip=$zip; zipSHA256=$zipHash; source=$env:GITHUB_SHA} |
+          ConvertTo-Json | Set-Content hf5a-stage5-results/portable-manifest.json
+        "$zipHash  $zip" | Set-Content "$zip.sha256"
+        Copy-Item "$zip.sha256" hf5a-stage5-results/
+        Get-Content hf5a-stage5-results/portable-manifest.json | Out-File $env:GITHUB_STEP_SUMMARY -Append
+    - name: Preserve actual results and source integrity
+      if: ${{ always() }}
+      run: |
+        $rows=@()
+        if (Test-Path hf5a-stage5-results/results.junit.xml) {
+          [xml]$xml=Get-Content -Raw hf5a-stage5-results/results.junit.xml
+          $rows=@(foreach($case in $xml.SelectNodes('//testcase')) {
+            $status=if ($case.GetAttribute('status') -eq 'notrun' -or $case.SelectSingleNode('skipped')) {'NOT RUN'} elseif ($case.SelectSingleNode('failure') -or $case.SelectSingleNode('error')) {'FAIL'} else {'PASS'}
+            [pscustomobject]@{test=$case.GetAttribute('name'); status=$status; seconds=$case.GetAttribute('time')}
+          })
+        }
+        $rows | ConvertTo-Json | Set-Content hf5a-stage5-results/results.json
+        $rows | Export-Csv hf5a-stage5-results/results.csv -NoTypeInformation
+        git status --porcelain --untracked-files=no | Set-Content hf5a-stage5-results/tracked-changes.txt
+        git diff --exit-code -- src tests CMakeLists.txt .github/workflows
+        $integrity=$LASTEXITCODE
+        $integrity | Set-Content hf5a-stage5-results/source-integrity-exit-code.txt
+        $rows | Format-Table | Out-String | Out-File $env:GITHUB_STEP_SUMMARY -Append
+        if ($integrity -ne 0) { throw 'Source was not restored to the tested commit' }
+
+        Get-NetFirewallRule -DisplayName 'HF5A-stage5-*' -ErrorAction SilentlyContinue | Format-List | Out-File hf5a-stage5-results/final-firewall.txt
+    - name: Upload portable full desktop ZIP and SHA256 (no installer)
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: AetherSDR-26.11.1-HF5A-RC-${{ github.sha }}
+        path: |
+          AetherSDR-26.11.1-HF5A-RC-*.zip
+          AetherSDR-26.11.1-HF5A-RC-*.zip.sha256
+          hf5a-stage5-results/portable-manifest.json
+        retention-days: 90
+        if-no-files-found: error
+    - name: Upload offline evidence
+      if: ${{ always() }}
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+      with:
+        name: hf5a-stage5-offline-${{ github.run_id }}
+        path: hf5a-stage5-results/
+        retention-days: 90
+        if-no-files-found: error
