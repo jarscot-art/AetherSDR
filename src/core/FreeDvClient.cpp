@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 #include "FreeDvClient.h"
 #include "LogManager.h"
 #include "AppSettings.h"
@@ -56,8 +57,7 @@ FreeDvClient::~FreeDvClient()
 
 QString FreeDvClient::logFilePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
-           + "/AetherSDR/spothub/freedv.log";
+    return SettingsPaths::configDir() + QStringLiteral("/spothub/freedv.log");
 }
 
 void FreeDvClient::startConnection()

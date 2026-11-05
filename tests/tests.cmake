@@ -1377,6 +1377,17 @@ target_include_directories(rx_readback_gui_test PRIVATE src tests)
 target_link_libraries(rx_readback_gui_test PRIVATE aetherdesktop_support Qt6::Widgets Qt6::Test)
 add_test(NAME rx_readback_gui_test COMMAND rx_readback_gui_test)
 set_tests_properties(rx_readback_gui_test PROPERTIES TIMEOUT 60 ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+if(AETHER_HF5A_DESKTOP_TEST)
+    add_executable(hf5a_desktop_profile_test tests/hf5a_desktop_profile_test.cpp src/Hf5aDesktopProfile.cpp)
+    target_include_directories(hf5a_desktop_profile_test PRIVATE src tests)
+    target_link_libraries(hf5a_desktop_profile_test PRIVATE aethercore Qt6::Core)
+    add_test(NAME hf5a_desktop_profile_test COMMAND hf5a_desktop_profile_test)
+    add_test(NAME hf5a_desktop_offline_startup COMMAND AetherSDR --hf5a-offline-self-check)
+    # The dedicated Windows job blocks this full desktop's network at the OS
+    # boundary. This is not the RX-only audit application.
+    set_tests_properties(hf5a_desktop_profile_test hf5a_desktop_offline_startup
+        PROPERTIES TIMEOUT 60 ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+endif()
 if(AETHER_RX_READBACK_GUI_ONLY)
     add_test(NAME icom_rx_readback_gui_self_check COMMAND AetherSDR --self-check)
     add_test(NAME icom_rx_readback_gui_refuses_implicit_connection COMMAND AetherSDR)
@@ -8361,6 +8372,7 @@ set_tests_properties(ctcss_tone_label_test PROPERTIES
 
 add_executable(local_memory_store_test
     tests/local_memory_store_test.cpp
+    src/core/SettingsPaths.cpp
     src/core/LocalMemoryStore.cpp
 )
 target_include_directories(local_memory_store_test PRIVATE src)
@@ -9101,6 +9113,7 @@ add_test(NAME device_diagnostics_test COMMAND device_diagnostics_test)
 
 add_executable(midi_settings_test
     tests/midi_settings_test.cpp
+    src/core/SettingsPaths.cpp
     src/core/MidiSettings.cpp
 )
 target_compile_definitions(midi_settings_test PRIVATE HAVE_MIDI)
@@ -10418,6 +10431,7 @@ if(TARGET Qt6::WebSockets)
 endif()
 
 set(AETHER_SETTINGS_CONSUMERS
+    hf5a_desktop_profile_test
     rx_readback_gui_test
     icom_rx_audit_requests_test
     icom_rx_audit_egress_test

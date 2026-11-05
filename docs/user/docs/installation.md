@@ -153,3 +153,14 @@ The Windows builds are Authenticode-signed (publisher: Jeremy Fielder), but Smar
 - [Building from Source](./building-from-source.md)
 - [Troubleshooting](./troubleshooting.md)
 - [GitHub Releases](https://github.com/aethersdr/AetherSDR/releases/latest)
+
+## HF5A stage 4 desktop qualification (fork only)
+
+The separate HF5A portable desktop keeps the full radio controls, including TX;
+it is **not RX-only**. Its SPLIT/TX display is informational and uses confirmed
+radio replies. Each launch uses a fresh temporary test profile, disables radio
+autoconnect and automatic update checks, and keeps credentials in memory only.
+Extract it to a new directory; do not replace the production executable or import
+the production profile. No hardware test is authorized by the offline CI checks.
+See the [HF5A stage 4 instructions](https://github.com/jarscot-art/AetherSDR/blob/hf5a/stage4-desktop-readback/docs/hf5a-stage4-desktop-readback.md)
+for profile/log locations, limitations and the separate Windows workflow.

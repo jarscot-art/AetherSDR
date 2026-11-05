@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 // ─────────────────────────────────────────────────────────────────────────────
 // ⚠️  MainWindow is DECOMPOSED (#3351). This file is NOT the default home for new
 //     feature code. Feature lifecycle/handlers belong in the matching
@@ -6610,9 +6611,7 @@ void MainWindow::buildUI()
         // GenericConfigLocation + "/AetherSDR" matches the AppSettings convention
         // and avoids the double-nested ~/.config/AetherSDR/AetherSDR/ path that
         // AppConfigLocation produces when both org and app names are "AetherSDR".
-        const QString cfgDir  = QStandardPaths::writableLocation(
-                                    QStandardPaths::GenericConfigLocation)
-                              + QStringLiteral("/AetherSDR");
+        const QString cfgDir  = SettingsPaths::configDir();
         const QString modelFile = QStringLiteral("signal_classifier.onnx");
         QString modelPath;
         if (QFile::exists(exeDir + QLatin1Char('/') + modelFile)) {

@@ -1,6 +1,10 @@
 #ifdef AETHER_RX_READBACK_GUI_ONLY
 #include "IcomRxReadbackGui.h"
 #endif
+#ifdef AETHER_HF5A_DESKTOP_TEST
+#include "Hf5aDesktopProfile.h"
+#include <QWidget>
+#endif
 #include "gui/MainWindow.h"
 #include "gui/ConnectionPanel.h"
 #include "gui/FramelessMessageBox.h"
@@ -314,6 +318,19 @@ int main(int argc, char* argv[])
 #ifdef AETHER_RX_READBACK_GUI_ONLY
     return AetherSDR::runIcomRxReadbackGui(argc, argv);
 #else
+#ifdef AETHER_HF5A_DESKTOP_TEST
+    const bool offlineSelfCheck = argc == 2
+        && qstrcmp(argv[1], "--hf5a-offline-self-check") == 0;
+    if (argc != 1 && !offlineSelfCheck) {
+        std::fputs("HF5A desktop: only no arguments or --hf5a-offline-self-check are supported.\n", stderr);
+        return EXIT_FAILURE;
+    }
+    AetherSDR::Hf5aDesktopProfile qualificationProfile;
+    if (!qualificationProfile.activate()) {
+        std::fputs("HF5A desktop: cannot isolate settings; refusing startup.\n", stderr);
+        return EXIT_FAILURE;
+    }
+#endif
     if (argc >= 2 && qstrcmp(argv[1], "--config") == 0) {
         return runConfigCli(argc, argv);
     }
@@ -503,6 +520,10 @@ int main(int argc, char* argv[])
     }
 #endif
     app.setOrganizationName("AetherSDR");
+#ifdef AETHER_HF5A_DESKTOP_TEST
+    app.setApplicationName("AetherSDR-HF5A-stage4");
+    app.setOrganizationName("HF5A-Desktop-Test");
+#endif
     app.setDesktopFileName("AetherSDR");  // matches .desktop file for taskbar icon
 
     // ── Main-thread stall watchdog (diagnostic, log-only) ─────────────────
@@ -682,6 +703,12 @@ int main(int argc, char* argv[])
     // to LogManager. SHistorySoftEdgeDb migration moved here for the same
     // reason.
     AetherSDR::AppSettings::instance().load();
+#ifdef AETHER_HF5A_DESKTOP_TEST
+    if (!qualificationProfile.initializeSettings()) {
+        std::fputs("HF5A desktop: unsafe startup profile; refusing startup.\n", stderr);
+        return EXIT_FAILURE;
+    }
+#endif
     // What AetherSDRUpdater did last time, read once; a rolled-back release
     // is remembered so it is not offered again (RFC #5304 Phase 3).
     AetherSDR::UpdateInstaller::takeSwapResult();
@@ -806,6 +833,28 @@ int main(int argc, char* argv[])
     int exitCode = 0;
     {
         AetherSDR::MainWindow window;
+#ifdef AETHER_HF5A_DESKTOP_TEST
+        window.setWindowTitle(window.windowTitle() + QStringLiteral(" — HF5A stage 4 TEST"));
+        qInfo().noquote() << "HF5A isolated desktop profile:" << qualificationProfile.path();
+        if (offlineSelfCheck) {
+            // CI blocks this executable's network traffic with Windows Firewall
+            // before launch. Construct the actual desktop and pump its startup
+            // timers; no synthetic radio or additional backend is created.
+            QTimer::singleShot(2000, &window, [&] {
+                const bool ok = window.centralWidget()
+                    && window.findChild<QWidget*>(QStringLiteral("RxReadback"))
+                    && !window.radioModel().isConnected()
+                    && !window.radioModel().isConnectAttemptInFlight()
+                    && !window.radioModel().transmitModel().confirmedTransmitFreq()
+                    && AetherSDR::SettingsPaths::configDir() == qualificationProfile.path()
+                    && AetherSDR::AppSettings::instance().value("AutoConnectToLastRadio").toString()
+                        == QStringLiteral("False")
+                    && !AetherSDR::AutomationBridgeSettings::enabled();
+                std::printf("HF5A full desktop offline startup: %s\n", ok ? "PASS" : "FAIL");
+                app.exit(ok ? EXIT_SUCCESS : EXIT_FAILURE);
+            });
+        }
+#endif
         window.show();
 
         // Settings-store notices a user must see (RFC #4603): a backup was

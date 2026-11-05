@@ -1,9 +1,11 @@
 #include "core/VoiceKeyerSettings.h"
 
 #include "core/AppSettings.h"
+#include "core/SettingsPaths.h"
 
 #include <QJsonDocument>
 #include <QStandardPaths>
+#include <QtGlobal>
 
 namespace AetherSDR {
 
@@ -72,6 +74,9 @@ void VoiceKeyerSettings::setSlotName(int id, const QString& name)
 
 QString VoiceKeyerSettings::recordingsDir()
 {
+    if (!qEnvironmentVariableIsEmpty("AETHER_SETTINGS_DIR")) {
+        return SettingsPaths::configDir() + QStringLiteral("/VoiceKeyer");
+    }
     return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
            + QStringLiteral("/AetherSDR/VoiceKeyer");
 }

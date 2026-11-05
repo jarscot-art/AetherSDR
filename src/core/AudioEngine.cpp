@@ -1,4 +1,5 @@
 #include "AudioEngine.h"
+#include "SettingsPaths.h"
 #include "RxChainRunner.h"
 #include "RxClientEffects.h"
 #include <QSignalBlocker>
@@ -7394,6 +7395,11 @@ void AudioEngine::saveClientQuindarSettings() const
 
 static QString wisdomDir()
 {
+    if (!qEnvironmentVariableIsEmpty("AETHER_SETTINGS_DIR")) {
+        const QString dir = SettingsPaths::configDir() + QStringLiteral("/fftw/");
+        QDir().mkpath(dir);
+        return dir;
+    }
 #ifdef _WIN32
     // Windows: use %APPDATA%/AetherSDR/
     QString dir = QDir::homePath() + "/AppData/Roaming/AetherSDR/";

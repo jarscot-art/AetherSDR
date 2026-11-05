@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 #include "TestEventLoop.h"
 #include "TestSettingsProfile.h"
 #include "core/ThemeManager.h"
@@ -121,9 +122,7 @@ int main(int argc, char** argv)
     // ThemeManager singleton scans the dir.
     {
         const QString sandboxAppDir =
-            QStandardPaths::writableLocation(
-                QStandardPaths::GenericConfigLocation)
-            + QStringLiteral("/AetherSDR");
+            AetherSDR::SettingsPaths::configDir();
         QDir(sandboxAppDir).removeRecursively();
     }
 
@@ -1085,9 +1084,7 @@ int main(int argc, char** argv)
         // Locate the on-disk file via the user-dir convention used by
         // importThemeFromFile().
         const QString userDir =
-            QStandardPaths::writableLocation(
-                QStandardPaths::GenericConfigLocation)
-            + "/AetherSDR/themes";
+            AetherSDR::SettingsPaths::configDir() + QStringLiteral("/themes");
         const QString savedPath = userDir + "/V1 Migrate Probe.json";
         EXPECT_TRUE(QFile::exists(savedPath));
 

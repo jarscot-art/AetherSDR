@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 #include "core/LocalMemoryStore.h"
 
 #include <QDir>
@@ -200,15 +201,11 @@ LocalMemoryStore::ParseResult LocalMemoryStore::parse(const QByteArray& bytes)
 
 QString LocalMemoryStore::defaultFilePath()
 {
-    // GenericConfigLocation, matching AppSettings: a plain base dir on every
-    // platform (~/.config on Linux/macOS, %LOCALAPPDATA% on Windows) with no
-    // org/app suffix, so appending "/AetherSDR" cannot produce the triple-nested
-    // path ConfigLocation gives on Windows and macOS.
-    const QString base =
-        QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
-    if (base.isEmpty())
+    if (qEnvironmentVariableIsEmpty("AETHER_SETTINGS_DIR")
+        && QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation).isEmpty()) {
         return {};
-    return base + QStringLiteral("/AetherSDR/memories.json");
+    }
+    return SettingsPaths::configDir() + QStringLiteral("/memories.json");
 }
 
 LocalMemoryStore::ParseResult LocalMemoryStore::load(const QString& path)

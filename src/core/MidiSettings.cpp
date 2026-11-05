@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 #ifdef HAVE_MIDI
 
 #include "MidiSettings.h"
@@ -465,14 +466,12 @@ MidiSettings& MidiSettings::instance()
 
 QString MidiSettings::settingsFilePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
-           + "/AetherSDR/midi.settings";
+    return SettingsPaths::configDir() + QStringLiteral("/midi.settings");
 }
 
 QString MidiSettings::profileDir()
 {
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
-           + "/AetherSDR/midi";
+    return SettingsPaths::configDir() + QStringLiteral("/midi");
 }
 
 // ── Load / Save ─────────────────────────────────────────────────────────────

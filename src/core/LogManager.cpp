@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 #include "LogManager.h"
 #include "AppSettings.h"
 
@@ -327,8 +328,7 @@ QString LogManager::logFilePath() const
     if (!m_activeLogFilePath.isEmpty()) {
         return m_activeLogFilePath;
     }
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
-           + "/AetherSDR/logs/aethersdr.log";
+    return SettingsPaths::configDir() + QStringLiteral("/logs/aethersdr.log");
 }
 
 void LogManager::setActiveLogFilePath(const QString& path)

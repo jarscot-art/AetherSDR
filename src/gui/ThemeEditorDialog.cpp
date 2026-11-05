@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 #include "ThemeEditorDialog.h"
 #include "ScopedChildWidget.h"
 #include "Theme.h"
@@ -55,8 +56,7 @@ namespace {
 QString userThemesDir()
 {
     return QDir::toNativeSeparators(
-        QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
-        + QStringLiteral("/AetherSDR/themes"));
+        SettingsPaths::configDir() + QStringLiteral("/themes"));
 }
 
 QMessageBox::StandardButton showModalMessage(

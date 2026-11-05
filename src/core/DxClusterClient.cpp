@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 #include "DxClusterClient.h"
 #include "DxSpotLineParser.h"
 #include "AppSettings.h"
@@ -53,8 +54,7 @@ DxClusterClient::~DxClusterClient()
 
 QString DxClusterClient::logFilePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
-           + "/AetherSDR/spothub/" + m_logFileName;
+    return SettingsPaths::configDir() + QStringLiteral("/spothub/") + m_logFileName;
 }
 
 void DxClusterClient::connectToCluster(const QString& host, quint16 port, const QString& callsign)

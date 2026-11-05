@@ -1,3 +1,4 @@
+#include "core/SettingsPaths.h"
 #include "WsjtxClient.h"
 #include "LogManager.h"
 
@@ -34,8 +35,7 @@ WsjtxClient::~WsjtxClient()
 
 QString WsjtxClient::logFilePath() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation)
-           + "/AetherSDR/spothub/wsjtx.log";
+    return SettingsPaths::configDir() + QStringLiteral("/spothub/wsjtx.log");
 }
 
 void WsjtxClient::startListening(const QString& address, quint16 port)

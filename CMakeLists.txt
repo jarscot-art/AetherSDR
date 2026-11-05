@@ -32,6 +32,13 @@ option(USE_SYSTEM_SQLITE       "Use system sqlite3"      OFF)
 
 option(REQUIRE_SERIALPORT "Fail if Qt6 SerialPort is not found (use for release builds)" OFF)
 option(REQUIRE_KEYCHAIN "Fail if Qt6Keychain is not found (use for release builds)" OFF)
+option(AETHER_HF5A_DESKTOP_TEST "Full desktop with a fresh isolated HF5A qualification profile" OFF)
+if(AETHER_HF5A_DESKTOP_TEST)
+    if(REQUIRE_KEYCHAIN)
+        message(FATAL_ERROR "HF5A desktop qualification must not access the production keychain")
+    endif()
+    set(CMAKE_DISABLE_FIND_PACKAGE_Qt6Keychain TRUE)
+endif()
 # ASR release guards: these features auto-detect and silently compile out if the
 # toolchain/lib is missing, so a release could ship them off unnoticed. Setting
 # these makes a missing dependency a hard configure error (use in release CI).
@@ -1935,8 +1942,16 @@ target_link_libraries(AetherSDR PRIVATE
 
 option(AETHER_RX_READBACK_GUI_ONLY "Build AetherSDR with only the isolated RX audit GUI entry point" OFF)
 if(AETHER_RX_READBACK_GUI_ONLY)
+    if(AETHER_HF5A_DESKTOP_TEST)
+        message(FATAL_ERROR "HF5A full desktop and audit-only entry points are mutually exclusive")
+    endif()
     target_sources(AetherSDR PRIVATE src/IcomRxReadbackGui.cpp)
     target_compile_definitions(AetherSDR PRIVATE AETHER_RX_READBACK_GUI_ONLY)
+endif()
+
+if(AETHER_HF5A_DESKTOP_TEST)
+    target_sources(AetherSDR PRIVATE src/Hf5aDesktopProfile.cpp)
+    target_compile_definitions(AetherSDR PRIVATE AETHER_HF5A_DESKTOP_TEST)
 endif()
 
 add_executable(aetherd
