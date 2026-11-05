@@ -10,6 +10,7 @@
 #include <QImage>
 #include <QTest>
 #include <cstdio>
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -49,6 +50,10 @@ struct IcomCivBackendTestAccess {
         const auto frame = parseFrame(raw);
         check(frame.has_value(), "regression input frame parses");
         if (frame) { b.onCivFrame(*frame, generation); }
+    }
+    static void nextSlot(IcomCivBackend& b) {
+        b.pumpCiv(std::max<qint64>(b.nowMs(), b.m_civScheduler.stats().lastDispatchMs)
+                  + IcomCivScheduler::kSlotMs);
     }
     static void timeoutRx(IcomCivBackend& b) {
         (void)b.m_civScheduler.reset();
@@ -131,8 +136,14 @@ int main(int argc, char** argv)
         QObject::connect(&backend, &IRadioBackend::transmitChanged, &model, &TransmitModel::applyChanges);
         Access::deliver(backend,{0x03,0,0x40,0x07,0x07,0});
         Access::deliver(backend,{0x0F,0});
+        // The RX report queued a TX read; it went out before SPLIT was known.
+        // Its first reply belongs to that superseded context and MUST fail.
+        Access::deliver(backend,{0x1C,3,0,0x50,0x07,0x07,0});
+        check(!model.confirmedTransmitFreq(), "pre-SPLIT in-flight TX answer cannot populate the GUI");
+        Access::nextSlot(backend);
         Access::deliver(backend,{0x1C,3,0,0x50,0x07,0x07,0});
         widget.refresh(model,true);
+        std::printf("EVIDENCE decoded GUI: %s\n", widget.text().toUtf8().constData());
         check(model.confirmedReceiveDialFreq() == std::optional<double>(7.074)
               && model.confirmedTransmitFreq() == std::optional<double>(7.075)
               && widget.text().contains("+1000 Hz"), "real CI-V decoder feeds model and GUI without diagnostic-map parsing");
