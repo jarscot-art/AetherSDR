@@ -101,6 +101,7 @@ int AetherSDR::runIcomRxAudit(QCoreApplication& app, const RxAuditAttach& attach
     TransmitModel transmit;
     QObject::connect(&backend, &IRadioBackend::transmitChanged, &transmit, &TransmitModel::applyChanges);
     if (attach) { attach(backend, transmit); }
+    QObject callbacks; // cancel queued callbacks when this runner returns
     bool closing = false;
     const auto report = [&] {
         QJsonObject result = QJsonObject::fromVariantMap(backend.rxAuditDiagnostics());
@@ -118,14 +119,14 @@ int AetherSDR::runIcomRxAudit(QCoreApplication& app, const RxAuditAttach& attach
     };
     // A failure can be emitted from inside IcomSession/IcomStream. Retire the
     // session only after that callback has returned to the event loop.
-    QObject::connect(&backend, &IRadioBackend::connectionError, &app,
+    QObject::connect(&backend, &IRadioBackend::connectionError, &callbacks,
                      [&](const QString&) { finish(3); }, Qt::QueuedConnection);
-    QObject::connect(&backend, &IRadioBackend::disconnected, &app,
+    QObject::connect(&backend, &IRadioBackend::disconnected, &callbacks,
                      [&] { if (!closing) { finish(3); } }, Qt::QueuedConnection);
     QTimer status;
     QObject::connect(&status, &QTimer::timeout, &app, report);
     status.start(1000);
-    QTimer::singleShot(seconds * 1000, &app, [&] {
+    QTimer::singleShot(seconds * 1000, &callbacks, [&] {
         const QVariantMap diagnostics = backend.rxAuditDiagnostics();
         const auto split = diagnostics.value(QStringLiteral("splitTxReadback")).toMap()
             .value(QStringLiteral("split")).toMap();
@@ -141,10 +142,10 @@ int AetherSDR::runIcomRxAudit(QCoreApplication& app, const RxAuditAttach& attach
                       {QStringLiteral("icom.serialPort"), civPort}, {QStringLiteral("icom.audioPort"), audioPort},
                       {QStringLiteral("icom.civAddress"), 0xB6}, {QStringLiteral("icom.civAddressPinned"), true}};
     // Defer so synchronous connection failure also has a running event loop to exit.
-    QTimer::singleShot(0, &app, [&] { backend.connectRadio(request); });
+    QTimer::singleShot(0, &callbacks, [&] { backend.connectRadio(request); });
     const int result = app.exec();
     // A GUI close can end the loop without the observation timer firing.
     // Tear down while both backend and observed model are still alive.
     backend.disconnectRadio();
-    return result;
+    return closing ? result : 1; // manual close is an incomplete observation, not PASS
 }

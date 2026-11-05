@@ -47,7 +47,8 @@ No-argument launch refuses to connect. Future hardware use requires separate
 approval, `--connect --exclusive-lan-confirmed --host <existing-IP>` and the
 same bounded `--credentials <private-JSON>`/`--seconds` options as stage 2.
 No second LAN client may be running. Do not change COM4/COM5 or LAN configuration.
-Closing the window tears down the same session; the observation limit remains
+Closing the window tears down the same session and returns failure for an
+incomplete observation; the observation limit remains
 5..120 seconds. Each launch uses a temporary settings directory.
 
 ## Verification

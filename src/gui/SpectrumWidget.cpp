@@ -17855,7 +17855,11 @@ void SpectrumWidget::drawDssDepthGeometry(
 void SpectrumWidget::drawConfirmedTxReadback(QPainter& painter, const QRect& rect)
 {
     if (const auto frequency = m_txReadbackMarker.confirmed()) {
-        m_txReadbackMarker.paint(painter, rect, mhzToX(*frequency),
+        // The right dBm strip is not part of the frequency scale. In both
+        // renderers mhzToX maps only contentWidth(), not the full specRect.
+        QRect frequencyRect = rect;
+        frequencyRect.setWidth(contentWidth());
+        m_txReadbackMarker.paint(painter, frequencyRect, mhzToX(*frequency),
             ThemeManager::instance().color(QStringLiteral("color.slice.tx")));
     }
 }
