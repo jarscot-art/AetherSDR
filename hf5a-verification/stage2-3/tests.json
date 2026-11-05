@@ -1,0 +1,82 @@
+[
+  {
+    "test": "icom_rx_audit_requests_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_rx_audit_init_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_connection_usage_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_rx_audit_busy_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_outbound_policy_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_rx_audit_egress_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_protocol_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_replay_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_session_lease_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_civ_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_control_profile_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_backend_seam_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "transmit_model_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "backend_family_switch_test",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_rx_audit_self_check",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  },
+  {
+    "test": "icom_rx_audit_refuses_implicit_connection",
+    "status": "NOT RUN",
+    "reason": "GitHub Actions disabled for this fork"
+  }
+]

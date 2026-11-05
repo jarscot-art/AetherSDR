@@ -1,0 +1,83 @@
+[
+  {
+    "command": [
+      "python",
+      "tools/check_test_registration.py",
+      "--strict"
+    ],
+    "exitCode": 0,
+    "output": "test registration: OK \u2014 all test targets declared in tests/tests.cmake\n"
+  },
+  {
+    "command": [
+      "python",
+      "tools/check_ci_test_gate.py"
+    ],
+    "exitCode": 0,
+    "output": "4 workflow(s) scanned: 7 test(s) selected by -R; .github/ci-test-gate.txt: 7 frozen; 923 registered in tests/tests.cmake\nok: per-PR gate matches the frozen list\n"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "48bb8ee78a2229e1035f6162d06f674e09923686",
+      "--check"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "command": "Compare protected policy/session/writer/gate and every pre-existing workflow to base",
+    "exitCode": 0,
+    "files": [
+      "src/core/backends/icom/IcomOutboundPolicy.cpp",
+      "src/core/backends/icom/IcomOutboundPolicy.h",
+      "src/core/backends/icom/IcomStream.cpp",
+      "src/core/backends/icom/IcomSession.cpp",
+      ".github/ci-test-gate.txt",
+      ".github/workflows/appimage.yml",
+      ".github/workflows/build-sherpa-onnx-aarch64.yml",
+      ".github/workflows/cache-cleanup.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/codeql.yml",
+      ".github/workflows/docker-ci-image.yml",
+      ".github/workflows/docs.yml",
+      ".github/workflows/full-suite.yml",
+      ".github/workflows/hf5a-stage2-1-busy-offline.yml",
+      ".github/workflows/hf5a-stage2-2-init-offline.yml",
+      ".github/workflows/hf5a-stage2-rx-only-offline.yml",
+      ".github/workflows/hf5a-stage2-rx-only-repackage.yml",
+      ".github/workflows/macos-dmg.yml",
+      ".github/workflows/sanitizers.yml",
+      ".github/workflows/sign-release.yml",
+      ".github/workflows/static-checks.yml",
+      ".github/workflows/system-libs-canary.yml",
+      ".github/workflows/tailnet-shim.yml",
+      ".github/workflows/update-manifest.yml",
+      ".github/workflows/update-rnnoise.yml",
+      ".github/workflows/windows-installer.yml"
+    ]
+  },
+  {
+    "command": "Parse helper YAML; assert branch, full desktop build and 16 distinct CTest selections",
+    "exitCode": 0,
+    "selectedTests": [
+      "icom_rx_audit_requests_test",
+      "icom_rx_audit_init_test",
+      "icom_connection_usage_test",
+      "icom_rx_audit_busy_test",
+      "icom_outbound_policy_test",
+      "icom_rx_audit_egress_test",
+      "icom_protocol_test",
+      "icom_replay_test",
+      "icom_session_lease_test",
+      "icom_civ_test",
+      "icom_control_profile_test",
+      "icom_backend_seam_test",
+      "transmit_model_test",
+      "backend_family_switch_test",
+      "icom_rx_audit_self_check",
+      "icom_rx_audit_refuses_implicit_connection"
+    ]
+  }
+]

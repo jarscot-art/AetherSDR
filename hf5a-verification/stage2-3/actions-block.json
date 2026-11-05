@@ -1,0 +1,9 @@
+{
+  "url": "https://github.com/jarscot-art/AetherSDR/actions",
+  "checkedAtUtc": "2026-11-05T01:40:27.746389+00:00",
+  "message": "Workflows are not currently being run on this fork due to the scale of GitHub Actions usage.",
+  "action": "A repository maintainer can choose to re-enable these.",
+  "htmlSha256": "d9f4116643d947f8e36d85902b5a6630b0763acb0f8065e3006a0a6feb8f0ed9",
+  "sourceCommit": "4f6d0e3026e287edf8f43db580c8f5672d1657ab",
+  "workflowRun": null
+}
