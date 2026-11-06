@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         persist-credentials: false
-        fetch-depth: 3
+        fetch-depth: 4
     - name: Initialize exact-source evidence
       run: |
         New-Item -ItemType Directory -Force hf5a-stage5-results | Out-Null
@@ -417,8 +417,11 @@ jobs:
         Copy-Item third_party/fftw3/share/aethersdr-rtl-sources hf5a-stage5-portable/licenses/fftw -Recurse
         Copy-Item docs/hf5a-stage5-production-candidate.md hf5a-stage5-portable/README.md
         Copy-Item build/*.dll hf5a-stage5-portable/
-        & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --no-translations --no-compiler-runtime --dir hf5a-stage5-portable hf5a-stage5-portable/AetherSDR.exe |
-          Tee-Object hf5a-stage5-results/portable-deploy.log
+        # qt6keychain is resolved through QT_INSTALL_BINS, not PATH/--dir.
+        # Deploy from a private copy of Qt; never add DLLs to the installed kit.
+        & pwsh -NoLogo -NoProfile -NonInteractive -File packaging/windows/deploy-hf5a-qt.ps1 `
+          -QtRoot "$env:QT_ROOT_DIR" -KeychainDll third_party/qtkeychain/bin/qt6keychain.dll `
+          -DeployDir hf5a-stage5-portable -EvidenceDir hf5a-stage5-results
         if ($LASTEXITCODE -ne 0) { throw 'Qt portable deployment failed' }
         Copy-Item "$env:QT_ROOT_DIR/plugins/platforms/qoffscreen.dll" hf5a-stage5-portable/platforms/
         @('[Paths]','Prefix=.','Plugins=.','Libraries=.','Binaries=.') | Set-Content hf5a-stage5-portable/qt.conf -Encoding ascii
@@ -518,6 +521,7 @@ jobs:
 
         Get-NetFirewallRule -DisplayName 'HF5A-stage5-*' -ErrorAction SilentlyContinue | Format-List | Out-File hf5a-stage5-results/final-firewall.txt
     - name: Upload portable full desktop ZIP and SHA256 (no installer)
+      id: portable_rc
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
       with:
         name: AetherSDR-26.11.1-HF5A-RC-${{ github.sha }}
@@ -527,6 +531,25 @@ jobs:
           hf5a-stage5-results/portable-manifest.json
         retention-days: 90
         if-no-files-found: error
+    - name: Record separate EXE, inner ZIP and GitHub artifact SHA256
+      env:
+        ARTIFACT_SHA256: ${{ steps.portable_rc.outputs.artifact-digest }}
+        ARTIFACT_ID: ${{ steps.portable_rc.outputs.artifact-id }}
+        ARTIFACT_URL: ${{ steps.portable_rc.outputs.artifact-url }}
+      run: |
+        # upload-artifact hashes its outer ZIP. This cannot be embedded in itself;
+        # retain the wrapper digest separately in the evidence artifact and summary.
+        if ($env:ARTIFACT_SHA256 -notmatch '^[0-9a-fA-F]{64}$' -or
+            $env:ARTIFACT_ID -notmatch '^\d+$' -or -not $env:ARTIFACT_URL) {
+          throw 'Missing GitHub artifact identity or SHA256'
+        }
+        $inner=Get-Content -Raw hf5a-stage5-results/portable-manifest.json | ConvertFrom-Json
+        @{source=$env:GITHUB_SHA; exe=$inner.exe; exeSHA256=$inner.exeSHA256;
+          innerZip=$inner.zip; innerZipSHA256=$inner.zipSHA256;
+          githubArtifactId=$env:ARTIFACT_ID; githubArtifactUrl=$env:ARTIFACT_URL;
+          githubArtifactSHA256=$env:ARTIFACT_SHA256.ToLower()} |
+          ConvertTo-Json | Set-Content hf5a-stage5-results/artifact-manifest.json
+        Get-Content hf5a-stage5-results/artifact-manifest.json | Out-File $env:GITHUB_STEP_SUMMARY -Append
     - name: Upload offline evidence
       if: ${{ always() }}
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
