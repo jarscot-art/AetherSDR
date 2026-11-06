@@ -58,6 +58,19 @@ public:
     explicit IcomCivBackend(QObject* parent = nullptr,
                             IcomOutboundPolicy policy = IcomOutboundPolicy::production());
     [[nodiscard]] QVariantMap rxAuditDiagnostics() const;
+    // Independent observations of the relative UNSELECTED VFO, never physical B.
+    // Optional values are present only while current; no receiver/slice is created.
+    struct UnselectedVfoReadback {
+        std::optional<std::uint64_t> frequencyHz;
+        std::optional<VfoModeState> mode;
+        qint64 frequencyAtMs = -1;
+        qint64 modeAtMs = -1;
+        QString frequencyStatus;
+        QString modeStatus;
+        std::uint64_t sessionGeneration = 0;
+        std::uint64_t contextGeneration = 0;
+    };
+    [[nodiscard]] UnselectedVfoReadback unselectedVfoReadback() const;
     ~IcomCivBackend() override;
 
     // ---- identity & capability ----
@@ -346,6 +359,11 @@ private:
     void invalidateTxReadback(const QString& reason, bool refresh = true);
     void resetSplitTxReadback(const QString& reason);
     void serviceSplitTxReadback(qint64 nowMs);
+    [[nodiscard]] bool unselectedVfoReady() const;
+    void queueUnselectedVfoReadback(IcomCivScheduler::Priority priority);
+    void invalidateUnselectedVfo(const QString& reason, bool reset = false);
+    void serviceUnselectedVfo(qint64 nowMs);
+    void onUnselectedVfoFrame(const CivFrame& frame);
     void publishReceiveSplitReadback();
     [[nodiscard]] QVariantMap splitTxReadbackDiagnostics(qint64 nowMs, bool withValues) const;
     // Adopt (or refuse) the address the radio reported in its 0x19 0x00 reply.
@@ -441,6 +459,22 @@ private:
     qint64 m_splitTxPollAtMs = -1;
     std::uint64_t m_splitTxEventId = 0;
     std::uint64_t m_txReadbackContext = 0;
+
+    template<typename T> struct VfoReadSample {
+        std::optional<T> value;
+        qint64 atMs = -1;
+        bool valid = false;
+        bool waiting = false;
+        std::uint64_t attemptGeneration = 0;
+        std::uint64_t attemptContext = 0;
+        QString status = QStringLiteral("never-confirmed");
+    };
+    VfoReadSample<std::uint64_t> m_unselectedFrequency;
+    VfoReadSample<VfoModeState> m_unselectedMode;
+    qint64 m_unselectedPollAtMs = -1;
+    std::uint64_t m_unselectedEventId = 0;
+    std::uint64_t m_unselectedContext = 0;
+    bool m_unselectedNeedsRefresh = true;
 
     // 48 kHz mono from the radio -> 24 kHz interleaved stereo for the engine.
     //

@@ -153,6 +153,7 @@ int main(int argc, char** argv)
               && state.value("txFrequencyHz").toMap().value("value").toULongLong() == 7'074'000,
               "normal decoded cycle retains valid SPLIT and 7074000 Hz TX readback");
         check(denied(b) == 0, "connect, polling, mode changes and unsolicited reports cause zero request denials");
+        Access::tick(b); // stable context: request the two samples cancelled by the last DATA change
         Access::drain(b);
         std::set<std::vector<std::uint8_t>> emitted;
         for (const auto& packet : writes) {
@@ -162,10 +163,10 @@ int main(int argc, char** argv)
                 check(IcomOutboundPolicy::rxAudit().allowsCiv(bytes), "actual final-writer bytes are approved queries");
             }
         }
-        check(emitted.size() == 9, "the nine baseline queries remain unchanged");
-        check(!emitted.contains(cmdReadUnselectedVfoFrequency(0xB6))
-              && !emitted.contains(cmdReadUnselectedVfoMode(0xB6)),
-              "codec support does not automatically poll the unselected VFO");
+        check(emitted.size() == 11, "nine baseline and two unselected VFO queries reach the writer");
+        check(emitted.contains(cmdReadUnselectedVfoFrequency(0xB6))
+              && emitted.contains(cmdReadUnselectedVfoMode(0xB6)),
+              "unselected VFO polling uses the two exact approved queries");
         const auto before = writes.size();
         Access::forbidden(b);
         check(denied(b) == 5 && writes.size() == before,

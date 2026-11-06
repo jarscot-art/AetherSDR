@@ -1396,6 +1396,13 @@ if(AETHER_RX_READBACK_GUI_ONLY)
     set_tests_properties(icom_rx_readback_gui_refuses_implicit_connection PROPERTIES WILL_FAIL TRUE)
 endif()
 
+# Unselected VFO observations through the real scheduler and injected final writer.
+add_executable(icom_unselected_vfo_test tests/icom_unselected_vfo_test.cpp)
+target_include_directories(icom_unselected_vfo_test PRIVATE src tests)
+target_link_libraries(icom_unselected_vfo_test PRIVATE aethercore Qt6::Core Qt6::Test)
+add_test(NAME icom_unselected_vfo_test COMMAND icom_unselected_vfo_test)
+set_tests_properties(icom_unselected_vfo_test PROPERTIES TIMEOUT 60)
+
 add_executable(icom_rx_audit_requests_test tests/icom_rx_audit_requests_test.cpp)
 target_include_directories(icom_rx_audit_requests_test PRIVATE src tests)
 target_link_libraries(icom_rx_audit_requests_test PRIVATE aethercore Qt6::Core Qt6::Test)
@@ -10445,6 +10452,7 @@ set(AETHER_SETTINGS_CONSUMERS
     hf5a_desktop_profile_test
     rx_readback_gui_test
     icom_rx_audit_requests_test
+    icom_unselected_vfo_test
     icom_rx_audit_egress_test
     update_controller_test
     update_installer_test

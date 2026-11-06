@@ -1140,6 +1140,7 @@ void IcomCivBackend::sendConnectReadBurst()
         resetSplitTxReadback(QStringLiteral("never-confirmed"));
         if (!alive || session != m_sessionGeneration || !m_session) { return; }
         queueSplitTxReadback(IcomCivScheduler::Priority::Maintenance);
+        queueUnselectedVfoReadback(IcomCivScheduler::Priority::Maintenance);
         return;
     }
     // A valid identity ends discovery before the model-shaped snapshot starts.
@@ -1299,6 +1300,7 @@ void IcomCivBackend::sendConnectReadBurst()
     queueTunerReadIfSupported(m_session->civAddress(),
                               IcomCivScheduler::Priority::Maintenance);
     queueSplitTxReadback(IcomCivScheduler::Priority::Maintenance);
+    queueUnselectedVfoReadback(IcomCivScheduler::Priority::Maintenance);
 
 }
 
@@ -2485,6 +2487,19 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
         return;
     }
     if (m_outboundPolicy.isAudit() && frame.cmd == cmd::kScope) { return; }
+    const auto pendingKey = m_civScheduler.stats().inFlightKey;
+    if (frame.cmd == cmd::kVfoFrequency
+        || (frame.cmd == cmd::kVfoMode && frame.hasSub && frame.sub != vfoMode::kSelected)
+        || ((frame.isOk() || frame.isNg())
+            && (pendingKey == "vfo.unselected.frequency" || pendingKey == "vfo.unselected.mode"))) {
+        onUnselectedVfoFrame(frame);
+        return; // never route the unselected VFO into RX mode/filter/scope publication
+    }
+    if (unselectedVfoReady() && (frame.cmd == 0x07 || frame.cmd == 0x08)
+        && frame.hasNormalTerminator && frame.from == m_session->civAddress()
+        && (frame.to == kControllerAddress || frame.to == kBroadcastAddress)) {
+        invalidateUnselectedVfo(QStringLiteral("previous-context"));
+    }
     const QPointer<IcomCivBackend> alive(this);
     const auto sessionCurrent = [alive, sessionGeneration, model = m_model,
                                  ambiguous = m_civAmbiguous, identity = frame.cmd == cmd::kReadId] {
@@ -2906,8 +2921,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
         // the radio cannot report a passband in Hz — so without it the window
         // was drawn from a per-mode default and never followed the operator
         // changing the filter on the radio's own front panel.
-        if (frame.data.size() >= 2 && frame.data[1] >= 1 && frame.data[1] <= 3)
+        if (frame.data.size() >= 2 && frame.data[1] >= 1 && frame.data[1] <= 3) {
+            if (m_filter != frame.data[1]) { invalidateUnselectedVfo(QStringLiteral("previous-context")); }
             m_filter = frame.data[1];
+        }
         // An unsolicited 01 (front-panel MODE knob) cannot carry the DATA flag:
         // USB->USB-D sends the same 01 01 xx. On VfoMode radios, read 0x26 once
         // per such push (not for our own 04 poll), and never publish 04/01
@@ -3432,8 +3449,10 @@ void IcomCivBackend::onCivFrame(const CivFrame& frame,
         // Zero means the radio named a slot outside 1..3 — see VfoModeState.
         // Keeping the previous slot is what stops mode and filter clobbering
         // each other, which is the whole reason the three travel in one frame.
-        if (st->filter != 0)
+        if (st->filter != 0) {
+            if (m_filter != st->filter) { invalidateUnselectedVfo(QStringLiteral("previous-context")); }
             m_filter = st->filter;
+        }
         publishModeState();
         // RX audit observes mode/DATA/filter but does not inventory passbands
         // or TX settings. Do not generate requests merely to have policy deny
@@ -4416,8 +4435,13 @@ std::string IcomCivBackend::semanticKey(std::span<const std::uint8_t> frame) con
     case cmd::kSetModeTrx:
     case cmd::kReadMode:
     case cmd::kSetMode:
-    case cmd::kVfoMode:
         return "mode";
+    case cmd::kVfoMode:
+        return parsed->hasSub && parsed->sub == vfoMode::kUnselected
+            ? "vfo.unselected.mode" : "mode";
+    case cmd::kVfoFrequency:
+        return parsed->hasSub && parsed->sub == vfoMode::kUnselected
+            ? "vfo.unselected.frequency" : "vfo.selected.frequency";
     case cmd::kReadRepeaterOffset:
     case cmd::kSetRepeaterOffset:
         // Read and write use different opcodes but own one state value. Sharing
@@ -4611,6 +4635,7 @@ void IcomCivBackend::pumpCiv(qint64 nowMs)
             command->completion.finish();
         }
     });
+    serviceUnselectedVfo(nowMs);
     serviceSplitTxReadback(nowMs);
     if (!alive || session != m_sessionGeneration || !m_connected || !m_session
         || model != m_model || ambiguous != m_civAmbiguous) {
@@ -4628,6 +4653,13 @@ void IcomCivBackend::pumpCiv(qint64 nowMs)
         sample.attemptSerial = sample.serial;
         sample.attemptGeneration = dispatch->generation;
     }
+    const auto dispatchedVfo = [&](auto& sample) {
+        sample.waiting = true;
+        sample.attemptGeneration = dispatch->generation;
+        sample.attemptContext = m_unselectedContext;
+    };
+    if (dispatch->key == "vfo.unselected.frequency") { dispatchedVfo(m_unselectedFrequency); }
+    if (dispatch->key == "vfo.unselected.mode") { dispatchedVfo(m_unselectedMode); }
     // ROUTINE = the high-rate loops only.  `>= Ptt` also swept up Control and
     // Maintenance, which hid the startup snapshot and the scope on/output
     // writes from the default `civ trace` — the frames behind the documented
@@ -4663,6 +4695,138 @@ void IcomCivBackend::pumpCiv(qint64 nowMs)
     serviceSchedulerWaiters(nowMs);
 }
 
+bool IcomCivBackend::unselectedVfoReady() const
+{
+    return m_connected && m_session && m_model && m_model->civAddress == 0xB6
+        && profileFor(*m_model).splitTxReadback && m_civReported != 0 && !m_civAmbiguous;
+}
+
+IcomCivBackend::UnselectedVfoReadback IcomCivBackend::unselectedVfoReadback() const
+{
+    UnselectedVfoReadback out;
+    out.sessionGeneration = m_sessionGeneration;
+    out.contextGeneration = m_unselectedContext;
+    out.frequencyAtMs = m_unselectedFrequency.atMs;
+    out.modeAtMs = m_unselectedMode.atMs;
+    const qint64 now = nowMs();
+    const auto current = [&](const auto& sample) {
+        return unselectedVfoReady() && sample.valid && sample.value && sample.atMs >= 0
+            && sample.attemptContext == m_unselectedContext && now >= sample.atMs
+            && now - sample.atMs < profileFor(*m_model).splitTxReadback->freshnessMs;
+    };
+    const auto status = [&](const auto& sample) {
+        return sample.valid && !current(sample) ? QStringLiteral("stale") : sample.status;
+    };
+    if (current(m_unselectedFrequency)) { out.frequencyHz = m_unselectedFrequency.value; }
+    if (current(m_unselectedMode)) { out.mode = m_unselectedMode.value; }
+    out.frequencyStatus = status(m_unselectedFrequency);
+    out.modeStatus = status(m_unselectedMode);
+    return out;
+}
+
+void IcomCivBackend::queueUnselectedVfoReadback(IcomCivScheduler::Priority priority)
+{
+    if (!unselectedVfoReady()) { return; }
+    const auto addr = m_session->civAddress();
+    queueRead(cmdReadUnselectedVfoFrequency(addr), "vfo.unselected.frequency", priority,
+              0, {}, true, m_unselectedNeedsRefresh);
+    queueRead(cmdReadUnselectedVfoMode(addr), "vfo.unselected.mode", priority,
+              0, {}, true, m_unselectedNeedsRefresh);
+    m_unselectedNeedsRefresh = false;
+    m_unselectedPollAtMs = nowMs();
+}
+
+void IcomCivBackend::invalidateUnselectedVfo(const QString& reason, bool reset)
+{
+    ++m_unselectedContext;
+    const auto invalidate = [&](auto& sample) {
+        if (reset) { sample.value.reset(); sample.atMs = -1; }
+        sample.valid = sample.waiting = false;
+        sample.status = reason;
+    };
+    invalidate(m_unselectedFrequency);
+    invalidate(m_unselectedMode);
+    m_civScheduler.cancelQueued("vfo.unselected.frequency");
+    m_civScheduler.cancelQueued("vfo.unselected.mode");
+    m_unselectedNeedsRefresh = true;
+    m_unselectedPollAtMs = -1;
+    // In-flight requests are not reused in the next context. At most their
+    // terminal reply/timeout frees the slot; waiting=false prevents adoption.
+}
+
+void IcomCivBackend::serviceUnselectedVfo(qint64 now)
+{
+    const auto service = [&](auto& sample, const char* key) {
+        for (const auto& event : m_civScheduler.recentTransactions()) {
+            if (event.eventId <= m_unselectedEventId || event.key != key || !sample.waiting
+                || event.generation != sample.attemptGeneration) { continue; }
+            if (event.completion == IcomCivScheduler::Completion::Timeout) {
+                sample.valid = sample.waiting = false;
+                sample.status = QStringLiteral("timeout");
+            }
+        }
+        if (sample.valid && (!unselectedVfoReady() || now < sample.atMs
+            || now - sample.atMs >= profileFor(*m_model).splitTxReadback->freshnessMs)) {
+            sample.valid = false;
+            sample.status = QStringLiteral("stale");
+        }
+    };
+    service(m_unselectedFrequency, "vfo.unselected.frequency");
+    service(m_unselectedMode, "vfo.unselected.mode");
+    const auto& events = m_civScheduler.recentTransactions();
+    if (!events.empty()) { m_unselectedEventId = events.back().eventId; }
+}
+
+void IcomCivBackend::onUnselectedVfoFrame(const CivFrame& frame)
+{
+    if (!unselectedVfoReady() || !frame.hasNormalTerminator
+        || frame.from != m_session->civAddress() || frame.to != kControllerAddress) { return; }
+    const bool ack = frame.isOk() || frame.isNg();
+    auto wire = frame.hasSub ? buildFrameSub(frame.to, frame.cmd, frame.sub, frame.data)
+                             : buildFrame(frame.to, frame.cmd, frame.data);
+    wire[3] = frame.from;
+    std::optional<VfoFrequencyReply> frequency;
+    std::optional<VfoModeReply> mode;
+    if (ack) {
+        if (frame.hasSub || !frame.data.empty()) { return; }
+    } else {
+        if (!frame.hasSub || frame.sub != vfoMode::kUnselected) { return; }
+        // CivFrame already passed the framing parser. Preserve all envelope
+        // fields when applying stage 6.1a's strict complete-reply validation.
+        frequency = parseIc7300Mk2VfoFrequencyReply(wire, m_session->civAddress());
+        mode = parseIc7300Mk2VfoModeReply(wire, m_session->civAddress());
+        if (!frequency && !mode) { return; } // cannot retire the scheduler slot
+    }
+    traceCiv(false, wire, true);
+    const auto key = m_civScheduler.stats().inFlightKey;
+    const auto now = nowMs();
+    const auto observation = m_civScheduler.observe(frame, now);
+    if (observation == IcomCivScheduler::Observation::Accepted) {
+        const auto accept = [&](auto& sample, const auto& value) {
+            if (!sample.waiting || sample.attemptContext != m_unselectedContext) { return; }
+            sample.waiting = false;
+            if (ack) {
+                sample.valid = false;
+                sample.status = frame.isNg() ? QStringLiteral("ng") : QStringLiteral("ack-without-data");
+            } else if (value) {
+                sample.value = value;
+                sample.atMs = now;
+                sample.valid = true;
+                sample.status = QStringLiteral("confirmed");
+            }
+        };
+        if (key == "vfo.unselected.frequency") {
+            accept(m_unselectedFrequency, frequency ? std::optional{frequency->frequencyHz} : std::nullopt);
+        } else if (key == "vfo.unselected.mode") {
+            accept(m_unselectedMode, mode ? std::optional{mode->state} : std::nullopt);
+        }
+    }
+    // Unmatched (including late-after-timeout) and stale replies never restore
+    // validity. CI-V cannot distinguish an old identical reply arriving during
+    // a new identical request: samples are observations, not an atomic A/B map.
+    pumpCiv(now);
+}
+
 void IcomCivBackend::queueSplitTxReadback(IcomCivScheduler::Priority priority)
 {
     if (!m_connected || !m_session || !profileFor(*m_model).splitTxReadback
@@ -4684,6 +4848,7 @@ void IcomCivBackend::invalidateTxReadback(const QString& reason, bool refresh)
     m_txReadback.valid = false;
     m_txReadback.status = reason;
     if (refresh) {
+        invalidateUnselectedVfo(QStringLiteral("previous-context"));
         ++m_txReadbackContext;
     }
     if (refresh && m_connected && m_session && m_civReported != 0 && !m_civAmbiguous) {
@@ -4701,6 +4866,7 @@ void IcomCivBackend::invalidateTxReadback(const QString& reason, bool refresh)
 
 void IcomCivBackend::resetSplitTxReadback(const QString& reason)
 {
+    invalidateUnselectedVfo(reason, true);
     const bool publishInvalid = m_txReadback.valid || profileFor(*m_model).splitTxReadback.has_value();
     m_splitReadback = {};
     m_receiveDialReadback = {};
@@ -8161,6 +8327,10 @@ void IcomCivBackend::onLinkTick()
 {
     if (!m_session)
         return;
+    if (unselectedVfoReady() && (m_unselectedPollAtMs < 0
+        || nowMs() - m_unselectedPollAtMs >= profileFor(*m_model).splitTxReadback->pollIntervalMs)) {
+        queueUnselectedVfoReadback(IcomCivScheduler::Priority::Control);
+    }
     if (m_outboundPolicy.isAudit()) {
         const qint64 now = nowMs();
         if (m_connected && m_civReported == 0xB6 && !m_civAmbiguous
