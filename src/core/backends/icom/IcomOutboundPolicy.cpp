@@ -44,7 +44,8 @@ bool IcomOutboundPolicy::allowsCiv(std::span<const std::uint8_t> frame) const
     if (frame.size() != 7) { return false; }
     return (frame[4] == 0x19 && frame[5] == 0x00)
         || (frame[4] == 0x1C && frame[5] == 0x03)
-        || (frame[4] == 0x26 && frame[5] == 0x00)
+        || (frame[4] == 0x26 && (frame[5] == 0x00 || frame[5] == 0x01))
+        || (frame[4] == 0x25 && frame[5] == 0x01)
         || (frame[4] == 0x21 && frame[5] <= 0x02);
 }
 

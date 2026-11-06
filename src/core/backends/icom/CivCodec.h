@@ -186,6 +186,7 @@ inline constexpr std::uint8_t kRxAntenna   = 0x12;
 // RIT / dTX. Icom calls transmit incremental tuning "dTX"; the operator-facing
 // name everywhere else is XIT, and they are the same control.
 inline constexpr std::uint8_t kTuneOffset   = 0x21;
+inline constexpr std::uint8_t kVfoFrequency = 0x25;
 // 0x26: operating mode, DATA flag and IF filter slot in ONE frame, per VFO,
 // readable and writable. It is the only command that distinguishes USB from
 // USB-D (01/04/06 carry only the shared mode byte). Send the three together: as
@@ -444,6 +445,26 @@ struct VfoModeState {
     int filter = 0;
 };
 
+// Relative to the radio's selection, never physical VFO A/B.
+enum class VfoSelector : std::uint8_t { Selected = 0x00, Unselected = 0x01 };
+struct VfoFrequencyReply {
+    VfoSelector selector;
+    std::uint64_t frequencyHz;
+};
+struct VfoModeReply {
+    VfoSelector selector;
+    VfoModeState state;
+};
+// IC-7300MK2 CI-V Reference Guide, PDF pp. 15/23 (25/26), and its
+// 30 kHz..74.8 MHz tuning range (also recorded in IcomModels.cpp).
+// Strict, complete addressed replies: FE FE <E0> <radioAddress> ... FD.
+// No broadcast, echo, FC, unknown selector, partial data or fallback fields.
+// These return decoded values only; no backend state or polling is added.
+[[nodiscard]] std::optional<VfoFrequencyReply> parseIc7300Mk2VfoFrequencyReply(
+    std::span<const std::uint8_t> frame, std::uint8_t radioAddress = 0xB6);
+[[nodiscard]] std::optional<VfoModeReply> parseIc7300Mk2VfoModeReply(
+    std::span<const std::uint8_t> frame, std::uint8_t radioAddress = 0xB6);
+
 // Filter slot (1, 2 or 3) for a requested width; the radio has three fixed IF
 // slots, so a request in Hz can only SNAP. Mode-dependent: FIL1 is 3.0 kHz in
 // SSB, 1.2 kHz in CW, 9 kHz in AM, 15 kHz in FM. Ladders are the IC-705 defaults
@@ -585,6 +606,8 @@ struct PassbandEdges {
 
 [[nodiscard]] std::vector<std::uint8_t> cmdSetFrequency(std::uint8_t to, std::uint64_t hz);
 [[nodiscard]] std::vector<std::uint8_t> cmdReadFrequency(std::uint8_t to);
+[[nodiscard]] std::vector<std::uint8_t> cmdReadUnselectedVfoFrequency(std::uint8_t to);
+[[nodiscard]] std::vector<std::uint8_t> cmdReadUnselectedVfoMode(std::uint8_t to);
 [[nodiscard]] std::vector<std::uint8_t> cmdSetMode(std::uint8_t to, CivMode mode, int filter);
 [[nodiscard]] std::vector<std::uint8_t> cmdReadMode(std::uint8_t to);
 // Command 0x26 — the selected VFO's mode, DATA state and filter, read and

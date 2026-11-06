@@ -33,7 +33,15 @@ int main()
         return buildSerialData(context.localSid, context.remoteSid, 0, 1, frame);
     };
     const std::array approved{civ({0x19,0}), civ({0x0F}), civ({0x1C,3}), civ({3}), civ({4}),
-                              civ({0x26,0}), civ({0x21,0}), civ({0x21,1}), civ({0x21,2})};
+                              civ({0x26,0}), civ({0x25,1}), civ({0x26,1}), civ({0x21,0}), civ({0x21,1}), civ({0x21,2})};
+    // Exactly two new forms: 25 00 remains forbidden; 26 00 was already allowed.
+    for (int selector = 0; selector < 256; ++selector) {
+        const auto sub = static_cast<std::uint8_t>(selector);
+        check(policy.allowsDatagram(wrap(civ({0x25,sub})), context) == (selector == 1),
+              "25 only unselected read is approved");
+        check(policy.allowsDatagram(wrap(civ({0x26,sub})), context) == (selector <= 1),
+              "26 only selected and unselected reads are approved");
+    }
     int mutations = 0;
     for (const auto& frame : approved) {
         check(policy.allowsCiv(frame), "exact approved query");
@@ -56,7 +64,8 @@ int main()
     }
     for (const auto& frame : {civ({0x0F,1}), civ({0x1C,0,0}), civ({0x1C,0,1}), civ({0x1C,2,2}),
                               civ({0x1C,4,1}), civ({0x17,0xFD}), civ({0x18,1}), civ({5,0,0,0,0,0}),
-                              civ({7,0}), civ({0x27,0x10,1}), civ({0x21,0,0,0,0})}) {
+                              civ({7,0}), civ({7,1}), civ({0x25,1,0,0x40,7,7,0}),
+                              civ({0x26,1,1,1,2}), civ({0x25}), civ({0x26}), civ({0x27,0x10,1}), civ({0x21,0,0,0,0})}) {
         check(!policy.allowsDatagram(wrap(frame), context), "PTT, CW, tuner, VFO, wake, scope, offset denied");
     }
     auto datagram = wrap(civ({0x0F}));
@@ -120,6 +129,6 @@ int main()
     check(!IcomOutboundPolicy{}.allowsDatagram(rx, context), "absent policy fails closed");
     check(!IcomOutboundPolicy{}.allowsCiv(civ({0x0F})), "absent CI-V policy fails closed");
     check(IcomOutboundPolicy::production().allowsDatagram(tx, context), "production path unchanged");
-    std::printf("policy: 9 exact queries; %d added-data mutations; failures=%d\n", mutations, failures);
+    std::printf("policy: %zu exact queries; %d added-data mutations; failures=%d\n", approved.size(), mutations, failures);
     return failures ? EXIT_FAILURE : EXIT_SUCCESS;
 }

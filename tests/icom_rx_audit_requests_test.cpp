@@ -162,7 +162,10 @@ int main(int argc, char** argv)
                 check(IcomOutboundPolicy::rxAudit().allowsCiv(bytes), "actual final-writer bytes are approved queries");
             }
         }
-        check(emitted.size() == 9, "all nine and only nine approved query forms reached the writer");
+        check(emitted.size() == 9, "the nine baseline queries remain unchanged");
+        check(!emitted.contains(cmdReadUnselectedVfoFrequency(0xB6))
+              && !emitted.contains(cmdReadUnselectedVfoMode(0xB6)),
+              "codec support does not automatically poll the unselected VFO");
         const auto before = writes.size();
         Access::forbidden(b);
         check(denied(b) == 5 && writes.size() == before,

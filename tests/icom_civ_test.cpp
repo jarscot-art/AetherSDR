@@ -938,10 +938,10 @@ static void testSubcommandPredicate()
                   "a bare command keeps both payload bytes");
         }
     }
-    // The thirteen that carry subcommands: 12 14 15 16 18 19 1A 1B 1C 21 23 26 27. A
+    // The fourteen that carry subcommands: 12 14 15 16 18 19 1A 1B 1C 21 23 25 26 27. A
     // change to the list is a deliberate protocol decision, so it should have
     // to come past this number rather than arrive as a silent side effect.
-    check(subAddressed == 13, "exactly thirteen CI-V commands are sub-addressed");
+    check(subAddressed == 14, "exactly fourteen CI-V commands are sub-addressed");
 }
 
 // ---------------------------------------------------------------------------
@@ -1143,8 +1143,117 @@ static void testSplitReadback()
           "FC terminates reassembly but retains its distinction from a normal FD reply");
 }
 
+
+// MK2 guide https://icomuk.co.uk/files/icom/PDF/productAdditionalFile/IC-7300MK2_ENG_CI-V_0.pdf
+// PDF pp. 15/23. Literal wire fixtures; no radio, transport or setters.
+static void testMk2VfoReadReplies()
+{
+    check(bytesAre(cmdReadUnselectedVfoFrequency(0xB6),
+                   {0xFE,0xFE,0xB6,0xE0,0x25,0x01,0xFD}), "exact 25 01 query");
+    check(bytesAre(cmdReadUnselectedVfoMode(0xB6),
+                   {0xFE,0xFE,0xB6,0xE0,0x26,0x01,0xFD}), "exact 26 01 query");
+    const std::vector<std::uint8_t> frequency{0xFE,0xFE,0xE0,0xB6,0x25,1,0,0x40,7,7,0,0xFD};
+    const std::vector<std::uint8_t> mode{0xFE,0xFE,0xE0,0xB6,0x26,1,1,1,2,0xFD};
+    for (int selector = 0; selector < 256; ++selector) {
+        auto f = frequency; f[5] = static_cast<std::uint8_t>(selector);
+        auto m = mode; m[5] = static_cast<std::uint8_t>(selector);
+        const auto parsed = parseFrame(f);
+        check(parsed && parsed->hasSub && parsed->sub == selector && parsed->data.size() == 5,
+              "25 selector is separate from all five frequency bytes");
+        const auto fr = parseIc7300Mk2VfoFrequencyReply(f);
+        const auto mr = parseIc7300Mk2VfoModeReply(m);
+        check(fr.has_value() == (selector <= 1) && mr.has_value() == (selector <= 1),
+              "only selected/unselected selectors accepted");
+        if (fr && mr) {
+            check(static_cast<int>(fr->selector) == selector && fr->frequencyHz == 7'074'000
+                      && static_cast<int>(mr->selector) == selector
+                      && mr->state.mode == CivMode::Usb && mr->state.dataMode && mr->state.filter == 2,
+                  "relative selector and complete reply values preserved");
+        }
+    }
+    for (const auto& fixture : {frequency, mode}) {
+        const auto valid = [&](const auto& bytes) {
+            return fixture[4] == 0x25 ? parseIc7300Mk2VfoFrequencyReply(bytes).has_value()
+                                     : parseIc7300Mk2VfoModeReply(bytes).has_value();
+        };
+        for (std::size_t size = 0; size < fixture.size(); ++size)
+            check(!valid(std::vector<std::uint8_t>(fixture.begin(), fixture.begin() + size)),
+                  "every truncated reply rejected");
+        for (std::size_t at = 0; at < fixture.size(); ++at) {
+            auto shortFrame = fixture; shortFrame.erase(shortFrame.begin() + at);
+            check(!valid(shortFrame), "missing byte including selector rejected");
+            auto longFrame = fixture; longFrame.insert(longFrame.begin() + at, 0);
+            check(!valid(longFrame), "extra byte rejected");
+        }
+        for (std::size_t field : {0u,1u,2u,3u,4u}) {
+            auto foreign = fixture; foreign[field] ^= 1;
+            check(!valid(foreign), "wrong preamble, destination, source or command rejected");
+        }
+        for (int end = 0; end < 256; ++end) {
+            auto bad = fixture; bad.back() = static_cast<std::uint8_t>(end);
+            check(valid(bad) == (end == 0xFD), "only normal FD terminator accepted");
+        }
+        auto broadcast = fixture; broadcast[2] = 0;
+        check(!valid(broadcast), "addressed query does not accept broadcast as its reply");
+        auto echo = fixture; echo[2] = 0xB6; echo[3] = 0xE0;
+        check(!valid(echo), "controller echo cannot confirm a VFO");
+        auto joined = fixture; joined.insert(joined.end(), fixture.begin(), fixture.end());
+        check(!valid(joined), "multiple frames are not one reply");
+    }
+    for (std::size_t at = 6; at < 11; ++at) {
+        for (int digit = 10; digit < 16; ++digit) {
+            for (int shift : {0, 4}) {
+                auto bad = frequency;
+                bad[at] = static_cast<std::uint8_t>(digit << shift);
+                check(!parseIc7300Mk2VfoFrequencyReply(bad), "invalid BCD nibble rejected in every byte");
+            }
+        }
+    }
+    for (std::uint64_t hz : {0ULL,29'999ULL,30'000ULL,74'800'000ULL,74'800'001ULL,144'000'000ULL}) {
+        auto wire = frequency;
+        const auto bcd = encodeFreq(hz);
+        for (std::size_t i = 0; i < 5; ++i) { wire[6+i] = bcd[i]; }
+        check(parseIc7300Mk2VfoFrequencyReply(wire).has_value()
+                  == (hz >= 30'000 && hz <= 74'800'000), "MK2 frequency limits inclusive");
+    }
+    for (int value = 0; value < 256; ++value) {
+        auto wire = mode; wire[6] = static_cast<std::uint8_t>(value);
+        const bool known = value <= 5 || value == 7 || value == 8;
+        check(parseIc7300Mk2VfoModeReply(wire).has_value() == known, "MK2 emission vocabulary exact");
+        wire = mode; wire[7] = static_cast<std::uint8_t>(value);
+        check(parseIc7300Mk2VfoModeReply(wire).has_value() == (value <= 1), "DATA only OFF/ON");
+        wire = mode; wire[8] = static_cast<std::uint8_t>(value);
+        check(parseIc7300Mk2VfoModeReply(wire).has_value() == (value >= 1 && value <= 3),
+              "only FIL1/FIL2/FIL3 accepted, no fallback to selected filter");
+    }
+    for (int selector : {0,1}) for (int emission : {0,1,2,3,4,5,7,8})
+        for (int data : {0,1}) for (int filter : {1,2,3}) {
+            auto wire = mode;
+            wire[5] = selector; wire[6] = emission; wire[7] = data; wire[8] = filter;
+            const auto result = parseIc7300Mk2VfoModeReply(wire);
+            check(result && static_cast<int>(result->selector) == selector
+                      && static_cast<int>(result->state.mode) == emission
+                      && result->state.dataMode == (data != 0) && result->state.filter == filter,
+                  "emission DATA and filter preserved independently for both selectors");
+        }
+    auto customFrequency = frequency; customFrequency[3] = 0x94;
+    auto customMode = mode; customMode[3] = 0x94;
+    check(parseIc7300Mk2VfoFrequencyReply(customFrequency, 0x94).has_value()
+              && parseIc7300Mk2VfoModeReply(customMode, 0x94).has_value(),
+          "explicit radio address is honored without weakening default address validation");
+    for (auto reserved : {0x00,0xE0,0xFC,0xFD,0xFE,0xFF}) {
+        customFrequency[3] = reserved; customMode[3] = reserved;
+        check(!parseIc7300Mk2VfoFrequencyReply(customFrequency, reserved)
+                  && !parseIc7300Mk2VfoModeReply(customMode, reserved), "reserved radio address rejected");
+    }
+    check(!parseIc7300Mk2VfoFrequencyReply(cmdReadUnselectedVfoFrequency(0xB6))
+              && !parseIc7300Mk2VfoModeReply(cmdReadUnselectedVfoMode(0xB6)),
+          "queries are not complete replies");
+}
+
 int main()
 {
+    testMk2VfoReadReplies();
     testSplitReadback();
     testFilterWidth();
     testTwinPbt();

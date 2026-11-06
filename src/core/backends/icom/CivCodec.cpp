@@ -88,6 +88,7 @@ bool commandHasSubcommand(std::uint8_t command)
     // unselected one. Without this the selector stays in the payload and every
     // mode/DATA/filter field is decoded one byte off.
     case cmd::kVfoMode:
+    case cmd::kVfoFrequency:
         return true;
     default:
         return false;
@@ -706,6 +707,58 @@ std::vector<std::uint8_t> cmdSetFrequency(std::uint8_t to, std::uint64_t hz)
 std::vector<std::uint8_t> cmdReadFrequency(std::uint8_t to)
 {
     return buildFrame(to, cmd::kReadFreq);
+}
+
+std::vector<std::uint8_t> cmdReadUnselectedVfoFrequency(std::uint8_t to)
+{
+    return buildFrameSub(to, cmd::kVfoFrequency, static_cast<std::uint8_t>(VfoSelector::Unselected));
+}
+
+std::vector<std::uint8_t> cmdReadUnselectedVfoMode(std::uint8_t to)
+{
+    return buildFrameSub(to, cmd::kVfoMode, static_cast<std::uint8_t>(VfoSelector::Unselected));
+}
+
+namespace {
+std::optional<CivFrame> mk2VfoReply(std::span<const std::uint8_t> wire,
+                                  std::uint8_t command, std::size_t payloadSize,
+                                  std::uint8_t radioAddress)
+{
+    if (wire.size() != 7 + payloadSize || radioAddress == kControllerAddress
+        || radioAddress == kBroadcastAddress || radioAddress >= 0xFC) {
+        return std::nullopt;
+    }
+    const auto frame = parseFrame(wire);
+    if (!frame || !frame->hasNormalTerminator || frame->to != kControllerAddress
+        || frame->from != radioAddress || frame->cmd != command || !frame->hasSub
+        || frame->sub > static_cast<std::uint8_t>(VfoSelector::Unselected)) {
+        return std::nullopt;
+    }
+    return frame;
+}
+}
+
+std::optional<VfoFrequencyReply> parseIc7300Mk2VfoFrequencyReply(
+    std::span<const std::uint8_t> wire, std::uint8_t radioAddress)
+{
+    const auto frame = mk2VfoReply(wire, cmd::kVfoFrequency, 5, radioAddress);
+    if (!frame) { return std::nullopt; }
+    const auto hz = decodeFreqExact(frame->data, 5);
+    if (!hz || *hz < 30'000 || *hz > 74'800'000) { return std::nullopt; }
+    return VfoFrequencyReply{static_cast<VfoSelector>(frame->sub), *hz};
+}
+
+std::optional<VfoModeReply> parseIc7300Mk2VfoModeReply(
+    std::span<const std::uint8_t> wire, std::uint8_t radioAddress)
+{
+    const auto frame = mk2VfoReply(wire, cmd::kVfoMode, 3, radioAddress);
+    if (!frame) { return std::nullopt; }
+    // MK2 table: 00..05, 07, 08; WFM (06) and DV (17) are not supported.
+    const auto mode = frame->data[0];
+    if (mode > 0x08 || mode == 0x06 || frame->data[1] > 1
+        || frame->data[2] < 1 || frame->data[2] > 3) { return std::nullopt; }
+    return VfoModeReply{static_cast<VfoSelector>(frame->sub),
+                       {static_cast<CivMode>(mode), frame->data[1] != 0, frame->data[2]}};
 }
 
 std::vector<std::uint8_t> cmdSetMode(std::uint8_t to, CivMode mode, int filter)

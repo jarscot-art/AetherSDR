@@ -133,18 +133,32 @@ int main(int argc, char** argv)
         Packets writes;
         IcomStream serial(nullptr, IcomOutboundPolicy::rxAudit());
         IcomStreamTestAccess::prepare(serial, IcomStream::Role::Serial, writes);
-        const auto query = buildSerialData(localSid, remoteSid, 0, 1, cmdReadSplit(0xB6));
-        serial.sendTracked(query);
-        check(writes.size() == 1, "approved query reaches last writer");
-        const auto firstSeq = parseHeader(writes.front()).seq;
-        IcomStreamTestAccess::replay(serial, firstSeq);
-        check(writes.size() == 2 && writes[0] == writes[1], "approved query retransmits unchanged");
+        std::vector<quint16> querySequences;
+        for (const auto& frame : {cmdReadSplit(0xB6), cmdReadTransmitFrequency(0xB6),
+                                 cmdReadUnselectedVfoFrequency(0xB6), cmdReadUnselectedVfoMode(0xB6)}) {
+            const auto offset = writes.size();
+            serial.sendTracked(buildSerialData(localSid, remoteSid, 0, 1, frame));
+            check(writes.size() == offset + 1, "approved query reaches last writer");
+            if (writes.size() != offset + 1) { continue; }
+            const auto payload = serialPayload(writes.back());
+            check(std::ranges::equal(payload, frame), "last writer preserves exact read-only CI-V bytes");
+            const auto sequence = parseHeader(writes.back()).seq;
+            querySequences.push_back(sequence);
+            IcomStreamTestAccess::replay(serial, sequence);
+            check(writes.size() == offset + 2 && writes[offset] == writes[offset + 1],
+                  "SPLIT/TX and new VFO queries retransmit unchanged");
+        }
         const auto before = writes.size();
         const auto seq = IcomStreamTestAccess::sequence(serial);
         TxTestAuthority authority;
         for (const auto& frame : {cmdSetPtt(0xB6, true), cmdSetPtt(0xB6, false),
                                   cmdAbortCwMessage(0xB6), cmdScopeOnOff(0xB6, true),
-                                  cmdSetTransmitFrequencyCheck(0xB6, false)}) {
+                                  cmdSetTransmitFrequencyCheck(0xB6, false),
+                                  std::vector<std::uint8_t>{0xFE,0xFE,0xB6,0xE0,0x25,1,0,0x40,7,7,0,0xFD},
+                                  std::vector<std::uint8_t>{0xFE,0xFE,0xB6,0xE0,0x26,1,1,1,2,0xFD},
+                                  std::vector<std::uint8_t>{0xFE,0xFE,0xB6,0xE0,0x25,0,0xFD},
+                                  std::vector<std::uint8_t>{0xFE,0xFE,0xB6,0xE0,0x26,2,0xFD},
+                                  std::vector<std::uint8_t>{0xFE,0xFE,0xB6,0xE0,0x07,1,0xFD}}) {
             const auto packet = buildSerialData(localSid, remoteSid, 0, 0, frame);
             serial.sendRaw(packet);
             serial.sendRawTwice(packet);
@@ -153,13 +167,13 @@ int main(int argc, char** argv)
             serial.retainForTest(600, packet); // force the bypass that normal enqueue refuses
             IcomStreamTestAccess::replay(serial, 600);
         }
-        check(writes.size() == before, "raw/tracked/emergency/authorized-TX/replay cannot leak PTT, OFF, CW, scope or XFC");
+        check(writes.size() == before, "raw/tracked/emergency/authorized-TX/replay block VFO writes/select and existing forbidden commands");
         std::printf("EVIDENCE serial: packets_before=%zu packets_after_forbidden=%zu denied=%llu\n",
                     before, writes.size(), static_cast<unsigned long long>(serial.deniedDatagrams()));
         check(IcomStreamTestAccess::sequence(serial) == seq, "denied writes consume no sequence");
-        check(serial.deniedDatagrams() >= 25, "denials counted at actual egress boundary");
+        check(serial.deniedDatagrams() >= 50, "denials counted at actual egress boundary");
         IcomStreamTestAccess::remote(serial, remoteSid + 1);
-        IcomStreamTestAccess::replay(serial, firstSeq);
+        for (const auto sequence : querySequences) { IcomStreamTestAccess::replay(serial, sequence); }
         check(writes.size() == before, "old-session retained packet cannot cross new SID");
         serial.stop();
         check(writes.size() == before + 2
