@@ -132,6 +132,21 @@ The Icom RC-28 remote encoder is supported (**Settings → Controllers → Icom 
 - AGC threshold, AGC Off, AM carrier, VOX delay and repeater offset are disabled. TUNE is refused in CW and CW-R.
 - The preamp and ATT buttons update about 0.2 s after a change, including the one the radio switches by itself: engaging ATT drops the preamp, and engaging the preamp drops ATT.
 
+### HF5A fork: unselected VFO readback (IC-7300MK2)
+
+The RX/TX readback panel includes **VFO NIEWYBRANE** (unselected VFO):
+frequency in MHz, the radio emission, **DATA ON/OFF**, and **FIL1/FIL2/FIL3**.
+This is relative to the VFO currently selected on the radio. It does not identify
+physical VFO B, and it does not replace the separate confirmed TX frequency or
+red TX marker. The filter number is a radio filter slot, not a bandwidth in Hz.
+
+Frequency and mode are independent observations. DATA and the filter belong to
+the mode observation. Missing or expired values show **unconfirmed / expired**;
+disconnection clears the displayed values. A row with no current values is
+dimmed. A context change withdraws the old observations until fresh replies
+arrive. These labels have no tuning, VFO-selection or transmit action, and
+refreshing them sends no commands or additional connection requests.
+
 ### IC-705
 
 - On the IC-705, the preamp cycles through **OFF**, **P.AMP1** and **P.AMP2** below 74.800 MHz. At 74.800 MHz and above it toggles **OFF** / **P.AMP1**. The choices follow the radio's reported frequency; until that frequency is known, only OFF and P.AMP1 are offered. Changing ranges does not change the radio's preamp setting; its readback takes priority over routine meter polling. After reconnecting, S-meter readings wait for the radio's frequency so they use the correct HF or VHF reference.

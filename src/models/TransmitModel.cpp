@@ -171,6 +171,25 @@ void TransmitModel::applyChanges(const TransmitDelta& d)
         }
         changed = true;
     }
+    if (d.unselectedVfo) {
+        m_unselectedVfo = *d.unselectedVfo;
+        auto& observation = m_unselectedVfo;
+        if (!observation.supported) { observation = {}; }
+        if (!observation.frequencyMHz || !std::isfinite(*observation.frequencyMHz)
+            || *observation.frequencyMHz <= 0.0 || observation.frequencyDeadline.isForever()
+            || observation.frequencyDeadline.hasExpired()) {
+            observation.frequencyMHz.reset();
+        }
+        const QStringList emissions{QStringLiteral("LSB"), QStringLiteral("USB"), QStringLiteral("AM"),
+            QStringLiteral("CW"), QStringLiteral("CW-R"), QStringLiteral("RTTY"),
+            QStringLiteral("RTTY-R"), QStringLiteral("FM")};
+        if (!observation.mode || !emissions.contains(observation.mode->emission)
+            || observation.mode->filter < 1 || observation.mode->filter > 3
+            || observation.modeDeadline.isForever() || observation.modeDeadline.hasExpired()) {
+            observation.mode.reset();
+        }
+        changed = true;
+    }
     const auto previousFrequencyValidity = m_transmitFreqValid;
     const auto previousQualifiedFrequencyValidity = transmitFreqValidity();
     if (d.transmitFreqValid.has_value()) {
@@ -186,6 +205,8 @@ void TransmitModel::applyChanges(const TransmitDelta& d)
         }
     } else if (d.transmitFreq) {
         changed |= assign(d.transmitFreq, m_transmitFreq);
+        changed |= m_unselectedVfo.supported;
+        m_unselectedVfo = {};
         m_splitValid.reset(); m_split.reset();
         m_receiveDialFreqValid.reset(); m_receiveDialFreq.reset();
         m_transmitFreqValid.reset(); // legacy publications make no freshness claim

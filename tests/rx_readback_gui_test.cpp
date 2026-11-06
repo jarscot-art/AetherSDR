@@ -8,6 +8,7 @@
 #include "TestSettingsProfile.h"
 #include <QApplication>
 #include <QImage>
+#include <QLabel>
 #include <QTest>
 #include <cstdio>
 #include <algorithm>
@@ -54,6 +55,9 @@ struct IcomCivBackendTestAccess {
     static void nextSlot(IcomCivBackend& b) {
         b.pumpCiv(std::max<qint64>(b.nowMs(), b.m_civScheduler.stats().lastDispatchMs)
                   + IcomCivScheduler::kSlotMs);
+    }
+    static void queueUnselected(IcomCivBackend& b) {
+        b.queueUnselectedVfoReadback(IcomCivScheduler::Priority::Control);
     }
     static void timeoutRx(IcomCivBackend& b) {
         (void)b.m_civScheduler.reset();
@@ -128,6 +132,66 @@ int main(int argc, char** argv)
     check(!model.hasFrequencyReadback(), "backend reset withdraws capability and all observations");
     widget.refresh(model, false);
     check(widget.text().contains("disconnected") && !widget.text().contains("SPLIT OFF"), "disconnect removes stale values");
+    {
+        TransmitDelta update;
+        UnselectedVfoObservation observation;
+        observation.supported = true; observation.frequencyMHz = 14.195;
+        observation.frequencyDeadline = QDeadlineTimer(5000);
+        observation.mode = UnselectedVfoMode{QStringLiteral("RTTY-R"), true, 3};
+        observation.modeDeadline = QDeadlineTimer(5000);
+        const auto refresh = [&] {
+            update.unselectedVfo = observation; model.applyChanges(update); widget.refresh(model, true);
+        };
+        refresh();
+        check(widget.unselectedVfoText().contains("VFO NIEWYBRANE")
+              && !widget.unselectedVfoText().contains("VFO B")
+              && widget.unselectedVfoText().contains("14.195000 MHz")
+              && widget.unselectedVfoText().contains("RTTY-R")
+              && widget.unselectedVfoText().contains("DATA ON")
+              && widget.unselectedVfoText().contains("FIL3"), "separate relative VFO frequency, emission, DATA and filter rendered");
+        const auto unchangedSplitTx = widget.text();
+        for (int filter : {1, 2, 3}) {
+            observation.mode->filter = filter; observation.mode->data = false; refresh();
+            check(widget.unselectedVfoText().contains(QStringLiteral("FIL%1").arg(filter))
+                  && widget.unselectedVfoText().contains("DATA OFF") && widget.text() == unchangedSplitTx,
+                  "VFO-only updates repaint even when SPLIT/TX line is unchanged");
+        }
+        auto* label = widget.findChild<QLabel*>(QStringLiteral("UnselectedVfoReadback"));
+        check(label && label->isEnabled() && label->accessibleName() == "VFO NIEWYBRANE"
+              && !label->toolTip().isEmpty(), "readback has accessible label and explanation");
+        if (label) {
+            auto& theme = ThemeManager::instance();
+            check(theme.tokensForWidget(label).contains("color.text.secondary")
+                  && theme.tokensForWidget(label).contains("color.control.unavailable")
+                  && !label->styleSheet().contains("{{"), "both readable and unavailable colors use resolved theme tokens");
+            const auto saved = theme.color(QStringLiteral("color.text.secondary"));
+            const auto replacement = theme.color(QStringLiteral("color.text.primary"));
+            theme.setColor(QStringLiteral("color.text.secondary"), replacement);
+            QCoreApplication::processEvents();
+            check(label->styleSheet().contains(replacement.name()), "readback follows live theme changes");
+            theme.setColor(QStringLiteral("color.text.secondary"), saved);
+        }
+        observation.frequencyDeadline = QDeadlineTimer(0); refresh();
+        check(!widget.unselectedVfoText().contains("14.195000") && widget.unselectedVfoText().contains("FIL3"),
+              "expired frequency is omitted while mode remains current");
+        observation.frequencyDeadline = QDeadlineTimer(5000);
+        observation.modeDeadline = QDeadlineTimer(0); refresh();
+        check(widget.unselectedVfoText().contains("14.195000") && !widget.unselectedVfoText().contains("RTTY-R")
+              && !widget.unselectedVfoText().contains("DATA OFF") && !widget.unselectedVfoText().contains("FIL3"),
+              "mode expiry withdraws emission, DATA and filter together");
+        observation.frequencyDeadline = QDeadlineTimer(1); refresh();
+        QTest::qWait(10); widget.refresh(model, true);
+        check(!widget.unselectedVfoText().contains("14.195000") && label && !label->isEnabled(),
+              "time alone dims stale row without requiring another model signal");
+        observation.frequencyDeadline = QDeadlineTimer(5000);
+        observation.modeDeadline = QDeadlineTimer(5000); refresh();
+        widget.refresh(model, false);
+        check(!widget.unselectedVfoText().contains("14.195000") && !widget.unselectedVfoText().contains("FIL3")
+              && widget.unselectedVfoText().contains("disconnected"), "disconnect hides even not-yet-expired samples");
+        model.resetTransmitFrequencyObservation(); widget.refresh(model, true);
+        check(widget.unselectedVfoText().contains("unavailable / unconfirmed")
+              && !widget.unselectedVfoText().contains("DATA OFF"), "new session does not inherit old observations");
+    }
     check(intents == 0, "presentation never emits PTT or tune intents");
     {
         Packets packets;
@@ -147,6 +211,17 @@ int main(int argc, char** argv)
         check(model.confirmedReceiveDialFreq() == std::optional<double>(7.074)
               && model.confirmedTransmitFreq() == std::optional<double>(7.075)
               && widget.text().contains("+1000 Hz"), "real CI-V decoder feeds model and GUI without diagnostic-map parsing");
+        Access::queueUnselected(backend); Access::nextSlot(backend);
+        Access::deliver(backend,{0x25,1,0,0x50,0x19,0x14,0}); Access::nextSlot(backend);
+        Access::deliver(backend,{0x26,1,1,1,2}); QCoreApplication::processEvents();
+        const auto packetsBeforeRefresh = packets.size();
+        for (int i = 0; i < 10; ++i) { widget.refresh(model, true); }
+        check(widget.unselectedVfoText().contains("14.195000 MHz")
+              && widget.unselectedVfoText().contains("USB") && widget.unselectedVfoText().contains("DATA ON")
+              && widget.unselectedVfoText().contains("FIL2") && model.confirmedTransmitFreq() == 7.075
+              && model.confirmedReceiveDialFreq() == 7.074 && packets.size() == packetsBeforeRefresh,
+              "real decoder -> typed model -> GUI; no RX/TX overwrite or GUI-generated packet");
+        std::printf("EVIDENCE unselected GUI: %s\n", widget.unselectedVfoText().toUtf8().constData());
         Access::deliver(backend,{0x0F,0x10}); // DUP is not SPLIT
         Access::deliver(backend,{0x03,0xFA,0x40,0x07,0x07,0});
         check(model.confirmedSplit() == std::optional<bool>(false)
@@ -156,6 +231,9 @@ int main(int argc, char** argv)
         Access::deliver(backend,{0x03,0,0x60,0x07,0x07,0});
         widget.refresh(model,true);
         check(!model.confirmedTransmitFreq() && !widget.text().contains("+1000 Hz"), "RX context change withdraws old TX and delta");
+        QCoreApplication::processEvents(); widget.refresh(model, true);
+        check(!widget.unselectedVfoText().contains("14.195000") && !widget.unselectedVfoText().contains("FIL2"),
+              "selected RX context change withdraws unselected VFO GUI evidence");
         Access::timeoutRx(backend);
         check(!model.confirmedReceiveDialFreq(), "RX read timeout invalidates independently");
         Access::deliver(backend,{0x03,0,0x60,0x07,0x07,0});

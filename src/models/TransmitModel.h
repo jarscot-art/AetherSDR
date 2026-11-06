@@ -136,10 +136,22 @@ public:
         return m_receiveDialFreqValid == true && !m_receiveDialFreqDeadline.hasExpired()
             ? m_receiveDialFreq : std::nullopt;
     }
+    bool hasUnselectedVfoReadback() const { return m_unselectedVfo.supported; }
+    std::optional<double> confirmedUnselectedVfoFrequency() const
+    {
+        return m_unselectedVfo.supported && !m_unselectedVfo.frequencyDeadline.hasExpired()
+            ? m_unselectedVfo.frequencyMHz : std::nullopt;
+    }
+    std::optional<UnselectedVfoMode> confirmedUnselectedVfoMode() const
+    {
+        return m_unselectedVfo.supported && !m_unselectedVfo.modeDeadline.hasExpired()
+            ? m_unselectedVfo.mode : std::nullopt;
+    }
     QDeadlineTimer transmitFreqDeadline() const { return m_transmitFreqDeadline; }
     // No signal on teardown: RadioModel can also call this from destruction.
     void resetTransmitFrequencyObservation()
     {
+        m_unselectedVfo = {};
         m_transmitFreqValid.reset();
         m_confirmedTransmitFreq.reset();
         m_splitValid.reset(); m_split.reset();
@@ -715,6 +727,7 @@ private:
     int    m_tunePower{10};
     bool   m_tune{false};
     bool   m_mox{false};
+    UnselectedVfoObservation m_unselectedVfo;
     double m_transmitFreq{0.0};   // MHz — last reported "transmit freq=..."
     std::optional<bool> m_splitValid;
     std::optional<bool> m_split;

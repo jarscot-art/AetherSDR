@@ -1,6 +1,7 @@
 // Socket-free backend readback: real scheduler, codec and final UDP writer guard.
 #include "core/backends/icom/IcomCivBackend.h"
 #include "TestSettingsProfile.h"
+#include "models/TransmitModel.h"
 #include <QCoreApplication>
 #include <algorithm>
 #include <cstdio>
@@ -107,13 +108,24 @@ int main(int argc, char** argv) {
     {
         Fixture f; auto& b = f.backend;
         const auto before = Access::rx(b);
-        int slices = 0, tx = 0;
+        int slices = 0, tx = 0, observations = 0;
+        TransmitModel model;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &model, &TransmitModel::applyChanges);
         QObject::connect(&b, &IRadioBackend::sliceChanged, &b, [&](int, const SliceDelta&) { ++slices; });
-        QObject::connect(&b, &IRadioBackend::transmitChanged, &b, [&](const TransmitDelta&) { ++tx; });
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &b, [&](const TransmitDelta& d) {
+            if (d.unselectedVfo) { ++observations; }
+            if (d.transmitFreq || d.legacyTransmitFreq || d.transmitFreqValid || d.receiveDialFreq
+                || d.split || d.mox || d.tune || d.txSliceMode) { ++tx; }
+        });
         check(!b.unselectedVfoReadback().frequencyHz && !b.unselectedVfoReadback().mode, "initial values unknown");
         Access::receive(b, {0x25,1,0,0x50,0x19,0x14,0});
         check(!b.unselectedVfoReadback().frequencyHz, "unsolicited reply cannot create confirmed state");
         Access::confirm(b);
+        QCoreApplication::processEvents();
+        check(observations == 1 && model.confirmedUnselectedVfoFrequency() == 14.195
+              && model.confirmedUnselectedVfoMode() && model.confirmedUnselectedVfoMode()->emission == "LSB"
+              && model.confirmedUnselectedVfoMode()->data && model.confirmedUnselectedVfoMode()->filter == 3,
+              "coalesced typed backend observation reaches model through existing seam");
         const auto state = b.unselectedVfoReadback();
         check(state.frequencyHz == 14'195'000 && state.mode && state.mode->mode == CivMode::Lsb
               && state.mode->dataMode && state.mode->filter == 3, "independent frequency/emission/DATA/filter confirmed");
@@ -143,7 +155,12 @@ int main(int argc, char** argv) {
         Access::ageFrequency(b);
         check(!b.unselectedVfoReadback().frequencyHz && b.unselectedVfoReadback().mode.has_value(),
               "frequency expires at getter even without timer service; mode remains valid");
-        Access::ageMode(b); Access::service(b);
+        Access::service(b); QCoreApplication::processEvents();
+        check(!model.confirmedUnselectedVfoFrequency() && model.confirmedUnselectedVfoMode(),
+              "backend frequency invalidation reaches model without clearing fresh mode");
+        Access::ageMode(b); Access::service(b); QCoreApplication::processEvents();
+        check(!model.confirmedUnselectedVfoFrequency() && !model.confirmedUnselectedVfoMode(),
+              "backend expiry withdraws both GUI claims");
         check(!b.unselectedVfoReadback().mode && b.unselectedVfoReadback().modeStatus == "stale",
               "mode expiry cannot preserve a filter or DATA claim");
     }
@@ -173,8 +190,13 @@ int main(int argc, char** argv) {
               "complete strict mode reply restores only the unselected sample");
     }
     {
-        Fixture f; auto& b = f.backend; Access::confirm(b); Access::poll(b);
-        Access::timeout(b);
+        Fixture f; auto& b = f.backend;
+        TransmitModel model;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &model, &TransmitModel::applyChanges);
+        Access::confirm(b); QCoreApplication::processEvents(); Access::poll(b);
+        Access::timeout(b); QCoreApplication::processEvents();
+        check(!model.confirmedUnselectedVfoFrequency() && model.confirmedUnselectedVfoMode(),
+              "refresh timeout reaches model independently of the still-fresh mode sample");
         check(!b.unselectedVfoReadback().frequencyHz && b.unselectedVfoReadback().frequencyStatus == "timeout",
               "missing refresh immediately invalidates old frequency on timeout");
         Access::receive(b, {0x25,1,0,0x50,0x19,0x14,0});
@@ -208,17 +230,29 @@ int main(int argc, char** argv) {
               "RX frequency, DATA, filter, SPLIT or existing context invalidation withdraws both samples");
     }
     {
-        Fixture f; auto& b = f.backend; Access::poll(b); Access::context(b);
+        Fixture f; auto& b = f.backend;
+        TransmitModel model;
+        QObject::connect(&b, &IRadioBackend::transmitChanged, &model, &TransmitModel::applyChanges);
+        Access::confirm(b); // publication still queued when context is revoked
+        Access::context(b); QCoreApplication::processEvents();
+        check(!model.confirmedUnselectedVfoFrequency() && !model.confirmedUnselectedVfoMode(),
+              "deferred publisher cannot resurrect a previous context");
+        Access::poll(b); Access::context(b);
         Access::receive(b, {0x25,1,0,0x50,0x19,0x14,0});
         check(!b.unselectedVfoReadback().frequencyHz, "in-flight answer from previous context cannot confirm");
-        Access::end(b);
+        Access::end(b); QCoreApplication::processEvents();
+        check(!model.hasUnselectedVfoReadback() && !model.confirmedUnselectedVfoFrequency(),
+              "disconnect publication withdraws supported state and values");
         check(!b.unselectedVfoReadback().frequencyHz && !b.unselectedVfoReadback().mode
               && b.unselectedVfoReadback().frequencyAtMs == -1, "disconnect clears values and timestamps");
         Access::prepare(b, f.writes, 8); Access::poll(b);
         Access::receive(b, {0x25,1,0,0x50,0x19,0x14,0}, 7);
         check(!b.unselectedVfoReadback().frequencyHz, "reconnect rejects previous session even with a live new request");
         Access::receive(b, {0x25,1,0,0x50,0x19,0x14,0}, 8); Access::pump(b);
-        Access::receive(b, {0x26,1,1,0,1}, 8);
+        Access::receive(b, {0x26,1,1,0,1}, 8); QCoreApplication::processEvents();
+        check(model.confirmedUnselectedVfoFrequency() == 14.195 && model.confirmedUnselectedVfoMode()
+              && !model.confirmedUnselectedVfoMode()->data && model.confirmedUnselectedVfoMode()->filter == 1,
+              "only newly correlated session samples repopulate the model");
         check(b.unselectedVfoReadback().frequencyHz == 14'195'000 && b.unselectedVfoReadback().mode.has_value(),
               "reconnect requires and accepts fresh correlated replies");
     }

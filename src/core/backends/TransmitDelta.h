@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UnselectedVfoReadback.h"
+
 #include <optional>
 
 #include <QDeadlineTimer>
@@ -43,6 +45,9 @@ struct TransmitDelta {
     std::optional<double> receiveDialFreq;
     std::optional<bool> receiveDialFreqValid;
     std::optional<QDeadlineTimer> receiveDialFreqDeadline;
+    // Complete, opt-in informational snapshot; absent leaves it unchanged.
+    // This observation never updates the TX/ATU frequency or selected slice.
+    std::optional<UnselectedVfoObservation> unselectedVfo;
     std::optional<int>     maxPowerLevel;    // unclamped
     std::optional<QString> tuneMode;
     std::optional<QString> txSliceMode;

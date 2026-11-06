@@ -4724,6 +4724,54 @@ IcomCivBackend::UnselectedVfoReadback IcomCivBackend::unselectedVfoReadback() co
     return out;
 }
 
+void IcomCivBackend::scheduleUnselectedVfoPublication()
+{
+    if (m_unselectedPublicationPending) { return; }
+    m_unselectedPublicationPending = true;
+    // Coalesce presentation after scheduler mutation. Direct model observers
+    // can tear down this backend; never emit from inside its state transitions.
+    QTimer::singleShot(0, this, [this] {
+        m_unselectedPublicationPending = false;
+        AetherSDR::UnselectedVfoObservation observation;
+        observation.supported = unselectedVfoReady();
+        const auto readback = unselectedVfoReadback();
+        if (observation.supported) {
+            const auto now = nowMs();
+            const auto freshness = profileFor(*m_model).splitTxReadback->freshnessMs;
+            if (readback.frequencyHz) {
+                observation.frequencyMHz = static_cast<double>(*readback.frequencyHz) / 1e6;
+                observation.frequencyDeadline = QDeadlineTimer(
+                    std::max<qint64>(0, freshness - (now - readback.frequencyAtMs)));
+            }
+            if (readback.mode) {
+                QString emission;
+                // Preserve the radio emission separately from DATA (no DIGU
+                // alias and no collapse of RTTY versus reversed RTTY).
+                switch (readback.mode->mode) {
+                case CivMode::Lsb: emission = QStringLiteral("LSB"); break;
+                case CivMode::Usb: emission = QStringLiteral("USB"); break;
+                case CivMode::Am: emission = QStringLiteral("AM"); break;
+                case CivMode::Cw: emission = QStringLiteral("CW"); break;
+                case CivMode::CwR: emission = QStringLiteral("CW-R"); break;
+                case CivMode::Rtty: emission = QStringLiteral("RTTY"); break;
+                case CivMode::RttyR: emission = QStringLiteral("RTTY-R"); break;
+                case CivMode::Fm: emission = QStringLiteral("FM"); break;
+                default: break;
+                }
+                if (!emission.isEmpty()) {
+                    observation.mode = UnselectedVfoMode{emission, readback.mode->dataMode,
+                                                         readback.mode->filter};
+                    observation.modeDeadline = QDeadlineTimer(
+                        std::max<qint64>(0, freshness - (now - readback.modeAtMs)));
+                }
+            }
+        }
+        TransmitDelta delta;
+        delta.unselectedVfo = observation;
+        emit transmitChanged(delta);
+    });
+}
+
 void IcomCivBackend::queueUnselectedVfoReadback(IcomCivScheduler::Priority priority)
 {
     if (!unselectedVfoReady()) { return; }
@@ -4750,23 +4798,27 @@ void IcomCivBackend::invalidateUnselectedVfo(const QString& reason, bool reset)
     m_civScheduler.cancelQueued("vfo.unselected.mode");
     m_unselectedNeedsRefresh = true;
     m_unselectedPollAtMs = -1;
+    scheduleUnselectedVfoPublication();
     // In-flight requests are not reused in the next context. At most their
     // terminal reply/timeout frees the slot; waiting=false prevents adoption.
 }
 
 void IcomCivBackend::serviceUnselectedVfo(qint64 now)
 {
+    bool changed = false;
     const auto service = [&](auto& sample, const char* key) {
         for (const auto& event : m_civScheduler.recentTransactions()) {
             if (event.eventId <= m_unselectedEventId || event.key != key || !sample.waiting
                 || event.generation != sample.attemptGeneration) { continue; }
             if (event.completion == IcomCivScheduler::Completion::Timeout) {
+                changed = true;
                 sample.valid = sample.waiting = false;
                 sample.status = QStringLiteral("timeout");
             }
         }
         if (sample.valid && (!unselectedVfoReady() || now < sample.atMs
             || now - sample.atMs >= profileFor(*m_model).splitTxReadback->freshnessMs)) {
+            changed = true;
             sample.valid = false;
             sample.status = QStringLiteral("stale");
         }
@@ -4775,6 +4827,7 @@ void IcomCivBackend::serviceUnselectedVfo(qint64 now)
     service(m_unselectedMode, "vfo.unselected.mode");
     const auto& events = m_civScheduler.recentTransactions();
     if (!events.empty()) { m_unselectedEventId = events.back().eventId; }
+    if (changed) { scheduleUnselectedVfoPublication(); }
 }
 
 void IcomCivBackend::onUnselectedVfoFrame(const CivFrame& frame)
@@ -4821,6 +4874,7 @@ void IcomCivBackend::onUnselectedVfoFrame(const CivFrame& frame)
             accept(m_unselectedMode, mode ? std::optional{mode->state} : std::nullopt);
         }
     }
+    if (observation == IcomCivScheduler::Observation::Accepted) { scheduleUnselectedVfoPublication(); }
     // Unmatched (including late-after-timeout) and stale replies never restore
     // validity. CI-V cannot distinguish an old identical reply arriving during
     // a new identical request: samples are observations, not an atomic A/B map.

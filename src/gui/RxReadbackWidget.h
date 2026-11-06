@@ -9,7 +9,9 @@ public:
     explicit RxReadbackWidget(QWidget* parent = nullptr);
     void refresh(const TransmitModel& model, bool connected);
     QString text() const;
+    QString unselectedVfoText() const;
 private:
     QLabel* m_label;
+    QLabel* m_unselectedLabel;
 };
 }

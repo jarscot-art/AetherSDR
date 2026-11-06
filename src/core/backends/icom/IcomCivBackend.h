@@ -363,6 +363,7 @@ private:
     void queueUnselectedVfoReadback(IcomCivScheduler::Priority priority);
     void invalidateUnselectedVfo(const QString& reason, bool reset = false);
     void serviceUnselectedVfo(qint64 nowMs);
+    void scheduleUnselectedVfoPublication();
     void onUnselectedVfoFrame(const CivFrame& frame);
     void publishReceiveSplitReadback();
     [[nodiscard]] QVariantMap splitTxReadbackDiagnostics(qint64 nowMs, bool withValues) const;
@@ -475,6 +476,7 @@ private:
     std::uint64_t m_unselectedEventId = 0;
     std::uint64_t m_unselectedContext = 0;
     bool m_unselectedNeedsRefresh = true;
+    bool m_unselectedPublicationPending = false;
 
     // 48 kHz mono from the radio -> 24 kHz interleaved stereo for the engine.
     //

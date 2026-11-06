@@ -4,6 +4,7 @@
 #include "core/ClientQuindarTone.h"
 
 #include <QCoreApplication>
+#include <QThread>
 #include <QObject>
 #include <QStringList>
 
@@ -50,6 +51,96 @@ int main(int argc, char** argv)
                      [&blockedMessages](const QString& message) { blockedMessages.append(message); });
 
     bool ok = true;
+
+    // Independent read-only observation: no TX/ATU or selected-dial coupling.
+    {
+        TransmitModel model;
+        int intents = 0;
+        QObject::connect(&model, &TransmitModel::controlRequested,
+                         [&intents](const TransmitControlRequest&) { ++intents; });
+        QObject::connect(&model, &TransmitModel::moxCommandIssued, [&intents](bool) { ++intents; });
+        QObject::connect(&model, &TransmitModel::tuneCommandIssued, [&intents](bool) { ++intents; });
+        TransmitDelta existing;
+        existing.legacyTransmitFreq = 7.074;
+        existing.transmitFreq = 7.075; existing.transmitFreqValid = true;
+        existing.transmitFreqDeadline = QDeadlineTimer(5000);
+        existing.receiveDialFreq = 7.074; existing.receiveDialFreqValid = true;
+        existing.receiveDialFreqDeadline = QDeadlineTimer(5000);
+        existing.split = true; existing.splitValid = true; existing.splitDeadline = QDeadlineTimer(5000);
+        model.applyChanges(existing);
+        ok &= expect(!model.hasUnselectedVfoReadback() && !model.confirmedUnselectedVfoFrequency()
+                     && !model.confirmedUnselectedVfoMode(), "unselected VFO starts unconfirmed");
+        UnselectedVfoObservation observation;
+        observation.supported = true;
+        observation.frequencyMHz = 14.195;
+        observation.frequencyDeadline = QDeadlineTimer(5000);
+        observation.mode = UnselectedVfoMode{QStringLiteral("USB"), true, 2};
+        observation.modeDeadline = QDeadlineTimer(5000);
+        const auto publish = [&] { TransmitDelta d; d.unselectedVfo = observation; model.applyChanges(d); };
+        publish();
+        ok &= expect(model.confirmedUnselectedVfoFrequency() == 14.195
+                     && model.confirmedUnselectedVfoMode() && model.confirmedUnselectedVfoMode()->data
+                     && model.confirmedUnselectedVfoMode()->filter == 2,
+                     "independent VFO frequency, emission, DATA and filter reach model");
+        for (const auto& emission : {"LSB", "USB", "AM", "CW", "CW-R", "RTTY", "RTTY-R", "FM"}) {
+            observation.mode->emission = QString::fromLatin1(emission); publish();
+            ok &= expect(model.confirmedUnselectedVfoMode()
+                         && model.confirmedUnselectedVfoMode()->emission == emission,
+                         "radio emission is preserved without DATA aliasing");
+        }
+        observation.frequencyDeadline = QDeadlineTimer(0); publish();
+        ok &= expect(!model.confirmedUnselectedVfoFrequency() && model.confirmedUnselectedVfoMode(),
+                     "frequency expiry does not erase fresh mode/DATA/filter");
+        observation.frequencyDeadline = QDeadlineTimer(5000);
+        observation.modeDeadline = QDeadlineTimer(0); publish();
+        ok &= expect(model.confirmedUnselectedVfoFrequency() && !model.confirmedUnselectedVfoMode(),
+                     "mode expiry invalidates DATA/filter together, not frequency");
+        observation.frequencyDeadline = QDeadlineTimer(1);
+        observation.modeDeadline = QDeadlineTimer(1); publish();
+        QThread::msleep(10);
+        ok &= expect(!model.confirmedUnselectedVfoFrequency() && !model.confirmedUnselectedVfoMode(),
+                     "getters expire without another backend delta or timer event");
+        publish();
+        ok &= expect(!model.confirmedUnselectedVfoFrequency() && !model.confirmedUnselectedVfoMode(),
+                     "queued expired snapshot does not renew freshness");
+        observation.frequencyDeadline = QDeadlineTimer(QDeadlineTimer::Forever);
+        observation.modeDeadline = QDeadlineTimer(QDeadlineTimer::Forever); publish();
+        ok &= expect(!model.confirmedUnselectedVfoFrequency() && !model.confirmedUnselectedVfoMode(),
+                     "unbounded observations fail closed");
+        observation.frequencyDeadline = QDeadlineTimer(5000);
+        observation.modeDeadline = QDeadlineTimer(5000);
+        for (double frequency : {0.0, -1.0, std::numeric_limits<double>::infinity(),
+                                  std::numeric_limits<double>::quiet_NaN()}) {
+            observation.frequencyMHz = frequency; publish();
+            ok &= expect(!model.confirmedUnselectedVfoFrequency(), "invalid VFO frequency cannot become confirmed");
+        }
+        observation.frequencyMHz = 14.195;
+        for (int filter : {0, 4}) {
+            observation.mode->filter = filter; publish();
+            ok &= expect(!model.confirmedUnselectedVfoMode(), "invalid filter invalidates whole mode sample");
+        }
+        observation.mode->filter = 1; observation.mode->emission = QStringLiteral("unknown"); publish();
+        ok &= expect(!model.confirmedUnselectedVfoMode(), "invalid emission fails closed");
+        observation.mode = UnselectedVfoMode{QStringLiteral("RTTY-R"), false, 3}; publish();
+        ok &= expect(model.transmitFreq() == 7.074 && model.confirmedTransmitFreq() == 7.075
+                     && model.confirmedReceiveDialFreq() == 7.074 && model.confirmedSplit() == true
+                     && !model.isMox() && !model.isTransmitting() && intents == 0,
+                     "VFO observations preserve TX, ATU, RX, SPLIT and emit zero control intents");
+        observation = {}; observation.supported = true; publish();
+        ok &= expect(!model.confirmedUnselectedVfoFrequency() && !model.confirmedUnselectedVfoMode(),
+                     "complete empty snapshot explicitly withdraws previous claims");
+        observation.frequencyMHz = 14.195; observation.frequencyDeadline = QDeadlineTimer(5000); publish();
+        model.resetTransmitFrequencyObservation();
+        ok &= expect(!model.hasUnselectedVfoReadback() && !model.confirmedUnselectedVfoFrequency(),
+                     "disconnect/backend teardown resets independent observation");
+        publish(); model.resetState();
+        ok &= expect(!model.hasUnselectedVfoReadback(), "full model reset withdraws capability");
+        publish(); TransmitDelta legacy; legacy.transmitFreq = 21.2; model.applyChanges(legacy);
+        ok &= expect(!model.hasUnselectedVfoReadback() && model.transmitFreq() == 21.2,
+                     "legacy frequency publisher never inherits unselected VFO provenance");
+        observation.supported = false; publish();
+        ok &= expect(!model.confirmedUnselectedVfoFrequency(), "unsupported snapshot cannot claim a value");
+    }
 
     // Readback provenance is additive: legacy ATU/KAT500 retain their last
     // reported frequency, while live consumers can explicitly require evidence.

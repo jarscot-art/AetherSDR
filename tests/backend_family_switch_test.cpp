@@ -222,10 +222,22 @@ int main(int argc, char** argv)
         nativeTx.transmitFreq = 14.0265;
         nativeTx.transmitFreqValid = true;
         nativeTx.legacyTransmitFreq = 14.025;
+        UnselectedVfoObservation unselected;
+        unselected.supported = true; unselected.frequencyMHz = 14.195;
+        unselected.frequencyDeadline = QDeadlineTimer(5000);
+        unselected.mode = UnselectedVfoMode{QStringLiteral("USB"), true, 2};
+        unselected.modeDeadline = QDeadlineTimer(5000);
+        nativeTx.unselectedVfo = unselected;
         model.transmitModel().applyChanges(nativeTx);
         check(model.transmitModel().confirmedTransmitFreq() == 14.0265,
               QStringLiteral("native TX observation is seeded before family replacement"));
+        check(model.transmitModel().confirmedUnselectedVfoFrequency() == 14.195,
+              QStringLiteral("unselected VFO observation seeded before backend replacement"));
         switchTo(model, QStringLiteral("icom"), rebuilt);
+        check(!model.transmitModel().hasUnselectedVfoReadback()
+                  && !model.transmitModel().confirmedUnselectedVfoFrequency()
+                  && !model.transmitModel().confirmedUnselectedVfoMode(),
+              QStringLiteral("production family replacement clears unselected frequency and mode evidence"));
         check(!model.transmitModel().confirmedTransmitFreq()
                   && !model.transmitModel().transmitFreqValidity().has_value(),
               QStringLiteral("production family replacement clears TX proof"));
