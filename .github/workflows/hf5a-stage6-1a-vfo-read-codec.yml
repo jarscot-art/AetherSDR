@@ -313,7 +313,17 @@ jobs:
         $cases=@($report.SelectNodes('//testcase'))
         $bad=@($cases | Where-Object { $_.GetAttribute('status') -ne 'run' -or $_.SelectSingleNode('skipped') -or $_.SelectSingleNode('failure') -or $_.SelectSingleNode('error') })
         if ($cases.Count -ne 7 -or $bad.Count) { throw 'All seven tests must execute and pass' }
-        git diff --exit-code
+        $head=(git rev-parse HEAD).Trim()
+        if ($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA) { throw 'Tested HEAD differs from GITHUB_SHA' }
+        git status --short --untracked-files=no | Tee-Object hf5a-stage6-1a-results/tracked-changes.txt
+        if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect tracked changes' }
+        # Dependency setup regenerates only these four tracked files. No directory-wide exclusions.
+        $allowed=@('third_party/deepfilter/COMMIT','third_party/deepfilter/include/deep_filter.h',
+                   'third_party/fftw3/lib/fftw3.exp','third_party/fftw3/lib/fftw3.lib')
+        $excluded=@($allowed | ForEach-Object { ":(top,exclude,literal)$_" })
+        git diff --cached --exit-code HEAD -- . @excluded
+        if ($LASTEXITCODE -ne 0) { throw 'Unexpected staged source changes' }
+        git diff --exit-code HEAD -- . @excluded
         if ($LASTEXITCODE -ne 0) { throw 'Tested source differs from commit' }
     - name: Preserve offline evidence
       if: ${{ always() }}
