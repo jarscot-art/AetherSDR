@@ -2801,6 +2801,11 @@ add_test(NAME panadapter_model_rx_antenna_test COMMAND panadapter_model_rx_anten
 # desktop compilation in the default test graph is needed for this regression.
 option(AETHER_BUILD_SPECTRUM_GESTURE_TEST "Build real SpectrumWidget gesture regression" OFF)
 if(AETHER_BUILD_SPECTRUM_GESTURE_TEST)
+    # The geometry fixture instantiates the real RTL worker/backend. Their
+    # implementations belong to aethercore, not AetherSDR's GUI source list.
+    if(NOT AETHER_BACKEND_RTL)
+        message(FATAL_ERROR "Spectrum gesture tests require the desktop RTL backend. Install librtlsdr and fftw3f and configure with ENABLE_RTL=ON and REQUIRE_RTL=ON.")
+    endif()
     # Optional desktop sources (MIDI, FreeDV, device dialogs, shader resources)
     # are appended to AetherSDR after GUI_SOURCES is declared. Mirror its final
     # source set so the test uses the same configured desktop implementation.
@@ -2817,7 +2822,7 @@ if(AETHER_BUILD_SPECTRUM_GESTURE_TEST)
         $<TARGET_PROPERTY:AetherSDR,COMPILE_DEFINITIONS>)
     target_compile_options(spectrum_confirmed_geometry_test PRIVATE
         $<TARGET_PROPERTY:AetherSDR,COMPILE_OPTIONS>)
-    target_link_libraries(spectrum_confirmed_geometry_test PRIVATE
+    target_link_libraries(spectrum_confirmed_geometry_test PRIVATE aethercore
         $<TARGET_PROPERTY:AetherSDR,LINK_LIBRARIES>)
     add_test(NAME spectrum_confirmed_geometry_test COMMAND spectrum_confirmed_geometry_test)
     set_tests_properties(spectrum_confirmed_geometry_test PROPERTIES
@@ -2829,7 +2834,7 @@ if(AETHER_BUILD_SPECTRUM_GESTURE_TEST)
         $<TARGET_PROPERTY:AetherSDR,COMPILE_DEFINITIONS>)
     target_compile_options(tx_marker_preview_test PRIVATE
         $<TARGET_PROPERTY:AetherSDR,COMPILE_OPTIONS>)
-    target_link_libraries(tx_marker_preview_test PRIVATE Qt6::Test
+    target_link_libraries(tx_marker_preview_test PRIVATE aethercore Qt6::Test
         $<TARGET_PROPERTY:AetherSDR,LINK_LIBRARIES>)
     add_test(NAME tx_marker_preview_test COMMAND tx_marker_preview_test)
     set_tests_properties(tx_marker_preview_test PROPERTIES TIMEOUT 60

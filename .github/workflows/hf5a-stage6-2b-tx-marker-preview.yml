@@ -217,6 +217,13 @@ jobs:
         \ -Append\n    Write-Host \"sccache OK\"\n  } else {\n    \"healthy=false\" | Out-File -FilePath $env:GITHUB_OUTPUT\
         \ -Append\n    Write-Host \"::warning::sccache unhealthy (exit $exit) \u2014 building without compiler cache\"\n \
         \ }\n} finally { Stop-Transcript }\n"
+    - name: Setup desktop dependency RTL-SDR and libusb
+      run: |
+        Start-Transcript -Path hf5a-stage6-2b-results/setup-rtl-deps.ps1.log
+        try {
+          & pwsh -NoLogo -NoProfile -NonInteractive -File ./scripts/setup/setup-rtl-deps.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'RTL-SDR and libusb setup failed' }
+        } finally { Stop-Transcript }
     - name: Configure
       shell: pwsh
       run: "Start-Transcript -Path \"hf5a-stage6-2b-results/configure.log\"\ntry {\n  $launcher = \"${{ steps.sccache_health.outputs.healthy\
@@ -228,7 +235,7 @@ jobs:
         \ on a different test each run \u2014 dstar,\n    # CAT_Flex \u2014 none of which hang on main, which has no ASR).\
         \ ASR-on-Windows\n    # is fully built + linked + packaged by the windows-installer workflow,\n    # so nothing is\
         \ lost here.\n    \"-DENABLE_ASR=OFF\",\n    # Stated rather than left to the CMake default so the assertion\n   \
-        \ # below has a request to check against.\n    \"-DAETHER_GPU_SPECTRUM=ON\",\n    \"-DAETHER_BUILD_SPECTRUM_GESTURE_TEST=ON\"\
+        \ # below has a request to check against.\n    \"-DAETHER_GPU_SPECTRUM=ON\",\n    \"-DENABLE_RTL=ON\",\n    \"-DREQUIRE_RTL=ON\",\n    \"-DAETHER_BUILD_SPECTRUM_GESTURE_TEST=ON\"\
         ,\n    \"-DCMAKE_TOOLCHAIN_FILE=$env:CMAKE_TOOLCHAIN_FILE\",\n    \"-DVCPKG_TARGET_TRIPLET=$env:VCPKG_TARGET_TRIPLET\"\
         \n  )\n  if ($launcher) {\n    $cargs += \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\"\n    $cargs += \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\"\
         \n  }\n  # Tee without `2>&1`: GitHub runs pwsh with $ErrorActionPreference=\n  # 'Stop', where merging a native command's\
@@ -288,7 +295,7 @@ jobs:
         if ($LASTEXITCODE -ne 0) { throw "Offline test build failed" }
     - name: Stage explicit runtime DLLs for offline tests
       run: |
-        $rows=@(foreach ($folder in @('third_party/fftw3/bin','third_party/deepfilter/lib/windows-x86_64','third_party/hidapi/bin')) {
+        $rows=@(foreach ($folder in @('third_party/fftw3/bin','third_party/deepfilter/lib/windows-x86_64','third_party/hidapi/bin','third_party/rtl-deps/bin')) {
           foreach ($dll in Get-ChildItem $folder -Filter '*.dll' -File) {
             $destination=Join-Path (Resolve-Path build).Path $dll.Name
             Copy-Item $dll.FullName $destination -Force
@@ -296,6 +303,11 @@ jobs:
           }
         })
         $rows | Export-Csv hf5a-stage6-2b-results/runtime-dlls.csv -NoTypeInformation
+        foreach ($dll in @('rtlsdr.dll','libusb-1.0.dll','libfftw3f-3.dll')) {
+          if (-not (Test-Path (Join-Path build $dll) -PathType Leaf)) {
+            throw "Missing RTL runtime dependency: $dll"
+          }
+        }
         $env:PATH | Set-Content hf5a-stage6-2b-results/PATH.txt
     - name: Run twelve required offline tests without sockets or hardware
       run: |
