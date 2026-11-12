@@ -4,6 +4,10 @@ name: HF5A stage 6.2b TX marker preview and guarded egress Windows
   push:
     branches:
     - hf5a/stage6-2b-tx-marker-preview
+    paths-ignore:
+    - .github/workflows/hf5a-stage6-1d-windows-candidate.yml
+    - packaging/windows/hf5a-candidate-*
+    - docs/hf5a-stage6-2d-portable.md
   workflow_dispatch: null
 permissions:
   contents: read

@@ -1,12 +1,17 @@
-name: HF5A stage 6.1d full desktop Windows test candidate
+name: HF5A stage 6.2d exact-source portable Windows candidate
 'on':
   workflow_dispatch: null
   push:
     branches:
-    - hf5a/stage6-1d-windows-candidate
+    - hf5a/stage6-2b-tx-marker-preview
+    paths:
+    - .github/workflows/hf5a-stage6-1d-windows-candidate.yml
+    - packaging/windows/hf5a-candidate-*
+    - docs/hf5a-stage6-2d-portable.md
 permissions:
   contents: read
 env:
+  HF5A_SOURCE_SHA: 8b73e3b3656adafcf9565f123072052095cb92e3
   QT_VERSION: 6.12.0
   QT_PACKAGE_REVISION: '202609280346'
   AQTINSTALL_VERSION: 3.3.0
@@ -28,18 +33,31 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         persist-credentials: false
-        fetch-depth: 4
+        ref: 8b73e3b3656adafcf9565f123072052095cb92e3
+        fetch-depth: 1
+    - name: Checkout packaging helpers separately from immutable application sources
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ github.sha }}
+        path: _candidate_tools
+        persist-credentials: false
+        sparse-checkout-cone-mode: false
+        sparse-checkout: |
+          /packaging/windows/hf5a-candidate-*
+          /docs/hf5a-stage6-2d-portable.md
     - name: Initialize exact-source evidence
       run: |
         New-Item -ItemType Directory -Force hf5a-stage6-1d-results | Out-Null
-        @{ sourceCommit=(git rev-parse HEAD).Trim(); baseCommit='4fc20d6b5c49697c29e6f6a9a5ae2ac655ab1ce3';
+        @{ sourceCommit=(git rev-parse HEAD).Trim(); packagingCommit=$env:GITHUB_SHA;
            runUrl="https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID";
            hardwareTest=$false; dependencyRecipe='hf5a-stage5-production-candidate.yml (Stage 5.2)'; target='Windows 10 Pro x64'; runnerOS=$env:ImageOS; runnerVersion=$env:ImageVersion; qt='6.12.0' } |
            ConvertTo-Json | Set-Content hf5a-stage6-1d-results/source.json
     - name: Check readback and TX source integrity and registration
       run: |
-        python tools/check_hf5a_stage6_1d.py | Tee-Object hf5a-stage6-1d-results/source-contracts.log
-        if ($LASTEXITCODE -ne 0) { throw 'Stage 6.1c source contract failed' }
+        $head=(git rev-parse HEAD).Trim()
+        if ($LASTEXITCODE -ne 0 -or $head -cne $env:HF5A_SOURCE_SHA) { throw 'Wrong application source SHA' }
+        "Immutable application source: $head; packaging workflow: $env:GITHUB_SHA" |
+          Set-Content hf5a-stage6-1d-results/source-contracts.log
         python tools/check_test_registration.py --strict
         if ($LASTEXITCODE -ne 0) { throw 'Test registration failed' }
         python tools/check_ci_test_gate.py
@@ -179,7 +197,10 @@ jobs:
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
         path: D:\sccache
-        key: sccache-windows-
+        key: hf5a-spectrum-windows-${{ env.HF5A_SOURCE_SHA }}
+        restore-keys: |
+          hf5a-spectrum-windows-
+          sccache-windows-
         restore-keys: |
           sccache-windows-
     - name: Setup sccache
@@ -419,7 +440,7 @@ jobs:
         python tools/hf5a_stage5_offline.py --exe build/AetherSDR.exe --report hf5a-stage6-1d-results/normal-exe
         if ($LASTEXITCODE -ne 0) { throw 'Normal EXE offline isolation failed' }
         $head=(git rev-parse HEAD).Trim()
-        if ($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA) { throw 'Tested HEAD differs from GITHUB_SHA' }
+        if ($LASTEXITCODE -ne 0 -or $head -cne $env:HF5A_SOURCE_SHA) { throw 'Tested HEAD differs from HF5A_SOURCE_SHA' }
         git status --short --untracked-files=no | Tee-Object hf5a-stage6-1d-results/tracked-changes-before-package.txt
         if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect tracked sources' }
         $allowed=@('third_party/deepfilter/COMMIT','third_party/deepfilter/include/deep_filter.h',
@@ -439,7 +460,9 @@ jobs:
         New-Item -ItemType Directory -Force hf5a-stage6-1d-portable/licenses/rtl | Out-Null
         Copy-Item third_party/rtl-deps/share/aethersdr-rtl-sources hf5a-stage6-1d-portable/licenses/rtl/ -Recurse
         Copy-Item third_party/fftw3/share/aethersdr-rtl-sources hf5a-stage6-1d-portable/licenses/fftw -Recurse
-        Copy-Item docs/hf5a-stage6-1d-windows-candidate.md hf5a-stage6-1d-portable/README.md
+        Copy-Item _candidate_tools/docs/hf5a-stage6-2d-portable.md hf5a-stage6-1d-portable/README.md
+        Copy-Item _candidate_tools/packaging/windows/hf5a-candidate-launch.ps1 hf5a-stage6-1d-portable/
+        Copy-Item _candidate_tools/packaging/windows/hf5a-candidate-start.cmd hf5a-stage6-1d-portable/START-HF5A.cmd
         Copy-Item build/*.dll hf5a-stage6-1d-portable/
         # qt6keychain is resolved through QT_INSTALL_BINS, not PATH/--dir.
         # Deploy from a private copy of Qt; never add DLLs to the installed kit.
@@ -507,6 +530,10 @@ jobs:
           if ($portableCode -ne 0) { throw "Portable tool self-check failed: $portableCode" }
         } finally { $env:PATH=$savedPath }
         Copy-Item hf5a-stage6-1d-results/portable-self-check/normal-exe-offline.json hf5a-stage6-1d-portable/portable-startup-evidence.json
+        & powershell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File _candidate_tools/packaging/windows/hf5a-candidate-verify.ps1 `
+          -Bundle hf5a-stage6-1d-portable -Report hf5a-stage6-1d-results/launcher-isolation.json
+        if ($LASTEXITCODE -ne 0) { throw 'Packaged launcher isolation failed' }
+        Copy-Item hf5a-stage6-1d-results/launcher-isolation.json hf5a-stage6-1d-portable/
         Get-ChildItem hf5a-stage6-1d-portable -File -Recurse | Get-FileHash -Algorithm SHA256 |
           Select-Object Path,Hash | Export-Csv hf5a-stage6-1d-results/portable-sha256.csv -NoTypeInformation
         Copy-Item hf5a-stage6-1d-results/portable-sha256.csv hf5a-stage6-1d-portable/
@@ -518,11 +545,11 @@ jobs:
         } | Set-Content hf5a-stage6-1d-portable/SHA256SUMS.txt
         Copy-Item hf5a-stage6-1d-portable/SHA256SUMS.txt hf5a-stage6-1d-results/
 
-        $zip="AetherSDR-26.11.1-HF5A-Stage6.1d-Windows-Candidate-$env:GITHUB_SHA.zip"
+        $zip="AetherSDR-26.11.1-HF5A-Stage6.2d-Windows-Candidate-$env:HF5A_SOURCE_SHA.zip"
         Compress-Archive -Path hf5a-stage6-1d-portable/* -DestinationPath $zip -CompressionLevel Optimal
         $exeHash=(Get-FileHash hf5a-stage6-1d-portable/AetherSDR.exe -Algorithm SHA256).Hash.ToLower()
         $zipHash=(Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
-        @{exe='AetherSDR.exe'; exeSHA256=$exeHash; zip=$zip; zipSHA256=$zipHash; source=$env:GITHUB_SHA} |
+        @{exe='AetherSDR.exe'; exeSHA256=$exeHash; zip=$zip; zipSHA256=$zipHash; source=$env:HF5A_SOURCE_SHA; packagingCommit=$env:GITHUB_SHA} |
           ConvertTo-Json | Set-Content hf5a-stage6-1d-results/portable-manifest.json
         "$zipHash  $zip" | Set-Content "$zip.sha256"
         Copy-Item "$zip.sha256" hf5a-stage6-1d-results/
@@ -552,10 +579,10 @@ jobs:
       id: portable_rc
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
       with:
-        name: AetherSDR-26.11.1-HF5A-Stage6.1d-Windows-Candidate-${{ github.sha }}
+        name: AetherSDR-26.11.1-HF5A-Stage6.2d-Windows-Candidate-${{ env.HF5A_SOURCE_SHA }}
         path: |
-          AetherSDR-26.11.1-HF5A-Stage6.1d-Windows-Candidate-*.zip
-          AetherSDR-26.11.1-HF5A-Stage6.1d-Windows-Candidate-*.zip.sha256
+          AetherSDR-26.11.1-HF5A-Stage6.2d-Windows-Candidate-*.zip
+          AetherSDR-26.11.1-HF5A-Stage6.2d-Windows-Candidate-*.zip.sha256
           hf5a-stage6-1d-results/portable-manifest.json
         retention-days: 90
         if-no-files-found: error
@@ -572,7 +599,7 @@ jobs:
           throw 'Missing GitHub artifact identity or SHA256'
         }
         $inner=Get-Content -Raw hf5a-stage6-1d-results/portable-manifest.json | ConvertFrom-Json
-        @{source=$env:GITHUB_SHA; exe=$inner.exe; exeSHA256=$inner.exeSHA256;
+        @{source=$env:HF5A_SOURCE_SHA; packagingCommit=$env:GITHUB_SHA; exe=$inner.exe; exeSHA256=$inner.exeSHA256;
           innerZip=$inner.zip; innerZipSHA256=$inner.zipSHA256;
           githubArtifactId=$env:ARTIFACT_ID; githubArtifactUrl=$env:ARTIFACT_URL;
           githubArtifactSHA256=$env:ARTIFACT_SHA256.ToLower()} |
