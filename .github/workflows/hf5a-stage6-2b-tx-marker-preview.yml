@@ -1,13 +1,7 @@
 # Isolated GUI and CI-V egress tests only. No hardware or package publication.
 name: HF5A stage 6.2b TX marker preview and guarded egress Windows
 'on':
-  push:
-    branches:
-    - hf5a/stage6-2b-tx-marker-preview
-    paths-ignore:
-    - .github/workflows/hf5a-stage6-1d-windows-candidate.yml
-    - packaging/windows/hf5a-candidate-*
-    - docs/hf5a-stage6-2d-portable.md
+  # Push validation (all twelve tests) is included in the full candidate workflow.
   workflow_dispatch: null
 permissions:
   contents: read

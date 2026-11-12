@@ -9973,7 +9973,6 @@ void SpectrumWidget::mousePressEvent(QMouseEvent* ev)
     PerfInputScope perfScope("mousePress");
     if (m_txPreviewGesture) {
         if (ev->button() != Qt::LeftButton) { ev->accept(); return; }
-        cancelTxMarkerPreview();
         m_txPreviewGesture = false;
     }
     // Alt reserves an explicit preview gesture; ordinary mouse tuning is unchanged.
@@ -11097,12 +11096,14 @@ void SpectrumWidget::mouseMoveEvent(QMouseEvent* ev)
 {
     PerfInputScope perfScope("mouseMove");
     if (m_txPreviewGesture) {
+        if (m_txPreviewCancelled) { ev->accept(); return; }
         if (ev->buttons().testFlag(Qt::LeftButton)) {
             updateTxMarkerPreview(xToMhz(std::clamp(static_cast<int>(ev->position().x()),
                                                   0, std::max(0, contentWidth() - 1))));
         } else {
-            cancelTxMarkerPreview();
-            m_txPreviewGesture = false;
+            // A release outside the widget ends movement, not the selected preview.
+            // Consume any late release rather than letting it become an RX tune.
+            m_txPreviewCancelled = true;
         }
         ev->accept();
         return;
@@ -12083,16 +12084,11 @@ void SpectrumWidget::setBackgroundFillColor(const QColor& c)
 
 bool SpectrumWidget::event(QEvent* ev)
 {
-    if (ev->type() == QEvent::WindowDeactivate || ev->type() == QEvent::Hide
-        || (ev->type() == QEvent::UngrabMouse && m_txPreviewGesture)) {
-        cancelTxMarkerPreview();
-    }
-    if (ev->type() == QEvent::KeyPress
-        && static_cast<QKeyEvent*>(ev)->key() == Qt::Key_Escape
-        && (m_txPreviewGesture || m_txPreviewMhz)) {
-        cancelTxMarkerPreview();
-        ev->accept();
-        return true;
+    if (m_txPreviewGesture && (ev->type() == QEvent::WindowDeactivate
+        || ev->type() == QEvent::FocusOut || ev->type() == QEvent::Hide
+        || ev->type() == QEvent::UngrabMouse)) {
+        // Keep the local selection; only stop this drag. Its tail stays consumed.
+        m_txPreviewCancelled = true;
     }
     if (m_txPreviewGesture && (ev->type() == QEvent::NativeGesture
                                || ev->type() == QEvent::Gesture)) {
@@ -17927,7 +17923,11 @@ void SpectrumWidget::setConfirmedTxReadback(std::optional<double> mhz, QDeadline
     if (!mhz && !m_txReadbackMarker.frequencyMhz) { return; }
     m_txReadbackMarker = {mhz, deadline};
     if (!txPreviewAllowed()) { cancelTxMarkerPreview(); }
-    markOverlayDirty();
+    const auto visible = m_txReadbackMarker.confirmed();
+    if (visible != m_txReadbackVisibleMhz) {
+        m_txReadbackVisibleMhz = visible;
+        markOverlayDirty();
+    }
 }
 
 void SpectrumWidget::setTxPreviewContext(bool splitOn, bool receiving, QDeadlineTimer deadline)

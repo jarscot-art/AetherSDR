@@ -25,8 +25,9 @@ proposed frequency and **PODGLĄD — BEZ ZAPISU** (preview — no write).
 The red line continues to show only the radio-confirmed TX frequency.
 
 Releasing the mouse retains the preview; it sends no command and changes no
-radio frequency. **Escape** clears it. SPLIT OFF, TX, disconnect, expired
-SPLIT/TX data, a changed TX readback or leaving the active window cancels it.
+radio frequency. **Escape** and switching windows preserve both markers. A new
+Alt-drag on the red line updates the yellow selection. SPLIT OFF, TX, disconnect,
+expired SPLIT/TX data or a changed TX readback clears the preview.
 A cancelled drag remains consumed until release: it cannot become an RX tune
 or resume when fresh data returns. Start a new drag to create another preview.
 

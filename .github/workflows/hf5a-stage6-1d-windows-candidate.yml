@@ -1,4 +1,4 @@
-name: HF5A stage 6.2d exact-source portable Windows candidate
+name: HF5A stage 6.2e persistent preview portable Windows candidate
 'on':
   workflow_dispatch: null
   push:
@@ -8,10 +8,13 @@ name: HF5A stage 6.2d exact-source portable Windows candidate
     - .github/workflows/hf5a-stage6-1d-windows-candidate.yml
     - packaging/windows/hf5a-candidate-*
     - docs/hf5a-stage6-2d-portable.md
+    - src/gui/SpectrumWidget.*
+    - tests/tx_marker_preview_test.cpp
+    - docs/user/docs/networked-icom.md
 permissions:
   contents: read
 env:
-  HF5A_SOURCE_SHA: 8b73e3b3656adafcf9565f123072052095cb92e3
+  HF5A_SOURCE_SHA: ${{ github.sha }}
   QT_VERSION: 6.12.0
   QT_PACKAGE_REVISION: '202609280346'
   AQTINSTALL_VERSION: 3.3.0
@@ -33,7 +36,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:
         persist-credentials: false
-        ref: 8b73e3b3656adafcf9565f123072052095cb92e3
+        ref: ${{ github.sha }}
         fetch-depth: 1
     - name: Checkout packaging helpers separately from immutable application sources
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -286,7 +289,7 @@ jobs:
           $cargs=@('-B','build','-G','Ninja','-DCMAKE_BUILD_TYPE=RelWithDebInfo',
             '-DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded','-DCMAKE_EXPORT_COMPILE_COMMANDS=ON',
             '-DAETHER_HF5A_DESKTOP_TEST=OFF','-DAETHER_RX_READBACK_GUI_ONLY=OFF',
-            '-DHF5A_BUILD_KEYCHAIN_TEST=ON','-DAETHER_BUILD_ICOM_RX_AUDIT=ON',
+            '-DAETHER_BUILD_SPECTRUM_GESTURE_TEST=ON','-DHF5A_BUILD_KEYCHAIN_TEST=ON','-DAETHER_BUILD_ICOM_RX_AUDIT=ON',
             '-DREQUIRE_KEYCHAIN=ON','-DREQUIRE_SERIALPORT=ON','-DENABLE_ASR=ON',
             '-DREQUIRE_ASR_ONNX=ON','-DREQUIRE_ASR_SHERPA=ON','-DREQUIRE_ASR_GPU=ON',
             '-DENABLE_RTL=ON','-DREQUIRE_RTL=ON','-DAETHER_GPU_SPECTRUM=ON',
@@ -357,7 +360,7 @@ jobs:
         try {
           cmake --build build --parallel 2 --target AetherSDR aether-dv-waveform AetherSDRUpdater
           if ($LASTEXITCODE -ne 0) { throw 'Normal desktop build failed' }
-          cmake --build build --parallel 2 --target icom_unselected_vfo_test rx_readback_gui_test icom_rx_audit_requests_test icom_rx_audit_init_test icom_connection_usage_test icom_rx_audit_busy_test icom_outbound_policy_test icom_rx_audit_egress_test icom_protocol_test icom_replay_test icom_session_lease_test icom_civ_test icom_control_profile_test icom_backend_seam_test transmit_model_test backend_family_switch_test icom_ptt_authority_test tx_operation_integration_test tune_inhibit_restore_test flex_ptt_stop_tracker_test flex_ptt_wire_session_test local_memory_store_test local_memory_bank_test midi_settings_test theme_manager_test control_transmit_service_test transmit_inhibit_policy_test hf5a_keychain_runtime_test control_credential_vault_test peripheral_auth_keychain_test icom_credentials_singleflight_test icom_settings_test asr_whisper_smoke_test asr_segmenter_test app_settings_safety_test aether-icom-rx-audit
+          cmake --build build --parallel 2 --target tx_marker_preview_test spectrum_confirmed_geometry_test icom_unselected_vfo_test rx_readback_gui_test icom_rx_audit_requests_test icom_rx_audit_init_test icom_connection_usage_test icom_rx_audit_busy_test icom_outbound_policy_test icom_rx_audit_egress_test icom_protocol_test icom_replay_test icom_session_lease_test icom_civ_test icom_control_profile_test icom_backend_seam_test transmit_model_test backend_family_switch_test icom_ptt_authority_test tx_operation_integration_test tune_inhibit_restore_test flex_ptt_stop_tracker_test flex_ptt_wire_session_test local_memory_store_test local_memory_bank_test midi_settings_test theme_manager_test control_transmit_service_test transmit_inhibit_policy_test hf5a_keychain_runtime_test control_credential_vault_test peripheral_auth_keychain_test icom_credentials_singleflight_test icom_settings_test asr_whisper_smoke_test asr_segmenter_test app_settings_safety_test aether-icom-rx-audit
           if ($LASTEXITCODE -ne 0) { throw 'Offline test build failed' }
           '0' | Set-Content hf5a-stage6-1d-results/build-exit-code.txt
         } finally { Stop-Transcript }
@@ -395,23 +398,23 @@ jobs:
         Get-NetFirewallRule -DisplayName 'HF5A-stage6-1d-build-*' | Get-NetFirewallApplicationFilter | Format-List | Out-File hf5a-stage6-1d-results/offline-firewall-programs.txt
     - name: Verify exact CTest selection and bounded offline timeouts
       run: |
-        $names=@('icom_unselected_vfo_test','rx_readback_gui_test','icom_rx_audit_requests_test','icom_rx_audit_init_test','icom_connection_usage_test','icom_rx_audit_busy_test','icom_outbound_policy_test','icom_rx_audit_egress_test','icom_protocol_test','icom_replay_test','icom_session_lease_test','icom_civ_test','icom_control_profile_test','icom_backend_seam_test','transmit_model_test','backend_family_switch_test','icom_rx_audit_self_check','icom_rx_audit_refuses_implicit_connection','icom_ptt_authority_test','tx_operation_integration_test','tune_inhibit_restore_test','flex_ptt_stop_tracker_test','flex_ptt_wire_session_test','local_memory_store_test','local_memory_bank_test','midi_settings_test','app_settings_safety_explicit-profile-path-isolation','theme_manager_test','control_transmit_service_test','transmit_inhibit_policy_test','hf5a_keychain_runtime_test','control_credential_vault_test','peripheral_auth_keychain_test','icom_credentials_singleflight_test','icom_settings_test','asr_whisper_smoke_test','asr_segmenter_test')
-        $pattern='^(icom_unselected_vfo_test|rx_readback_gui_test|icom_rx_audit_requests_test|icom_rx_audit_init_test|icom_connection_usage_test|icom_rx_audit_busy_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_protocol_test|icom_replay_test|icom_session_lease_test|icom_civ_test|icom_control_profile_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test|icom_rx_audit_self_check|icom_rx_audit_refuses_implicit_connection|icom_ptt_authority_test|tx_operation_integration_test|tune_inhibit_restore_test|flex_ptt_stop_tracker_test|flex_ptt_wire_session_test|local_memory_store_test|local_memory_bank_test|midi_settings_test|app_settings_safety_explicit-profile-path-isolation|theme_manager_test|control_transmit_service_test|transmit_inhibit_policy_test|hf5a_keychain_runtime_test|control_credential_vault_test|peripheral_auth_keychain_test|icom_credentials_singleflight_test|icom_settings_test|asr_whisper_smoke_test|asr_segmenter_test)$'
+        $names=@('tx_marker_preview_test','spectrum_confirmed_geometry_test','spectrum_pan_pixels_retina_test','icom_unselected_vfo_test','rx_readback_gui_test','icom_rx_audit_requests_test','icom_rx_audit_init_test','icom_connection_usage_test','icom_rx_audit_busy_test','icom_outbound_policy_test','icom_rx_audit_egress_test','icom_protocol_test','icom_replay_test','icom_session_lease_test','icom_civ_test','icom_control_profile_test','icom_backend_seam_test','transmit_model_test','backend_family_switch_test','icom_rx_audit_self_check','icom_rx_audit_refuses_implicit_connection','icom_ptt_authority_test','tx_operation_integration_test','tune_inhibit_restore_test','flex_ptt_stop_tracker_test','flex_ptt_wire_session_test','local_memory_store_test','local_memory_bank_test','midi_settings_test','app_settings_safety_explicit-profile-path-isolation','theme_manager_test','control_transmit_service_test','transmit_inhibit_policy_test','hf5a_keychain_runtime_test','control_credential_vault_test','peripheral_auth_keychain_test','icom_credentials_singleflight_test','icom_settings_test','asr_whisper_smoke_test','asr_segmenter_test')
+        $pattern='^(tx_marker_preview_test|spectrum_confirmed_geometry_test|spectrum_pan_pixels_retina_test|icom_unselected_vfo_test|rx_readback_gui_test|icom_rx_audit_requests_test|icom_rx_audit_init_test|icom_connection_usage_test|icom_rx_audit_busy_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_protocol_test|icom_replay_test|icom_session_lease_test|icom_civ_test|icom_control_profile_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test|icom_rx_audit_self_check|icom_rx_audit_refuses_implicit_connection|icom_ptt_authority_test|tx_operation_integration_test|tune_inhibit_restore_test|flex_ptt_stop_tracker_test|flex_ptt_wire_session_test|local_memory_store_test|local_memory_bank_test|midi_settings_test|app_settings_safety_explicit-profile-path-isolation|theme_manager_test|control_transmit_service_test|transmit_inhibit_policy_test|hf5a_keychain_runtime_test|control_credential_vault_test|peripheral_auth_keychain_test|icom_credentials_singleflight_test|icom_settings_test|asr_whisper_smoke_test|asr_segmenter_test)$'
         $inventory=ctest --test-dir build --show-only=json-v1 -R $pattern --no-tests=error
         if ($LASTEXITCODE -ne 0) { throw 'CTest inventory failed' }
         $inventory -join "`n" | Set-Content hf5a-stage6-1d-results/ctest-selection-original.json
         $selected=@(($inventory -join "`n" | ConvertFrom-Json).tests | ForEach-Object name)
-        if ($selected.Count -ne 37 -or @(Compare-Object ($names | Sort-Object) ($selected | Sort-Object)).Count) { throw 'Wrong test selection' }
+        if ($selected.Count -ne 40 -or @(Compare-Object ($names | Sort-Object) ($selected | Sort-Object)).Count) { throw 'Wrong test selection' }
         # Bound generated CTest properties; no repository test source is edited here.
         ('set_tests_properties(' + ($names -join ' ') + ' PROPERTIES TIMEOUT 60)') |
           Add-Content build/CTestTestfile.cmake
         ctest --test-dir build --show-only=json-v1 -R $pattern --no-tests=error |
           Set-Content hf5a-stage6-1d-results/ctest-selection.json
         if ($LASTEXITCODE -ne 0) { throw 'Bounded CTest inventory failed' }
-    - name: Run nine Stage 6 regressions plus retained production regressions (37 total)
+    - name: Run persistent preview, geometry and retained production regressions (40 total)
       timeout-minutes: 15
       run: |
-        ctest --test-dir build -R '^(icom_unselected_vfo_test|rx_readback_gui_test|icom_rx_audit_requests_test|icom_rx_audit_init_test|icom_connection_usage_test|icom_rx_audit_busy_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_protocol_test|icom_replay_test|icom_session_lease_test|icom_civ_test|icom_control_profile_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test|icom_rx_audit_self_check|icom_rx_audit_refuses_implicit_connection|icom_ptt_authority_test|tx_operation_integration_test|tune_inhibit_restore_test|flex_ptt_stop_tracker_test|flex_ptt_wire_session_test|local_memory_store_test|local_memory_bank_test|midi_settings_test|app_settings_safety_explicit-profile-path-isolation|theme_manager_test|control_transmit_service_test|transmit_inhibit_policy_test|hf5a_keychain_runtime_test|control_credential_vault_test|peripheral_auth_keychain_test|icom_credentials_singleflight_test|icom_settings_test|asr_whisper_smoke_test|asr_segmenter_test)$' --parallel 1 --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage6-1d-results/results.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage6-1d-results/ctest.log"
+        ctest --test-dir build -R '^(tx_marker_preview_test|spectrum_confirmed_geometry_test|spectrum_pan_pixels_retina_test|icom_unselected_vfo_test|rx_readback_gui_test|icom_rx_audit_requests_test|icom_rx_audit_init_test|icom_connection_usage_test|icom_rx_audit_busy_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_protocol_test|icom_replay_test|icom_session_lease_test|icom_civ_test|icom_control_profile_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test|icom_rx_audit_self_check|icom_rx_audit_refuses_implicit_connection|icom_ptt_authority_test|tx_operation_integration_test|tune_inhibit_restore_test|flex_ptt_stop_tracker_test|flex_ptt_wire_session_test|local_memory_store_test|local_memory_bank_test|midi_settings_test|app_settings_safety_explicit-profile-path-isolation|theme_manager_test|control_transmit_service_test|transmit_inhibit_policy_test|hf5a_keychain_runtime_test|control_credential_vault_test|peripheral_auth_keychain_test|icom_credentials_singleflight_test|icom_settings_test|asr_whisper_smoke_test|asr_segmenter_test)$' --parallel 1 --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage6-1d-results/results.junit.xml" --output-log "$env:GITHUB_WORKSPACE/hf5a-stage6-1d-results/ctest.log"
         $code=$LASTEXITCODE
         $code | Set-Content hf5a-stage6-1d-results/ctest-exit-code.txt
         exit $code
@@ -423,16 +426,16 @@ jobs:
           $_.GetAttribute('status') -ne 'run' -or $_.SelectSingleNode('skipped') -or
           $_.SelectSingleNode('failure') -or $_.SelectSingleNode('error')
         })
-        if ($cases.Count -ne 37 -or $bad.Count) { throw 'All 37 tests must execute and pass; skipped tests cannot qualify the ZIP' }
-        $required=@('rx_readback_gui_test','icom_unselected_vfo_test','icom_civ_test','icom_outbound_policy_test',
+        if ($cases.Count -ne 40 -or $bad.Count) { throw 'All 40 tests must execute and pass; skipped tests cannot qualify the ZIP' }
+        $required=@('tx_marker_preview_test','spectrum_confirmed_geometry_test','spectrum_pan_pixels_retina_test','rx_readback_gui_test','icom_unselected_vfo_test','icom_civ_test','icom_outbound_policy_test',
           'icom_rx_audit_egress_test','icom_rx_audit_requests_test','icom_backend_seam_test','transmit_model_test','backend_family_switch_test')
         $vfoCases=@($cases | Where-Object { $_.GetAttribute('name') -in $required })
-        if ($vfoCases.Count -ne 9 -or @(Compare-Object ($required | Sort-Object) ($vfoCases | ForEach-Object { $_.GetAttribute('name') } | Sort-Object)).Count) {
-          throw 'The nine required Stage 6 regressions did not all execute'
+        if ($vfoCases.Count -ne 12 -or @(Compare-Object ($required | Sort-Object) ($vfoCases | ForEach-Object { $_.GetAttribute('name') } | Sort-Object)).Count) {
+          throw 'The twelve required Stage 6 regressions did not all execute'
         }
         $vfoCases | ForEach-Object {
           [pscustomobject]@{test=$_.GetAttribute('name'); status='PASS'; seconds=$_.GetAttribute('time')}
-        } | ConvertTo-Json | Set-Content hf5a-stage6-1d-results/stage6-nine-tests.json
+        } | ConvertTo-Json | Set-Content hf5a-stage6-1d-results/stage6-twelve-tests.json
         # Normal binary: load Qt/platform/DLLs and check isolated persistent settings,
         # then exit before MainWindow, discovery, credentials or any radio session.
         python tools/hf5a_stage5_offline.py --exe build/AetherSDR.exe --report hf5a-stage6-1d-results/normal-exe
@@ -507,7 +510,7 @@ jobs:
         if ($LASTEXITCODE -ne 0) { throw 'RTL runtime/licenses incomplete' }
         if (-not (Test-Path hf5a-stage6-1d-portable/qt6keychain.dll)) { throw 'QtKeychain DLL missing' }
         Copy-Item hf5a-stage6-1d-results/source.json hf5a-stage6-1d-portable/
-        Copy-Item hf5a-stage6-1d-results/stage6-nine-tests.json hf5a-stage6-1d-portable/
+        Copy-Item hf5a-stage6-1d-results/stage6-twelve-tests.json hf5a-stage6-1d-portable/
         Copy-Item hf5a-stage6-1d-results/results.junit.xml hf5a-stage6-1d-portable/
         Copy-Item hf5a-stage6-1d-results/normal-exe/normal-exe-offline.json hf5a-stage6-1d-portable/startup-evidence.json
         $python=(Get-Command python).Source
@@ -543,7 +546,7 @@ jobs:
         } | Set-Content hf5a-stage6-1d-portable/SHA256SUMS.txt
         Copy-Item hf5a-stage6-1d-portable/SHA256SUMS.txt hf5a-stage6-1d-results/
 
-        $zip="AetherSDR-26.11.1-HF5A-Stage6.2d-Windows-Candidate-$env:HF5A_SOURCE_SHA.zip"
+        $zip="AetherSDR-26.11.1-HF5A-Stage6.2e-Windows-Candidate-$env:HF5A_SOURCE_SHA.zip"
         Compress-Archive -Path hf5a-stage6-1d-portable/* -DestinationPath $zip -CompressionLevel Optimal
         $exeHash=(Get-FileHash hf5a-stage6-1d-portable/AetherSDR.exe -Algorithm SHA256).Hash.ToLower()
         $zipHash=(Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
@@ -577,10 +580,10 @@ jobs:
       id: portable_rc
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
       with:
-        name: AetherSDR-26.11.1-HF5A-Stage6.2d-Windows-Candidate-${{ env.HF5A_SOURCE_SHA }}
+        name: AetherSDR-26.11.1-HF5A-Stage6.2e-Windows-Candidate-${{ env.HF5A_SOURCE_SHA }}
         path: |
-          AetherSDR-26.11.1-HF5A-Stage6.2d-Windows-Candidate-*.zip
-          AetherSDR-26.11.1-HF5A-Stage6.2d-Windows-Candidate-*.zip.sha256
+          AetherSDR-26.11.1-HF5A-Stage6.2e-Windows-Candidate-*.zip
+          AetherSDR-26.11.1-HF5A-Stage6.2e-Windows-Candidate-*.zip.sha256
           hf5a-stage6-1d-results/portable-manifest.json
         retention-days: 90
         if-no-files-found: error

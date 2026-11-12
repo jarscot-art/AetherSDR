@@ -11,7 +11,7 @@ waterfall as well as the spectrum; the separate warning-token dotted marker
 and explicit PODGLĄD — BEZ ZAPISU label hold the local proposed MHz.
 
 Alt + left drag near the confirmed line opts into preview without replacing
-normal mouse behavior. Escape, window deactivation, SPLIT OFF, TX/MOX/TUNE,
+normal mouse behavior. SPLIT OFF, TX/MOX/TUNE,
 disconnect, deadline expiry and a changed confirmed TX frequency clear it.
 SPLIT and TX deadlines are checked at input and paint time as well as during
 the existing 100 ms readback refresh. Cancelled gestures consume their remaining
@@ -52,3 +52,8 @@ scan reported only two pre-existing zoom-button description warnings.
 `icom_civ_test` passed under GCC/C++20; `icom_outbound_policy_test` passed with
 11 exact queries and 2,816 rejected added-data mutations. The new Qt GUI test
 and Windows workflow have not been executed locally.
+
+Stage 6.2e: Escape and focus/window changes retain the local yellow selection.
+An interrupted drag remains consumed until release/new press. A new Alt drag
+updates the selection. Unchanged valid readback refreshes deadlines without
+invalidating the cached red overlay; invalid/expired data still clears it.

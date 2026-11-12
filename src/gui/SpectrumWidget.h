@@ -1135,6 +1135,8 @@ private:
     void drawSliceMarkers(QPainter& p, const QRect& specRect, const QRect& wfRect);
     void drawConfirmedTxReadback(QPainter& painter, const QRect& rect);
     TxReadbackMarker m_txReadbackMarker;
+    // Last visible value scheduled for the cached overlay; deadlines still refresh.
+    std::optional<double> m_txReadbackVisibleMhz;
     bool txPreviewAllowed() const;
     bool txPreviewHit(const QPointF& point) const;
     void cancelTxMarkerPreview();

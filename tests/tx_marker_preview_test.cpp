@@ -4,6 +4,7 @@
 #include "core/backends/icom/IcomCivBackend.h"
 #include <QApplication>
 #include <QImage>
+#include <QFocusEvent>
 #include <QMetaMethod>
 #include <QThread>
 #include <QPainter>
@@ -58,6 +59,18 @@ struct SpectrumOffscreenTestAccess {
                       type == QEvent::MouseMove ? Qt::NoButton : Qt::LeftButton,
                       release ? Qt::NoButton : Qt::LeftButton, mods);
         QApplication::sendEvent(&w, &e);
+    }
+    static void clearOverlayDirty(SpectrumWidget& w) {
+#ifdef AETHER_GPU_SPECTRUM
+        w.m_overlayStaticDirty = false;
+#endif
+    }
+    static bool overlayDirty(SpectrumWidget& w) {
+#ifdef AETHER_GPU_SPECTRUM
+        return w.m_overlayStaticDirty;
+#else
+        return false;
+#endif
     }
     static QImage paint(SpectrumWidget& w) {
         QImage image(w.size(), QImage::Format_ARGB32_Premultiplied);
@@ -127,7 +140,7 @@ int main(int argc, char** argv) {
         check(preview.copy(txX, 100, 1, 300) == confirmed.copy(txX, 100, 1, 300),
               "red confirmed line remains unchanged in spectrum and waterfall");
     }
-    for (int invalidation = 0; invalidation != 7; ++invalidation) {
+    for (int invalidation = 0; invalidation != 6; ++invalidation) {
         ready(); press(); move();
         switch (invalidation) {
         case 0: w.setTxPreviewContext(false, true, QDeadlineTimer(5000)); break;
@@ -136,8 +149,6 @@ int main(int argc, char** argv) {
         case 3: w.setConfirmedTxReadback(7.080, QDeadlineTimer(0)); break;
         case 4: w.setTxPreviewContext(true, true, QDeadlineTimer(0)); break;
         case 5: w.setConfirmedTxReadback(7.081, QDeadlineTimer(5000)); break;
-        case 6: { QKeyEvent escape(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
-                  QApplication::sendEvent(&w, &escape); break; }
         }
         check(!w.txMarkerPreview(), "invalidated preview disappears");
         ready(); move(); release();
@@ -160,11 +171,58 @@ int main(int argc, char** argv) {
         ready();
         check(!w.txMarkerPreview(), "fresh same-value readback cannot resurrect an expired preview");
     }
+    // Focus/key events must preserve both rendered markers, before and after release.
+    for (bool dragging : {false, true}) {
+        ready(); press(); move();
+        if (!dragging) { release(); }
+        const auto selection = w.txMarkerPreview();
+        const QImage before = Access::paint(w);
+        QKeyEvent escape(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier);
+        QApplication::sendEvent(&w, &escape);
+        for (auto type : {QEvent::WindowDeactivate, QEvent::FocusOut,
+                          QEvent::UngrabMouse, QEvent::WindowActivate, QEvent::FocusIn}) {
+            if (type == QEvent::FocusIn || type == QEvent::FocusOut) {
+                QFocusEvent event(type);
+                QApplication::sendEvent(&w, &event);
+            } else {
+                QEvent event(type);
+                QApplication::sendEvent(&w, &event);
+            }
+            check(w.txMarkerPreview() == selection, "focus/Escape preserve selected preview");
+            check(Access::paint(w) == before, "focus leaves both marker pixels unchanged");
+        }
+        Access::clearOverlayDirty(w);
+        ready(); // The 100ms model refresh changes deadlines, not visible pixels.
+        check(!Access::overlayDirty(w), "unchanged readback does not rebuild the GPU overlay");
+        check(w.confirmedTxReadback() == std::optional<double>{7.080}, "focus never invalidates confirmed TX");
+        if (dragging) {
+            Access::mouse(w, QEvent::MouseMove, Access::point(w, 7.090, true));
+            release();
+        }
+        check(w.txMarkerPreview() == selection, "interrupted drag tail cannot move selection or tune RX");
+        press();
+        Access::mouse(w, QEvent::MouseMove, Access::point(w, 7.090, true));
+        release();
+        check(w.txMarkerPreview() != selection, "new Alt drag updates persistent selection");
+    }
     ready(); press(); move();
-    QEvent deactivate(QEvent::WindowDeactivate);
-    QApplication::sendEvent(&w, &deactivate);
-    ready(); move(); release();
-    check(!w.txMarkerPreview(), "window deactivation cancels preview without release-to-tune");
+    const auto releasedOutside = w.txMarkerPreview();
+    QMouseEvent noButton(QEvent::MouseMove, QPointF(400,400), QPointF(400,400),
+                         Qt::NoButton, Qt::NoButton, Qt::AltModifier);
+    QApplication::sendEvent(&w, &noButton);
+    release();
+    check(w.txMarkerPreview() == releasedOutside, "release outside preserves selection and consumes tail");
+    ready(); press(); move(); release();
+    w.setTxPreviewContext(false, true, QDeadlineTimer(5000));
+    check(!w.txMarkerPreview(), "SPLIT OFF clears retained selection");
+    ready();
+    check(!w.txMarkerPreview(), "SPLIT ON cannot restore a cleared selection");
+    Access::clearOverlayDirty(w);
+    w.setConfirmedTxReadback(7.080, QDeadlineTimer(0));
+#ifdef AETHER_GPU_SPECTRUM
+    check(Access::overlayDirty(w), "expired TX invalidates the cached red marker");
+#endif
+    check(!w.confirmedTxReadback(), "red marker never retains stale TX as confirmed");
     ready(); press(); move();
     QWheelEvent wheel(QPointF(400,400), QPointF(400,400), QPoint(), QPoint(0,120),
                       Qt::LeftButton, Qt::NoModifier, Qt::NoScrollPhase, false);

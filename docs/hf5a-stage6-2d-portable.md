@@ -1,6 +1,6 @@
-# HF5A Stage 6.2d — Windows 10 x64 portable candidate
+# HF5A Stage 6.2e — Windows 10 x64 portable candidate
 
-Application source: `8b73e3b3656adafcf9565f123072052095cb92e3`.
+Application source and packaging commit: see `source.json` in this archive.
 Normal full desktop, QtKeychain enabled. This is **not an RX-only application**.
 Alt + left-drag on the confirmed red TX line is preview only, without CI-V writes.
 This package does not authorize a hardware test, transmitting or installation.
@@ -13,7 +13,7 @@ This package does not authorize a hardware test, transmitting or installation.
    credentials within the same Windows account. Do not create an account through
    this package; use an independently prepared test account. Do not copy passwords,
    profiles or application data from production.
-3. Extract the inner ZIP into a new writable directory, e.g. `C:\HF5A-Test\Stage6.2d`.
+3. Extract the inner ZIP into a new writable directory, e.g. `C:\HF5A-Test\Stage6.2e`.
    Verify its `.sha256` from the Actions artifact; `SHA256SUMS.txt` lists payload files.
 4. Run **START-HF5A.cmd**, not AetherSDR.exe directly. The launcher refuses an account
    with an existing standard AetherSDR data directory and asks for confirmation of
@@ -36,10 +36,12 @@ Normal mouse gestures outside the TX preview can tune the radio after connection
 The recipe reuses the Stage 6.1d full desktop dependencies/deployment, including
 QtKeychain, RTL/libusb, FFTW, ASR/ONNX/sherpa, OpenSSL, Qt plugins and MSVC runtime.
 Packaging checks include dumpbin imports, DLL closure, native qwindows plugin,
-37 retained production regressions and early-exit offline Qt/settings probes
-under program-specific firewall rules. The already-passed twelve preview tests
-are available in run 43229012931 for exactly the pinned source SHA; this package
-makes no application-code changes and does not repeat their expensive build.
+40 regressions (the twelve preview/CI-V tests plus retained production checks)
+and early-exit offline Qt/settings probes under program-specific firewall rules.
+Escape and focus/window changes preserve the yellow local selection; a new Alt
+drag updates it. SPLIT OFF, TX, disconnected or stale/changed readback clears it.
+The confirmed red marker remains independent of that local selection.
+
 
 The packaged launcher is exercised twice with a deliberately inherited wrong
 profile, an unchanged sentinel in the normal profile, and a restricted PATH.
