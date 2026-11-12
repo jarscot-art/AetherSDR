@@ -122,11 +122,17 @@ void MainWindow::wireStatusBarMessages()
             ? transmit.confirmedTransmitFreq() : std::nullopt;
         for (auto* spectrum : findChildren<SpectrumWidget*>()) {
             spectrum->setConfirmedTxReadback(tx, transmit.transmitFreqDeadline());
+            spectrum->setTxPreviewContext(transmit.confirmedSplit() == true,
+                connected && !transmit.isTransmitting() && !transmit.isMox()
+                    && !transmit.isTuning(), transmit.splitReadbackDeadline());
         }
     };
     connect(readbackRefresh, &QTimer::timeout, readback, refreshReadback);
     connect(&m_radioModel.transmitModel(), &TransmitModel::stateChanged, readback, refreshReadback);
     connect(&m_radioModel, &RadioModel::connectionStateChanged, readback, refreshReadback);
+    connect(&m_radioModel.transmitModel(), &TransmitModel::transmittingChanged, readback, refreshReadback);
+    connect(&m_radioModel.transmitModel(), &TransmitModel::moxChanged, readback, refreshReadback);
+    connect(&m_radioModel.transmitModel(), &TransmitModel::tuneChanged, readback, refreshReadback);
     readbackRefresh->start(100);
     refreshReadback();
     QHBoxLayout* layout = qobject_cast<QHBoxLayout*>(m_statusBarContainer->layout());

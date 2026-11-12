@@ -16,6 +16,25 @@ AetherSDR can operate Icom transceivers that have a built-in network connection,
 
 The **IC-7300MK2** is supported and shows no EXPERIMENTAL badge. Every other Icom shows the **EXPERIMENTAL** badge in the title bar and an "Experimental radio support" notice when you connect. FlexRadio remains AetherSDR's supported target; see [Supported Radios](./supported-radios.md).
 
+## TX marker preview (IC-7300MK2)
+
+With a connected radio, confirmed **SPLIT ON**, fresh TX readback and no active
+TX/MOX/TUNE, hold **Alt** and drag within six pixels of the red **TX readback**
+line in the spectrum or waterfall. A separate dotted preview displays the
+proposed frequency and **PODGLĄD — BEZ ZAPISU** (preview — no write).
+The red line continues to show only the radio-confirmed TX frequency.
+
+Releasing the mouse retains the preview; it sends no command and changes no
+radio frequency. **Escape** clears it. SPLIT OFF, TX, disconnect, expired
+SPLIT/TX data, a changed TX readback or leaving the active window cancels it.
+A cancelled drag remains consumed until release: it cannot become an RX tune
+or resume when fresh data returns. Start a new drag to create another preview.
+
+Ordinary mouse gestures without Alt retain their RX tuning, panning and zoom
+functions. This preview does not identify physical VFO B, enable a write mode,
+or persist a frequency. Existing TX operations elsewhere in the desktop remain
+available; the desktop is not an RX-only application.
+
 ## Where to go next
 
 - [Before You Transmit](./before-you-transmit.md) and [TX Controls](./tx-controls.md).

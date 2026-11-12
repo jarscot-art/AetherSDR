@@ -356,12 +356,10 @@ public:
 
     // Set the VFO frequency (draws the orange VFO marker).
     void setVfoFrequency(double freqMhz);
-    void setConfirmedTxReadback(std::optional<double> mhz, QDeadlineTimer deadline) {
-        if (!mhz && !m_txReadbackMarker.frequencyMhz) { return; }
-        m_txReadbackMarker = {mhz, deadline};
-        markOverlayDirty();
-    }
+    void setConfirmedTxReadback(std::optional<double> mhz, QDeadlineTimer deadline);
     std::optional<double> confirmedTxReadback() const { return m_txReadbackMarker.confirmed(); }
+    void setTxPreviewContext(bool splitOn, bool receiving, QDeadlineTimer splitDeadline);
+    std::optional<double> txMarkerPreview() const;
 
     // Set the filter edges (Hz offsets from VFO frequency).
     void setVfoFilter(int lowHz, int highHz);
@@ -1137,6 +1135,17 @@ private:
     void drawSliceMarkers(QPainter& p, const QRect& specRect, const QRect& wfRect);
     void drawConfirmedTxReadback(QPainter& painter, const QRect& rect);
     TxReadbackMarker m_txReadbackMarker;
+    bool txPreviewAllowed() const;
+    bool txPreviewHit(const QPointF& point) const;
+    void cancelTxMarkerPreview();
+    void updateTxMarkerPreview(double mhz);
+    bool m_txPreviewReceiving{false};
+    bool m_txPreviewSplitOn{false};
+    QDeadlineTimer m_txPreviewSplitDeadline;
+    std::optional<double> m_txPreviewMhz;
+    // Retained after cancellation until release, so the tail cannot tune RX.
+    bool m_txPreviewGesture{false};
+    bool m_txPreviewCancelled{false};
     struct DssDepthBand {
         QPolygonF polygon;
         QColor frontColor;

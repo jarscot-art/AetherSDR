@@ -14,7 +14,7 @@ struct TxReadbackMarker {
             && !deadline.hasExpired() ? frequencyMhz : std::nullopt;
     }
     // x comes from the spectrum's existing frequency mapping (including crop).
-    // Pure decoration: there is no hit region and no tuning/drag operation.
+    // This confirmed marker never moves optimistically; SpectrumWidget owns a separate preview.
     bool paint(QPainter& painter, const QRect& rect, int x, const QColor& color) const {
         if (!confirmed() || !rect.isValid() || x < rect.left() || x > rect.right()) { return false; }
         painter.save();

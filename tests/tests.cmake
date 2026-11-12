@@ -2822,6 +2822,18 @@ if(AETHER_BUILD_SPECTRUM_GESTURE_TEST)
     add_test(NAME spectrum_confirmed_geometry_test COMMAND spectrum_confirmed_geometry_test)
     set_tests_properties(spectrum_confirmed_geometry_test PROPERTIES
         ENVIRONMENT "QT_QPA_PLATFORM=offscreen;AETHER_AUTOMATION_NO_TX=1")
+    add_executable(tx_marker_preview_test tests/tx_marker_preview_test.cpp ${_spectrum_gesture_sources})
+    target_include_directories(tx_marker_preview_test PRIVATE tests
+        $<TARGET_PROPERTY:AetherSDR,INCLUDE_DIRECTORIES>)
+    target_compile_definitions(tx_marker_preview_test PRIVATE
+        $<TARGET_PROPERTY:AetherSDR,COMPILE_DEFINITIONS>)
+    target_compile_options(tx_marker_preview_test PRIVATE
+        $<TARGET_PROPERTY:AetherSDR,COMPILE_OPTIONS>)
+    target_link_libraries(tx_marker_preview_test PRIVATE Qt6::Test
+        $<TARGET_PROPERTY:AetherSDR,LINK_LIBRARIES>)
+    add_test(NAME tx_marker_preview_test COMMAND tx_marker_preview_test)
+    set_tests_properties(tx_marker_preview_test PROPERTIES TIMEOUT 60
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen;AETHER_AUTOMATION_NO_TX=1")
     # Same binary at a Retina device pixel ratio: pins the Flex pan xpixels cap.
     add_test(NAME spectrum_pan_pixels_retina_test
         COMMAND spectrum_confirmed_geometry_test --pan-pixels-retina)
@@ -10561,6 +10573,7 @@ set(AETHER_SETTINGS_CONSUMERS
     fm_filter_controls_test
     wfm_controls_test
     spectrum_confirmed_geometry_test
+    tx_marker_preview_test
     panadapter_dbm_range_test
     panadapter_late_packet_test
     flex_slice_mode_intent_test

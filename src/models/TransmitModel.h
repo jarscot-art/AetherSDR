@@ -147,6 +147,7 @@ public:
         return m_unselectedVfo.supported && !m_unselectedVfo.modeDeadline.hasExpired()
             ? m_unselectedVfo.mode : std::nullopt;
     }
+    QDeadlineTimer splitReadbackDeadline() const { return m_splitDeadline; }
     QDeadlineTimer transmitFreqDeadline() const { return m_transmitFreqDeadline; }
     // No signal on teardown: RadioModel can also call this from destruction.
     void resetTransmitFrequencyObservation()

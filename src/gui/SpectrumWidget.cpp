@@ -44,6 +44,7 @@
 #include <QResizeEvent>
 #include <QScopeGuard>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QWheelEvent>
 #include <QNativeGestureEvent>
 #include <QGestureEvent>
@@ -3560,7 +3561,7 @@ void SpectrumWidget::positionFpsMeterLabels() {
 }
 
 bool SpectrumWidget::anyDragActive() const {
-    return m_draggingDivider
+    return m_txPreviewGesture || m_draggingDivider
         || m_draggingBandwidth
         || m_draggingPan
         || m_draggingFilter != FilterEdge::None
@@ -8538,6 +8539,12 @@ void SpectrumWidget::updateAccessibleStateDescription()
                            "VFO-locked").arg(aName, bName)
                       : tr("Slice Link %1 to %2 active").arg(aName, bName));
     }
+    if (const auto preview = txMarkerPreview()) {
+        parts << tr("PODGLĄD — BEZ ZAPISU: %1 MHz").arg(*preview, 0, 'f', 6);
+    }
+    if (txPreviewAllowed()) {
+        parts << tr("Alt + drag TX readback to preview; Escape cancels. No radio write.");
+    }
     setAccessibleDescription(parts.join(QStringLiteral("; ")));
 }
 
@@ -9964,6 +9971,21 @@ static double snapToStep(double mhz, int stepHz)
 void SpectrumWidget::mousePressEvent(QMouseEvent* ev)
 {
     PerfInputScope perfScope("mousePress");
+    if (m_txPreviewGesture) {
+        if (ev->button() != Qt::LeftButton) { ev->accept(); return; }
+        cancelTxMarkerPreview();
+        m_txPreviewGesture = false;
+    }
+    // Alt reserves an explicit preview gesture; ordinary mouse tuning is unchanged.
+    // Even an unavailable preview consumes its release instead of falling into RX tuning.
+    if (ev->button() == Qt::LeftButton && ev->modifiers() == Qt::AltModifier
+        && !anyDragActive() && txPreviewHit(ev->position())) {
+        m_txPreviewGesture = true;
+        m_txPreviewCancelled = false;
+        updateTxMarkerPreview(xToMhz(static_cast<int>(ev->position().x())));
+        ev->accept();
+        return;
+    }
     // A menu's nested event loop can destroy this panadapter during shutdown.
     const QPointer<SpectrumWidget> self(this);
     const auto dragStatePublisher = makeScopeExit([self] {
@@ -11074,6 +11096,17 @@ void SpectrumWidget::applyPanDragCenter(double newCenterMhz, bool force)
 void SpectrumWidget::mouseMoveEvent(QMouseEvent* ev)
 {
     PerfInputScope perfScope("mouseMove");
+    if (m_txPreviewGesture) {
+        if (ev->buttons().testFlag(Qt::LeftButton)) {
+            updateTxMarkerPreview(xToMhz(std::clamp(static_cast<int>(ev->position().x()),
+                                                  0, std::max(0, contentWidth() - 1))));
+        } else {
+            cancelTxMarkerPreview();
+            m_txPreviewGesture = false;
+        }
+        ev->accept();
+        return;
+    }
     if (PerfTelemetry::instance().enabled()) {
         const qint64 nowNs = PerfTelemetry::nowNs();
         if (m_lastMouseMoveNs > 0) {
@@ -11602,6 +11635,17 @@ void SpectrumWidget::mouseMoveEvent(QMouseEvent* ev)
 void SpectrumWidget::mouseReleaseEvent(QMouseEvent* ev)
 {
     PerfInputScope perfScope("mouseRelease");
+    if (m_txPreviewGesture) {
+        if (ev->button() == Qt::LeftButton) {
+            if (!txPreviewAllowed()) { cancelTxMarkerPreview(); }
+            m_txPreviewGesture = false;
+            updateAccessibleStateDescription();
+            QAccessibleEvent announcement(this, QAccessible::DescriptionChanged);
+            QAccessible::updateAccessibility(&announcement);
+        }
+        ev->accept();
+        return;
+    }
     const auto dragStatePublisher = makeScopeExit([this] { publishPerfDragState(); });
     (void)dragStatePublisher;
     clearVfoCursorOverride();
@@ -11880,6 +11924,12 @@ void SpectrumWidget::showAddSpotDialog(double freqMhz)
 
 void SpectrumWidget::mouseDoubleClickEvent(QMouseEvent* ev)
 {
+    if (m_txPreviewGesture) { ev->accept(); return; }
+    if (ev->button() == Qt::LeftButton && ev->modifiers() == Qt::AltModifier
+        && txPreviewHit(ev->position())) {
+        mousePressEvent(ev);
+        return;
+    }
     const int chromeH  = freqScaleH() + DIVIDER_H;
     const int contentH = height() - chromeH;
     const int specH = static_cast<int>(contentH * m_spectrumFrac);
@@ -12033,6 +12083,22 @@ void SpectrumWidget::setBackgroundFillColor(const QColor& c)
 
 bool SpectrumWidget::event(QEvent* ev)
 {
+    if (ev->type() == QEvent::WindowDeactivate || ev->type() == QEvent::Hide
+        || (ev->type() == QEvent::UngrabMouse && m_txPreviewGesture)) {
+        cancelTxMarkerPreview();
+    }
+    if (ev->type() == QEvent::KeyPress
+        && static_cast<QKeyEvent*>(ev)->key() == Qt::Key_Escape
+        && (m_txPreviewGesture || m_txPreviewMhz)) {
+        cancelTxMarkerPreview();
+        ev->accept();
+        return true;
+    }
+    if (m_txPreviewGesture && (ev->type() == QEvent::NativeGesture
+                               || ev->type() == QEvent::Gesture)) {
+        ev->accept();
+        return true;
+    }
     // Re-assert mouse tracking after native window changes (reparenting into
     // QSplitter, window recreation). Without this, QRhiWidget's native Metal
     // surface loses mouse tracking and mouseMoveEvent stops firing.
@@ -12214,6 +12280,7 @@ void SpectrumWidget::toggleStarstruckMode()
 
 void SpectrumWidget::wheelEvent(QWheelEvent* ev)
 {
+    if (m_txPreviewGesture) { ev->accept(); return; }
     PerfInputScope perfScope("wheel");
 
     // Skip scroll on the divider + freq scale bar.
@@ -14686,7 +14753,7 @@ void SpectrumWidget::renderGpuFrame(QRhiCommandBuffer* cb,
             }
             drawSwrSweep(frequencyPainter, specRect);
             drawSliceMarkers(frequencyPainter, specRect, wfRect);
-            drawConfirmedTxReadback(frequencyPainter, specRect);
+            drawConfirmedTxReadback(frequencyPainter, specRect.united(wfRect));
             drawOffScreenSlices(frequencyPainter, specRect);
 
             m_overlayStatic.fill(Qt::transparent);
@@ -15876,7 +15943,7 @@ void SpectrumWidget::paintEvent(QPaintEvent* ev)
     if (m_showSpots || m_showSHistory) drawSpotMarkers(p, specRect);
     drawSwrSweep(p, specRect);
     drawSliceMarkers(p, specRect, wfRect);
-    drawConfirmedTxReadback(p, specRect);
+    drawConfirmedTxReadback(p, specRect.united(wfRect));
     drawSmartMtrValueLabels(p);
     drawOffScreenSlices(p, specRect);
 
@@ -17852,8 +17919,90 @@ void SpectrumWidget::drawDssDepthGeometry(
     painter.restore();
 }
 
+void SpectrumWidget::setConfirmedTxReadback(std::optional<double> mhz, QDeadlineTimer deadline)
+{
+    if (!txPreviewAllowed() || mhz != m_txReadbackMarker.frequencyMhz) {
+        cancelTxMarkerPreview();
+    }
+    if (!mhz && !m_txReadbackMarker.frequencyMhz) { return; }
+    m_txReadbackMarker = {mhz, deadline};
+    if (!txPreviewAllowed()) { cancelTxMarkerPreview(); }
+    markOverlayDirty();
+}
+
+void SpectrumWidget::setTxPreviewContext(bool splitOn, bool receiving, QDeadlineTimer deadline)
+{
+    if (!txPreviewAllowed()) { cancelTxMarkerPreview(); }
+    m_txPreviewSplitOn = splitOn;
+    m_txPreviewReceiving = receiving;
+    m_txPreviewSplitDeadline = deadline;
+    if (!txPreviewAllowed()) { cancelTxMarkerPreview(); }
+    updateAccessibleStateDescription();
+}
+
+bool SpectrumWidget::txPreviewAllowed() const
+{
+    return m_txPreviewReceiving && m_txPreviewSplitOn
+        && !m_txPreviewSplitDeadline.hasExpired() && m_txReadbackMarker.confirmed().has_value();
+}
+
+std::optional<double> SpectrumWidget::txMarkerPreview() const
+{
+    return txPreviewAllowed() ? m_txPreviewMhz : std::nullopt;
+}
+
+bool SpectrumWidget::txPreviewHit(const QPointF& point) const
+{
+    const auto frequency = m_txReadbackMarker.frequencyMhz;
+    if (!frequency || !std::isfinite(*frequency)) { return false; }
+    const int x = mhzToX(*frequency);
+    return x >= 0 && x < contentWidth() && point.x() >= 0 && point.x() < contentWidth()
+        && point.y() >= 0 && point.y() < height() && std::abs(point.x() - x) <= 6;
+}
+
+void SpectrumWidget::cancelTxMarkerPreview()
+{
+    if (m_txPreviewGesture) { m_txPreviewCancelled = true; }
+    if (!m_txPreviewMhz) { return; }
+    m_txPreviewMhz.reset();
+    updateAccessibleStateDescription();
+    QAccessibleEvent announcement(this, QAccessible::DescriptionChanged);
+    QAccessible::updateAccessibility(&announcement);
+    markOverlayDirty();
+}
+
+void SpectrumWidget::updateTxMarkerPreview(double mhz)
+{
+    if (m_txPreviewCancelled || !txPreviewAllowed() || !std::isfinite(mhz) || mhz <= 0.0) {
+        cancelTxMarkerPreview();
+        return;
+    }
+    m_txPreviewMhz = mhz;
+    markOverlayDirty();
+}
+
 void SpectrumWidget::drawConfirmedTxReadback(QPainter& painter, const QRect& rect)
 {
+    if (const auto preview = txMarkerPreview()) {
+        QRect area = rect;
+        area.setWidth(contentWidth());
+        const int x = mhzToX(*preview);
+        painter.save();
+        painter.setClipRect(area, Qt::IntersectClip);
+        painter.setPen(QPen(ThemeManager::instance().color(QStringLiteral("color.accent.warning")),
+                            2, Qt::DotLine));
+        if (x >= area.left() && x <= area.right()) {
+            painter.drawLine(x, area.top(), x, area.bottom());
+        }
+        const QString label = tr("PODGLĄD — BEZ ZAPISU: %1 MHz").arg(*preview, 0, 'f', 6);
+        const int labelWidth = painter.fontMetrics().horizontalAdvance(label) + 12;
+        const QRect labelRect(std::clamp(x + 8, area.left(),
+                                        std::max(area.left(), area.right() - labelWidth)),
+                              area.top() + 25, labelWidth, painter.fontMetrics().height() + 6);
+        painter.fillRect(labelRect, ThemeManager::instance().color(QStringLiteral("color.canon.ground")));
+        painter.drawText(labelRect, Qt::AlignCenter, label);
+        painter.restore();
+    }
     if (const auto frequency = m_txReadbackMarker.confirmed()) {
         // The right dBm strip is not part of the frequency scale. In both
         // renderers mhzToX maps only contentWidth(), not the full specRect.
