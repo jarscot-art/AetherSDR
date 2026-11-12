@@ -49,7 +49,10 @@ try {
             return $stdout.Result.Trim()
         } finally { $process.Dispose() }
     }
-    if ((Config @('path')) -ine (Join-Path $profile 'AetherSDR.db')) { throw 'Settings escaped the new profile.' }
+    # Qt returns mixed Windows/forward separators; compare canonical absolute paths.
+    $actualDatabase=[IO.Path]::GetFullPath((Config @('path')))
+    $expectedDatabase=[IO.Path]::GetFullPath((Join-Path $profile 'AetherSDR.db'))
+    if ($actualDatabase -ine $expectedDatabase) { throw 'Settings escaped the new profile.' }
     $settings=@{
         AutoConnectToLastRadio='False'
         AutomationBridge='{"enabled":false,"txAllowed":false,"txAck":false,"readOnly":true}'
