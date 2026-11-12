@@ -17,6 +17,11 @@ LONG WINAPI recordCrash(EXCEPTION_POINTERS* exception)
     if (InterlockedExchange(&handling, 1)) { return EXCEPTION_CONTINUE_SEARCH; }
     std::fprintf(stderr, "NATIVE_EXCEPTION code=0x%08lX address=%p\n", code,
                  exception->ExceptionRecord->ExceptionAddress);
+    if (code == EXCEPTION_ACCESS_VIOLATION && exception->ExceptionRecord->NumberParameters >= 2) {
+        std::fprintf(stderr, "ACCESS operation=%llu address=0x%llX\n",
+            static_cast<unsigned long long>(exception->ExceptionRecord->ExceptionInformation[0]),
+            static_cast<unsigned long long>(exception->ExceptionRecord->ExceptionInformation[1]));
+    }
     HMODULE module = nullptr;
     char moduleName[MAX_PATH]{};
     if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS

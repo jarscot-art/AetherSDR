@@ -178,8 +178,9 @@ jobs:
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
       with:
         path: D:\sccache
-        key: sccache-windows-
+        key: hf5a-spectrum-windows-${{ github.sha }}
         restore-keys: |
+          hf5a-spectrum-windows-
           sccache-windows-
     - name: Setup sccache
       uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba
@@ -318,7 +319,7 @@ jobs:
         $crashes=Join-Path $env:GITHUB_WORKSPACE 'hf5a-stage6-2b-results/crashes'
         New-Item -ItemType Directory -Force $crashes | Out-Null
         "AETHER_TEST_CRASH_DIR=$crashes" | Out-File -FilePath $env:GITHUB_ENV -Append
-    - name: Reproduce original stack failures and restore heap-owned fixtures
+    - name: Reproduce original native failures and restore corrected fixtures
       id: stack_reproduction
       continue-on-error: true
       run: |
@@ -352,12 +353,18 @@ jobs:
         if ($LASTEXITCODE -ne 0) { throw 'Unexpected staged source changes' }
         git diff --exit-code HEAD -- . @excluded
         if ($LASTEXITCODE -ne 0) { throw 'Tested source differs from commit' }
-    - name: Require completed stack regression diagnosis
+    - name: Require completed native crash regression diagnosis
       if: ${{ always() && !cancelled() }}
       run: |
         if ('${{ steps.stack_reproduction.outcome }}' -ne 'success') {
           throw 'Baseline crash diagnosis failed; twelve-test results do not override this failure'
         }
+    - name: Retain branch compiler cache for focused test repairs
+      if: ${{ always() && !cancelled() }}
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: D:\sccache
+        key: hf5a-spectrum-windows-${{ github.sha }}
     - name: Preserve offline evidence
       if: ${{ always() }}
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9

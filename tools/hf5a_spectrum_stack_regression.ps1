@@ -38,8 +38,13 @@ try {
         $code = [BitConverter]::ToUInt32([BitConverter]::GetBytes([int]$process.ExitCode), 0)
         $hex = '0x{0:X8}' -f $code
         $stderr = Get-Content $args.RedirectStandardError -Raw
-        $rows += [pscustomobject]@{test=$name; exitCode=$hex; stackOverflow=($hex -eq '0xC00000FD');
-            exceptionRecorded=($stderr -match 'NATIVE_EXCEPTION code=0xC00000FD')}
+        # Captured on Windows: geometry/Retina overflow the stack; the preview
+        # fixture dereferences its missing IcomSession before creating the widget.
+        $expected = if ($name -eq 'tx_marker_preview_test') { '0xC0000005' } else { '0xC00000FD' }
+        $nullSessionWrite = $name -ne 'tx_marker_preview_test' -or $stderr -match 'ACCESS operation=1 address=0xDA'
+        $rows += [pscustomobject]@{test=$name; exitCode=$hex; expectedCode=$expected;
+            reproduced=($hex -eq $expected -and $nullSessionWrite);
+            exceptionRecorded=($stderr -match "NATIVE_EXCEPTION code=$expected")}
         Write-Host "BASELINE $name exit=$hex"
         Write-Host $stderr
     }
@@ -51,6 +56,6 @@ try {
         Tee-Object (Join-Path $results 'stack-restored-build.log')
     if ($LASTEXITCODE -ne 0) { throw 'Restored test build failed' }
 }
-if ($rows.Count -ne 3 -or @($rows | Where-Object { -not $_.stackOverflow }).Count) {
-    throw 'Stack-overflow hypothesis not established for all three baselines; inspect exception logs/dumps'
+if ($rows.Count -ne 3 -or @($rows | Where-Object { -not $_.reproduced -or -not $_.exceptionRecorded }).Count) {
+    throw 'Original native failures not reproduced exactly; inspect exception logs/dumps'
 }

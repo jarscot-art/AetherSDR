@@ -32,6 +32,7 @@ struct IcomStreamTestAccess {
 };
 struct IcomCivBackendTestAccess {
     static void prepare(IcomCivBackend& b, Packets& packets) {
+        b.m_session = std::make_unique<IcomSession>(nullptr, b.m_outboundPolicy);
         b.m_session->m_params.civAddress = 0xB6;
         b.m_session->m_serial = b.m_session->makeStream();
         IcomStreamTestAccess::prepare(*b.m_session->m_serial, packets);
