@@ -309,6 +309,21 @@ jobs:
           }
         }
         $env:PATH | Set-Content hf5a-stage6-2b-results/PATH.txt
+    - name: Record executable dependencies and stack headers
+      run: |
+        foreach ($exe in @('spectrum_confirmed_geometry_test','tx_marker_preview_test')) {
+          dumpbin /nologo /headers /dependents "build/$exe.exe" | Set-Content "hf5a-stage6-2b-results/$exe.pe.txt"
+          if ($LASTEXITCODE -ne 0) { throw "Cannot inspect $exe" }
+        }
+        $crashes=Join-Path $env:GITHUB_WORKSPACE 'hf5a-stage6-2b-results/crashes'
+        New-Item -ItemType Directory -Force $crashes | Out-Null
+        "AETHER_TEST_CRASH_DIR=$crashes" | Out-File -FilePath $env:GITHUB_ENV -Append
+    - name: Reproduce original stack failures and restore heap-owned fixtures
+      id: stack_reproduction
+      continue-on-error: true
+      run: |
+        & pwsh -NoLogo -NoProfile -NonInteractive -File tools/hf5a_spectrum_stack_regression.ps1
+        if ($LASTEXITCODE -ne 0) { throw 'Stack regression diagnostics failed' }
     - name: Run twelve required offline tests without sockets or hardware
       run: |
         $pattern='^(tx_marker_preview_test|spectrum_confirmed_geometry_test|spectrum_pan_pixels_retina_test|rx_readback_gui_test|icom_unselected_vfo_test|icom_civ_test|icom_outbound_policy_test|icom_rx_audit_egress_test|icom_rx_audit_requests_test|icom_backend_seam_test|transmit_model_test|backend_family_switch_test)$'
@@ -337,6 +352,12 @@ jobs:
         if ($LASTEXITCODE -ne 0) { throw 'Unexpected staged source changes' }
         git diff --exit-code HEAD -- . @excluded
         if ($LASTEXITCODE -ne 0) { throw 'Tested source differs from commit' }
+    - name: Require completed stack regression diagnosis
+      if: ${{ always() && !cancelled() }}
+      run: |
+        if ('${{ steps.stack_reproduction.outcome }}' -ne 'success') {
+          throw 'Baseline crash diagnosis failed; twelve-test results do not override this failure'
+        }
     - name: Preserve offline evidence
       if: ${{ always() }}
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9

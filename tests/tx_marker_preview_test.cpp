@@ -69,6 +69,7 @@ struct SpectrumOffscreenTestAccess {
 }
 using Access = SpectrumOffscreenTestAccess;
 int main(int argc, char** argv) {
+    std::fprintf(stderr, "GUI_MAIN sizeof(SpectrumWidget)=%zu sizeof(DssRenderer)=%zu\n", sizeof(SpectrumWidget), sizeof(DssRenderer));
     TestSettingsProfile profile(QStringLiteral("tx-marker-preview"));
     if (!profile.isValid()) { return 1; }
     QApplication app(argc, argv);
@@ -80,7 +81,8 @@ int main(int argc, char** argv) {
     Packets packets;
     IcomCivBackend backend;
     IcomCivBackendTestAccess::prepare(backend, packets);
-    SpectrumWidget w;
+    const auto wOwner = std::make_unique<SpectrumWidget>();
+    SpectrumWidget& w = *wOwner;
     w.resize(1000, 500);
     w.setFrequencyRangeImmediate(7.075, 0.040);
     w.setSingleClickTune(true);

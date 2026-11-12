@@ -2839,6 +2839,15 @@ if(AETHER_BUILD_SPECTRUM_GESTURE_TEST)
     add_test(NAME tx_marker_preview_test COMMAND tx_marker_preview_test)
     set_tests_properties(tx_marker_preview_test PROPERTIES TIMEOUT 60
         ENVIRONMENT "QT_QPA_PLATFORM=offscreen;AETHER_AUTOMATION_NO_TX=1")
+    if(WIN32)
+        foreach(_spectrum_test spectrum_confirmed_geometry_test tx_marker_preview_test)
+            target_sources(${_spectrum_test} PRIVATE tests/WindowsGuiCrashDiagnostics.cpp)
+            target_link_libraries(${_spectrum_test} PRIVATE dbghelp)
+            if(MSVC)
+                target_link_options(${_spectrum_test} PRIVATE /DEBUG /INCREMENTAL:NO)
+            endif()
+        endforeach()
+    endif()
     # Same binary at a Retina device pixel ratio: pins the Flex pan xpixels cap.
     add_test(NAME spectrum_pan_pixels_retina_test
         COMMAND spectrum_confirmed_geometry_test --pan-pixels-retina)

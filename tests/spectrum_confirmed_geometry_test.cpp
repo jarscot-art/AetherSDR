@@ -26,6 +26,7 @@
 #include <QPushButton>
 #include <cmath>
 #include <cstdio>
+#include <memory>
 
 using namespace AetherSDR;
 
@@ -158,7 +159,8 @@ int runPanPixelsAtRetinaScale()
         std::printf("[%s] %s\n", ok ? "OK" : "FAIL", name);
         failures += !ok;
     };
-    SpectrumWidget pan;
+    const auto panOwner = std::make_unique<SpectrumWidget>();
+    SpectrumWidget& pan = *panOwner;
     pan.resize(1000, 600);
     const double ratio = pan.devicePixelRatioF();
     if (!near(ratio, 2.0)) {
@@ -183,6 +185,7 @@ int runPanPixelsAtRetinaScale()
 
 int main(int argc, char** argv)
 {
+    std::fprintf(stderr, "GUI_MAIN sizeof(SpectrumWidget)=%zu sizeof(DssRenderer)=%zu\n", sizeof(SpectrumWidget), sizeof(DssRenderer));
     TestSettingsProfile profile("spectrum-confirmed-geometry");
     QApplication app(argc, argv);
     if (app.arguments().contains(QStringLiteral("--flex-squelch-bridge-fixture"))) {
@@ -197,7 +200,8 @@ int main(int argc, char** argv)
         failures += !ok;
     };
     {
-        SpectrumWidget sql;
+        const auto sqlOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& sql = *sqlOwner;
         sql.setSquelchScale(legacyDbmSquelchScale());
         sql.setAutoSquelchEnable(true);
         sql.setSquelchLine(true, 60);
@@ -251,7 +255,8 @@ int main(int argc, char** argv)
     const DbmRangeTransition::Range original{-165, -35};
     for (const DbmRangeTransition::Range target : {
              DbmRangeTransition::Range{-127.5f, 2.5f}, {-180, -50}, {-170, -90}}) {
-        SpectrumWidget trace;
+        const auto traceOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& trace = *traceOwner;
         trace.setNoiseFloorEnable(false);
         trace.setDbmRange(original.minDbm, original.maxDbm);
         trace.setEncoderDbmRange(original.minDbm, original.maxDbm, 1);
@@ -281,7 +286,8 @@ int main(int argc, char** argv)
         trace.prepareForShutdown();
     }
     for (const bool gainChange : {true, false}) {
-        SpectrumWidget trace;
+        const auto traceOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& trace = *traceOwner;
         trace.setNoiseFloorEnable(false);
         trace.setDbmRange(-165, -35);
         trace.setEncoderDbmRange(-165, -35, 1);
@@ -301,7 +307,8 @@ int main(int argc, char** argv)
         trace.prepareForShutdown();
     }
     {
-        SpectrumWidget trace;
+        const auto traceOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& trace = *traceOwner;
         trace.setNoiseFloorEnable(false);
         trace.setDbmRange(-165, -35);
         trace.setEncoderDbmRange(-165, -35, 1);
@@ -334,7 +341,8 @@ int main(int argc, char** argv)
         trace.prepareForShutdown();
     }
     {
-        SpectrumWidget trace;
+        const auto traceOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& trace = *traceOwner;
         trace.resize(1000, 900);
         trace.setDbmRange(-135, -40);
         trace.setEncoderDbmRange(-135, -40);
@@ -401,7 +409,8 @@ int main(int argc, char** argv)
         check(lockedRef > -100, "initial local floor lock was established");
     }
     {
-        SpectrumWidget trace;
+        const auto traceOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& trace = *traceOwner;
         trace.setDbmRange(-100, -16);
         trace.setEncoderDbmRange(-100, -16);
         trace.setNoiseFloorPosition(25);
@@ -447,7 +456,8 @@ int main(int argc, char** argv)
     {
         // A pan another client owns: this session cannot request headroom, so
         // holding the baseline would stall auto floor for the whole session.
-        SpectrumWidget trace;
+        const auto traceOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& trace = *traceOwner;
         trace.setDbmRange(-100, -16);
         trace.setEncoderDbmRange(-100, -16);
         trace.setNoiseFloorPosition(25);
@@ -469,7 +479,8 @@ int main(int argc, char** argv)
     {
         // The floor already sits at Flex's -180 dBm limit: no recovery can
         // come, so holding the baseline would stall auto floor for good.
-        SpectrumWidget trace;
+        const auto traceOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& trace = *traceOwner;
         trace.setDbmRange(-180, -90);
         trace.setEncoderDbmRange(-180, -90);
         trace.setNoiseFloorPosition(25);
@@ -492,7 +503,8 @@ int main(int argc, char** argv)
               "a floor already at -180 dBm is not held for a recovery that cannot come");
     }
     {
-        SpectrumWidget trace;
+        const auto traceOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& trace = *traceOwner;
         trace.updateSpectrum(QVector<float>(32,-80));
         trace.updateSpectrum(QVector<float>(32,-20));
         check(std::abs(SpectrumOffscreenTestAccess::trace(trace).front()+59)<.001,
@@ -560,7 +572,8 @@ int main(int argc, char** argv)
         check(near(dss.rowCenterMhzAtAge(0) + dss.rowBandwidthMhzAtAge(0) / 2, 101.2),
             "a zoom preview preserves explicit coherent RF bounds instead of relabeling a padded preview frame");
     }
-    SpectrumWidget widget;
+    const auto widgetOwner = std::make_unique<SpectrumWidget>();
+    SpectrumWidget& widget = *widgetOwner;
     widget.resize(1200, 600);
     widget.setBandwidthLimits(0.01, 2.16);
     widget.setPanGeometryConfirmationRequired(true);
@@ -705,7 +718,8 @@ int main(int argc, char** argv)
         SliceModel* slice = model.slice(0);
         PanadapterModel* pan = slice ? model.panadapter(slice->panId()) : nullptr;
         if (pan) {
-            SpectrumWidget reveal;
+            const auto revealOwner = std::make_unique<SpectrumWidget>();
+            SpectrumWidget& reveal = *revealOwner;
             reveal.resize(1200, 600);
             reveal.setPanGeometryConfirmationRequired(true);
             int tunes = 0, reveals = 0;
@@ -806,7 +820,8 @@ int main(int argc, char** argv)
         plans.setActivePlan(QStringLiteral("IARU Region 1"));
         check(plans.activePlanName() == QStringLiteral("IARU Region 1"),
               "usage hover: IARU Region 1 plan loads from resources");
-        SpectrumWidget band;
+        const auto bandOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& band = *bandOwner;
         band.resize(800, 400);
         band.setBandPlanManager(&plans);
         band.setBandPlanFontSize(6);
@@ -851,7 +866,8 @@ int main(int argc, char** argv)
     {
         // The cap holds without a scale factor, so it stays pinned even if the
         // --pan-pixels-retina registration's QT_SCALE_FACTOR is ignored.
-        SpectrumWidget wide;
+        const auto wideOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& wide = *wideOwner;
         wide.resize(5000, 600);
         if (near(wide.devicePixelRatioF(), 1.0)) {
             check(panXpixelsFor(&wide) == 3840, "pan pixels: a 5000-pixel pan at ratio 1 is capped at 3840");
@@ -865,7 +881,8 @@ int main(int argc, char** argv)
         // Anchored gesture zoom (the shared applyAnchoredZoom extracted from the
         // trackpad/pinch paths). Under confirmation the new span is requested,
         // not applied locally, so assert the requested span and the clamp.
-        SpectrumWidget widget;
+        const auto widgetOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& widget = *widgetOwner;
         widget.resize(1000, 400);
         widget.setPanGeometryConfirmationRequired(true);
         widget.setFrequencyRangeImmediate(14.200, 0.200);
@@ -890,7 +907,8 @@ int main(int argc, char** argv)
         // the next FFT present. If the stream stops right after, the deferred
         // row and its finished scroll must still be presented. One FFT frame,
         // one native row 5 ms later, then silence.
-        SpectrumWidget wf;
+        const auto wfOwner = std::make_unique<SpectrumWidget>();
+        SpectrumWidget& wf = *wfOwner;
         wf.resize(1000, 600);
         wf.setFrequencyRangeImmediate(14.100, 0.200);
         wf.show();
