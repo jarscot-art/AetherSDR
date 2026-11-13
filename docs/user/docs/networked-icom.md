@@ -26,11 +26,14 @@ The red line continues to show only the radio-confirmed TX frequency.
 
 Releasing the mouse retains the preview; it sends no command and changes no
 radio frequency. **Escape** and switching windows preserve both markers. A new
-Alt-drag on the red line updates the yellow selection. SPLIT OFF, TX, disconnect,
+Alt-drag directly on the yellow line updates its selection; the red line can
+also start a new preview. Overlapping markers still select preview only with Alt. SPLIT OFF, TX, disconnect,
 expired SPLIT/TX data or a changed TX readback clears the preview.
 A cancelled drag remains consumed until release: it cannot become an RX tune
 or resume when fresh data returns. Start a new drag to create another preview.
 
+Direct TX tuning by dragging the red line without Alt is not supported: the
+Icom backend currently provides unselected-VFO readback, not a guarded setter.
 Ordinary mouse gestures without Alt retain their RX tuning, panning and zoom
 functions. This preview does not identify physical VFO B, enable a write mode,
 or persist a frequency. Existing TX operations elsewhere in the desktop remain

@@ -1,4 +1,4 @@
-name: HF5A stage 6.2e persistent preview portable Windows candidate
+name: HF5A stage 6.2f repeatable preview portable Windows candidate
 'on':
   workflow_dispatch: null
   push:
@@ -385,6 +385,11 @@ jobs:
         $main=@($commands | Where-Object { $_.file.Replace('\','/').EndsWith('/src/main.cpp') })
         if ($main.Count -ne 1 -or $main[0].command -notmatch 'HAVE_KEYCHAIN' -or $main[0].command -match 'AETHER_HF5A_DESKTOP_TEST|AETHER_RX_READBACK_GUI_ONLY') { throw 'Not a normal credential-enabled desktop entry point' }
         $main | ConvertTo-Json -Depth 5 | Set-Content hf5a-stage6-1d-results/normal-entry-compile.json
+    - name: Targeted repeated yellow-marker and zero-egress regression
+      timeout-minutes: 3
+      run: |
+        ctest --test-dir build -R '^tx_marker_preview_test$' --parallel 1 --no-tests=error --verbose --output-on-failure --output-junit "$env:GITHUB_WORKSPACE/hf5a-stage6-1d-results/targeted-preview.junit.xml"
+        if ($LASTEXITCODE -ne 0) { throw 'Targeted yellow-marker regression failed' }
     - name: Block normal EXE network before early-exit offline probes
       run: |
         $profiles=@(Get-NetFirewallProfile)
@@ -546,7 +551,7 @@ jobs:
         } | Set-Content hf5a-stage6-1d-portable/SHA256SUMS.txt
         Copy-Item hf5a-stage6-1d-portable/SHA256SUMS.txt hf5a-stage6-1d-results/
 
-        $zip="AetherSDR-26.11.1-HF5A-Stage6.2e-Windows-Candidate-$env:HF5A_SOURCE_SHA.zip"
+        $zip="AetherSDR-26.11.1-HF5A-Stage6.2f-Windows-Candidate-$env:HF5A_SOURCE_SHA.zip"
         Compress-Archive -Path hf5a-stage6-1d-portable/* -DestinationPath $zip -CompressionLevel Optimal
         $exeHash=(Get-FileHash hf5a-stage6-1d-portable/AetherSDR.exe -Algorithm SHA256).Hash.ToLower()
         $zipHash=(Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
@@ -580,10 +585,10 @@ jobs:
       id: portable_rc
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
       with:
-        name: AetherSDR-26.11.1-HF5A-Stage6.2e-Windows-Candidate-${{ env.HF5A_SOURCE_SHA }}
+        name: AetherSDR-26.11.1-HF5A-Stage6.2f-Windows-Candidate-${{ env.HF5A_SOURCE_SHA }}
         path: |
-          AetherSDR-26.11.1-HF5A-Stage6.2e-Windows-Candidate-*.zip
-          AetherSDR-26.11.1-HF5A-Stage6.2e-Windows-Candidate-*.zip.sha256
+          AetherSDR-26.11.1-HF5A-Stage6.2f-Windows-Candidate-*.zip
+          AetherSDR-26.11.1-HF5A-Stage6.2f-Windows-Candidate-*.zip.sha256
           hf5a-stage6-1d-results/portable-manifest.json
         retention-days: 90
         if-no-files-found: error
@@ -606,6 +611,12 @@ jobs:
           githubArtifactSHA256=$env:ARTIFACT_SHA256.ToLower()} |
           ConvertTo-Json | Set-Content hf5a-stage6-1d-results/artifact-manifest.json
         Get-Content hf5a-stage6-1d-results/artifact-manifest.json | Out-File $env:GITHUB_STEP_SUMMARY -Append
+    - name: Retain existing compiler cache for subsequent candidate verification
+      if: ${{ always() && !cancelled() }}
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: D:\sccache
+        key: hf5a-spectrum-windows-${{ env.HF5A_SOURCE_SHA }}
     - name: Upload offline evidence
       if: ${{ always() }}
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9

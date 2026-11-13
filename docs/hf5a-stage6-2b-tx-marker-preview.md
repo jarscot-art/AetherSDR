@@ -57,3 +57,7 @@ Stage 6.2e: Escape and focus/window changes retain the local yellow selection.
 An interrupted drag remains consumed until release/new press. A new Alt drag
 updates the selection. Unchanged valid readback refreshes deadlines without
 invalidating the cached red overlay; invalid/expired data still clears it.
+
+Stage 6.2f: Alt-drag can start at the current yellow selection as well as the
+red confirmed line. Overlapping hit areas have the same local-only action.
+Expired hits are consumed/refused; direct red-line TX tuning is unsupported.

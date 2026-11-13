@@ -1,4 +1,4 @@
-# HF5A Stage 6.2e — Windows 10 x64 portable candidate
+# HF5A Stage 6.2f — Windows 10 x64 portable candidate
 
 Application source and packaging commit: see `source.json` in this archive.
 Normal full desktop, QtKeychain enabled. This is **not an RX-only application**.
@@ -13,7 +13,7 @@ This package does not authorize a hardware test, transmitting or installation.
    credentials within the same Windows account. Do not create an account through
    this package; use an independently prepared test account. Do not copy passwords,
    profiles or application data from production.
-3. Extract the inner ZIP into a new writable directory, e.g. `C:\HF5A-Test\Stage6.2e`.
+3. Extract the inner ZIP into a new writable directory, e.g. `C:\HF5A-Test\Stage6.2f`.
    Verify its `.sha256` from the Actions artifact; `SHA256SUMS.txt` lists payload files.
 4. Run **START-HF5A.cmd**, not AetherSDR.exe directly. The launcher refuses an account
    with an existing standard AetherSDR data directory and asks for confirmation of
@@ -39,7 +39,7 @@ Packaging checks include dumpbin imports, DLL closure, native qwindows plugin,
 40 regressions (the twelve preview/CI-V tests plus retained production checks)
 and early-exit offline Qt/settings probes under program-specific firewall rules.
 Escape and focus/window changes preserve the yellow local selection; a new Alt
-drag updates it. SPLIT OFF, TX, disconnected or stale/changed readback clears it.
+drag on either the yellow or red line updates it. SPLIT OFF, TX, disconnected or stale/changed readback clears it.
 The confirmed red marker remains independent of that local selection.
 
 
@@ -59,3 +59,15 @@ Close the candidate and ensure its radio session (if later authorized) is closed
 Return to the original Windows account and original Stage 5.2 shortcut. Since the
 candidate uses a separate directory/account and no deployment occurs, no settings
 restore or uninstall should be needed. Retain the original archive and backups.
+
+## Stage 6.2f scope limitation
+
+Direct red-marker TX tuning is not implemented. `IcomCivBackend::setSliceFrequency`
+ignores the slice index and sends `cmdSetFrequency` (`05`) to the selected VFO;
+it is not a safe route to the unselected VFO. `IRadioBackend` has no guarded
+unselected-frequency setter. `CivCodec` supplies selected/unselected readback
+selectors (`00`/`01`), not an authorized unselected write operation. These selectors
+are relative, not fixed A/B identities. RX-only policy still rejects writes.
+Therefore this package fixes repeated yellow-marker preview only and introduces
+no `25 01` write, VFO switch, TX/PTT/TUNE operation or fallback through RX tuning.
+RX changes during SPLIT need not move the independently confirmed TX line.

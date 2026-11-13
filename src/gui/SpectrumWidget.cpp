@@ -17953,11 +17953,17 @@ std::optional<double> SpectrumWidget::txMarkerPreview() const
 
 bool SpectrumWidget::txPreviewHit(const QPointF& point) const
 {
-    const auto frequency = m_txReadbackMarker.frequencyMhz;
-    if (!frequency || !std::isfinite(*frequency)) { return false; }
-    const int x = mhzToX(*frequency);
-    return x >= 0 && x < contentWidth() && point.x() >= 0 && point.x() < contentWidth()
-        && point.y() >= 0 && point.y() < height() && std::abs(point.x() - x) <= 6;
+    if (point.x() < 0 || point.x() >= contentWidth()
+        || point.y() < 0 || point.y() >= height()) { return false; }
+    const auto hits = [&](std::optional<double> frequency) {
+        if (!frequency || !std::isfinite(*frequency)) { return false; }
+        const int x = mhzToX(*frequency);
+        return x >= 0 && x < contentWidth() && std::abs(point.x() - x) <= 6;
+    };
+    // Either line starts the same local-only gesture, including overlapping hits.
+    // Retain raw positions for hit testing so an expired hit is consumed/refused
+    // by updateTxMarkerPreview, never allowed to fall through into RX tuning.
+    return hits(m_txPreviewMhz) || hits(m_txReadbackMarker.frequencyMhz);
 }
 
 void SpectrumWidget::cancelTxMarkerPreview()

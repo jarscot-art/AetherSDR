@@ -140,6 +140,41 @@ int main(int argc, char** argv) {
         check(preview.copy(txX, 100, 1, 300) == confirmed.copy(txX, 100, 1, 300),
               "red confirmed line remains unchanged in spectrum and waterfall");
     }
+    // Re-grab the current yellow position, not the original confirmed TX position.
+    for (int repeat = 0; repeat != 16; ++repeat) {
+        const auto current = w.txMarkerPreview();
+        check(current.has_value(), "yellow selection exists before repeated drag");
+        if (!current) { break; }
+        const bool waterfall = repeat % 2 == 0;
+        const double target = repeat % 2 == 0 ? 7.090 : 7.085;
+        Access::mouse(w, QEvent::MouseButtonPress, Access::point(w, *current, waterfall));
+        Access::mouse(w, QEvent::MouseMove, Access::point(w, target, waterfall));
+        Access::mouse(w, QEvent::MouseButtonRelease, Access::point(w, target, waterfall));
+        check(w.txMarkerPreview() && std::abs(*w.txMarkerPreview()
+              - Access::frequency(w, Access::point(w, target, waterfall).x())) < 1e-9,
+              "repeated yellow drag tracks its current position on spectrum/waterfall");
+        check(w.confirmedTxReadback() == std::optional<double>{7.080},
+              "yellow drag never moves confirmed red TX");
+    }
+    for (int separation : {0, 3, -3, 6, -6}) {
+        ready(); press();
+        const QPoint close = Access::point(w, 7.080, true) + QPoint(separation, 0);
+        Access::mouse(w, QEvent::MouseMove, close);
+        Access::mouse(w, QEvent::MouseButtonRelease, close);
+        Access::mouse(w, QEvent::MouseButtonPress, close);
+        move(); release();
+        check(w.txMarkerPreview() && std::abs(*w.txMarkerPreview()
+              - Access::frequency(w, Access::point(w, 7.085, true).x())) < 1e-9,
+              "overlapping red/yellow hits remain exclusively local preview gestures");
+    }
+    ready(); press(); move(); release();
+    check(w.txMarkerPreview().has_value(), "preview prepared for expiry refusal");
+    const QPoint expiredYellow = Access::point(w, w.txMarkerPreview().value_or(7.085), true);
+    w.setConfirmedTxReadback(7.080, QDeadlineTimer(1));
+    QThread::msleep(3);
+    Access::mouse(w, QEvent::MouseButtonPress, expiredYellow);
+    move(); release();
+    check(!w.txMarkerPreview(), "expired yellow hit is refused without falling through to RX");
     for (int invalidation = 0; invalidation != 6; ++invalidation) {
         ready(); press(); move();
         switch (invalidation) {
@@ -240,5 +275,7 @@ int main(int argc, char** argv) {
     Access::mouse(w, QEvent::MouseButtonRelease, rx, Qt::NoModifier);
     IcomCivBackendTestAccess::pump(backend);
     check(!packets.empty(), "ordinary RX click still reaches injected CI-V writer (positive control)");
+    check(w.confirmedTxReadback() == std::optional<double>{7.080},
+          "RX tuning does not optimistically overwrite independent confirmed TX");
     return failures ? 1 : 0;
 }
