@@ -1,4 +1,5 @@
 #include "SpectrumWidget.h"
+#include "Hf5aXitClickLogic.h"
 #include "SpectrumTraceBins.h"
 #include "SpectrumChromeGeometry.h"
 #include "SpectrumSquelchLogic.h"
@@ -10063,6 +10064,32 @@ static double snapToStep(double mhz, int stepHz)
 void SpectrumWidget::mousePressEvent(QMouseEvent* ev)
 {
     PerfInputScope perfScope("mousePress");
+    // HF5A: this shortcut owns its press/release before ordinary slice,
+    // filter, spot or pan handlers can tune RX. No dragging is performed.
+    if (ev->button() == Qt::LeftButton) {
+        const auto modifiers =
+            ev->modifiers() | QGuiApplication::keyboardModifiers();
+        const int chromeH = freqScaleH() + DIVIDER_H;
+        const int specH = static_cast<int>(
+            (height() - chromeH) * m_spectrumFrac);
+        const int wfTop = specH + chromeH;
+        const QPoint pos = ev->position().toPoint();
+        const bool inFrequencyCanvas = pos.x() >= 0
+            && pos.x() < contentWidth()
+            && (pos.y() >= 0 && pos.y() < specH
+                || pos.y() >= wfTop && pos.y() < height());
+        const bool chord =
+            (modifiers & (Qt::ControlModifier | Qt::ShiftModifier))
+                == (Qt::ControlModifier | Qt::ShiftModifier)
+            && !(modifiers & (Qt::AltModifier | Qt::MetaModifier));
+        if (chord && inFrequencyCanvas) {
+            m_hf5aXitClickPending = true;
+            m_hf5aXitClickStart = pos;
+            ev->accept();
+            return;
+        }
+    }
+    m_hf5aXitClickPending = false;
     // A menu's nested event loop can destroy this panadapter during shutdown.
     const QPointer<SpectrumWidget> self(this);
     const auto dragStatePublisher = makeScopeExit([self] {
@@ -11705,6 +11732,31 @@ void SpectrumWidget::mouseMoveEvent(QMouseEvent* ev)
 void SpectrumWidget::mouseReleaseEvent(QMouseEvent* ev)
 {
     PerfInputScope perfScope("mouseRelease");
+    if (m_hf5aXitClickPending) {
+        m_hf5aXitClickPending = false;
+        const auto modifiers =
+            ev->modifiers() | QGuiApplication::keyboardModifiers();
+        const bool chord =
+            (modifiers & (Qt::ControlModifier | Qt::ShiftModifier))
+                == (Qt::ControlModifier | Qt::ShiftModifier)
+            && !(modifiers & (Qt::AltModifier | Qt::MetaModifier));
+        const QPoint pos = ev->position().toPoint();
+        if (ev->button() == Qt::LeftButton && chord
+            && Hf5aXitClick::isStationaryClick(
+                m_hf5aXitClickStart.x(), m_hf5aXitClickStart.y(),
+                pos.x(), pos.y())
+            && pos.x() >= 0 && pos.x() < contentWidth()
+            && pos.y() >= 0 && pos.y() < height()) {
+            const int chromeH = freqScaleH() + DIVIDER_H;
+            const int specH = static_cast<int>(
+                (height() - chromeH) * m_spectrumFrac);
+            if (pos.y() < specH || pos.y() >= specH + chromeH)
+                emit xitFrequencyClicked(xToMhz(pos.x()));
+        }
+        // Never allow a released XIT gesture to fall into RX click-to-tune.
+        ev->accept();
+        return;
+    }
     const auto dragStatePublisher = makeScopeExit([this] { publishPerfDragState(); });
     (void)dragStatePublisher;
     clearVfoCursorOverride();
@@ -11983,6 +12035,17 @@ void SpectrumWidget::showAddSpotDialog(double freqMhz)
 
 void SpectrumWidget::mouseDoubleClickEvent(QMouseEvent* ev)
 {
+    // A double-click must never turn Ctrl+Shift TX selection into RX tune.
+    const auto modifiers =
+        ev->modifiers() | QGuiApplication::keyboardModifiers();
+    if (ev->button() == Qt::LeftButton
+        && (modifiers & (Qt::ControlModifier | Qt::ShiftModifier))
+            == (Qt::ControlModifier | Qt::ShiftModifier)
+        && !(modifiers & (Qt::AltModifier | Qt::MetaModifier))) {
+        m_hf5aXitClickPending = false;
+        ev->accept();
+        return;
+    }
     const int chromeH  = freqScaleH() + DIVIDER_H;
     const int contentH = height() - chromeH;
     const int specH = static_cast<int>(contentH * m_spectrumFrac);
