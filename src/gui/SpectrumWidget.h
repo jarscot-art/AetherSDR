@@ -1032,6 +1032,9 @@ signals:
     void offScreenSliceCenterRequested(int sliceId);
     // Emitted when the user requests an absolute jump in the panadapter area.
     void frequencyClicked(double mhz);
+    // HF5A: Ctrl+Shift + stationary left click selects TX QRG via XIT.
+    // Separate from frequencyClicked, which tunes RX VFO.
+    void xitFrequencyClicked(double mhz);
     // Emitted when user clicks on a KiwiSDR DX Community spot marker.
     void kiwiSpotClicked(double freqMhz, const QString& mode, int loOffsetHz, int hiOffsetHz);
     // Emitted when the user makes an incremental tuning gesture such as
@@ -2013,6 +2016,9 @@ private:
     qint64 m_frequencyPreviewCommitLastNs{0};
     qint64 m_frequencyPreviewCommitMaxNs{0};
     // Waterfall pan drag state
+    // Isolated Ctrl+Shift click; never enters ordinary VFO or pan drag.
+    bool m_hf5aXitClickPending{false};
+    QPoint m_hf5aXitClickStart;
     bool m_draggingPan{false};
     int  m_panDragStartX{0};
     double m_panDragStartCenter{0.0};
