@@ -4,6 +4,7 @@
 // panFollowVfo()/revealFrequencyIfNeeded().
 
 #include "MainWindow.h"
+#include "Hf5aXitClickLogic.h"
 #include "ControlAvailabilityRegistry.h"
 #include "HGauge.h"
 #include "StatusIndicator.h"
@@ -5277,6 +5278,32 @@ void MainWindow::wirePanadapter(PanadapterApplet* applet)
         // caller decide (click → spawn slice; scroll → no-op). Fixes #3086.
         return nullptr;
     };
+
+    // HF5A: one stationary Ctrl+Shift click chooses TX QRG by writing only
+    // the active TX slice's XIT offset. Deliberately never touches VFO A,
+    // pan center, split or keying, and never enables XIT implicitly.
+    connect(sw, &SpectrumWidget::xitFrequencyClicked,
+            this, [this, resolveSpectrumTuneTarget](double txMhz) {
+        if (!m_radioModel.isConnected()
+            || m_radioModel.transmitModel().isTransmitting()) {
+            return;
+        }
+        auto* target = resolveSpectrumTuneTarget();
+        if (!target || target != activeSlice()
+            || !target->isTxSlice() || !target->xitOn()
+            || target->ritOn()) {
+            return;
+        }
+        const auto offset = Hf5aXitClick::offsetHz(txMhz, target->frequency());
+        if (!offset) {
+            statusBar()->showMessage(
+                QStringLiteral("XIT: wybrana QRG poza zakresem +/-9999 Hz"),
+                3000);
+            return;
+        }
+        if (*offset != target->xitFreq())
+            target->setXit(true, *offset);
+    });
 
     // ── Click-to-tune ────────────────────────────────────────────────────
     // Same-pan and cross-pan tune requests both resolve a target slice first,
